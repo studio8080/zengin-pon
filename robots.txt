@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /data/
+Disallow: /samples/
+Sitemap: https://zenginpon.kokokikaku.com/sitemap.xml

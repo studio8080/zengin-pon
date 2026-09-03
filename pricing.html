@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>料金プラン｜全銀ポン（全銀フォーマット変換ツール）</title>
+<meta name="description" content="全銀ポンの料金。無料プランは登録不要で1回20件まで。Proプランは月払い480円または年払い4,800円で件数無制限。他の方法との比較つき。">
+<link rel="canonical" href="https://zenginpon.kokokikaku.com/pricing.html">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+.billing { display: inline-flex; background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 4px; margin: 0 auto 22px; }
+.billing button { border: 0; background: none; padding: 8px 18px; border-radius: 999px; font-weight: 700; cursor: pointer; color: var(--muted); }
+.billing button.on { background: var(--navy); color: #fff; }
+.billing .save { font-size: 11px; color: var(--accent); margin-left: 4px; }
+.plans.two { max-width: 720px; margin: 0 auto; }
+</style>
+</head>
+<body>
+<section class="section">
+  <div class="wrap">
+    <h2>料金プラン</h2>
+    <p class="sub">まずは無料で。毎月使うならPro。月払いでも年払いでも、いつでも解約できます。すべて税込です。</p>
+    <p class="center"><span class="billing" role="group" aria-label="支払い方法">
+      <button type="button" class="on" data-cycle="month">月払い</button>
+      <button type="button" data-cycle="year">年払い<span class="save">2か月分おトク</span></button>
+    </span></p>
+    <div class="plans two">
+      <div class="plan"><h3>Free</h3><div class="price">¥0</div><p class="hint" style="margin:0">登録不要・期限なし</p>
+        <ul><li>1回の変換で20件まで</li><li>総合振込・給与振込・賞与振込</li><li>Excel・CSV・PDF・Googleスプレッドシート</li><li>自動整理・カナ変換・金融機関辞書との照合</li><li>銀行休業日チェック</li><li class="no">列の割り当てテンプレート保存</li><li class="no">変換履歴・設定のバックアップ</li><li class="no">メールサポート</li></ul>
+        <a class="btn" href="index.html#tool">今すぐ使う</a></div>
+      <div class="plan hot"><span class="ribbon">Pro</span><h3>Pro</h3>
+        <div class="price" data-month="¥480" data-year="¥4,800">¥480<small id="unit">/月</small></div>
+        <p class="hint" id="cycleNote" style="margin:0">月払い。いつでも解約可</p>
+        <ul><li>件数無制限</li><li>Freeの全機能</li><li>列の割り当てテンプレートを保存・再利用</li><li>変換履歴（このブラウザ内に保存）</li><li>設定のバックアップ・復元</li><li>振込元プロファイルを複数保存（顧問先ごとの切替に）</li><li>メールサポート（2営業日以内）</li><li>新機能を優先利用</li></ul>
+        <a class="btn primary" href="#buy">Proを申し込む（準備中）</a></div>
+    </div>
+    <p class="hint center" style="margin-top:18px">社労士・税理士事務所で顧問先の分をまとめて作る場合も Pro ひとつで足ります（振込元プロファイルを顧問先ごとに保存できます）。</p>
+  </div>
+</section>
+
+<section class="section alt">
+  <div class="wrap">
+    <h2>他の方法との比較</h2>
+    <p class="sub">「Excel→全銀」だけなら無料の選択肢もあります。違いは、その前後の手間をどこまで無くすかです。</p>
+    <div class="tablewrap">
+    <table class="compare">
+      <thead><tr><th></th><th>全銀ポン（当サービス）</th><th>無料の変換ツール・銀行配布のマクロ</th><th>クラウド会計・給与ソフト</th><th>手入力（ネットバンキングの画面）</th></tr></thead>
+      <tbody>
+        <tr><th>費用</th><td>無料〜月額480円</td><td>無料</td><td>月額2,000〜6,000円（他機能込み）</td><td>無料（時間はかかる）</td></tr>
+        <tr class="hl"><th>Excelの形が違っても読める</th><td class="y">自動整理（並び・結合セル・見出しなし）</td><td class="n">決まった雛形に貼り直す</td><td class="n">そのソフトの形式のみ</td><td class="n">—</td></tr>
+        <tr class="hl"><th>銀行名しかない表</th><td class="y">辞書でコードを補う</td><td class="n">自分で調べる</td><td>マスタ登録が必要</td><td class="n">自分で調べる</td></tr>
+        <tr><th>統廃合・存在しないコードの警告</th><td class="y">あり（毎月更新）</td><td class="n">なし</td><td>ソフトによる</td><td>銀行側でエラー</td></tr>
+        <tr><th>PDF・Googleスプレッドシート</th><td class="y">対応</td><td class="n">Excelのみ</td><td class="n">CSV取込のみ</td><td class="n">—</td></tr>
+        <tr><th>データの保存先</th><td class="y">ブラウザ内のみ（送信しない）</td><td>PC内（マクロの警告あり）</td><td>クラウド</td><td>銀行</td></tr>
+        <tr><th>複数の会社（顧問先）</th><td class="y">Proでプロファイル切替</td><td class="n">ファイルを分けて管理</td><td>会社ごとに契約</td><td class="n">—</td></tr>
+        <tr><th>Mac・スマホ</th><td class="y">ブラウザがあれば</td><td class="n">Windows Excelのみが多い</td><td class="y">対応</td><td class="y">対応</td></tr>
+        <tr><th>広告</th><td class="y">なし</td><td>あるものが多い</td><td>なし</td><td>なし</td></tr>
+        <tr><th>所要時間（30件）</th><td class="y">約1分</td><td>5〜10分</td><td>マスタ整備後は数分</td><td>30〜60分</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p class="hint">クラウド会計・給与ソフトを既にお使いで、その中でFBデータが出ている方には当サービスは不要です。「Excelで給与計算している」「支払リストがExcel」「税理士さんからExcelが届く」方向けです。</p>
+  </div>
+</section>
+
+<section class="section" id="buy">
+  <div class="wrap article" style="padding-top:0">
+    <h2>お支払いについて</h2>
+    <ul>
+      <li>クレジットカード（Stripe）で決済します。カード情報は当サイトでは保持しません。</li>
+      <li>決済後にメールでライセンスキーが届きます。ツールの「Pro」ボタンから入力すると、そのブラウザで有効になります。同じキーを2台まで（例: 会社のPCと自宅のPC）で使えます。</li>
+      <li>月払いはいつでも解約できます。解約後も当月末まで利用できます。年払いは期間末まで利用でき、途中解約の日割り返金はありません。</li>
+      <li>返金は初回決済から7日以内の申し出に限りお受けします。</li>
+      <li>領収書は決済時にStripeから自動でメール送付されます。当社は適格請求書発行事業者ではないため、適格請求書（インボイス）は発行できません。</li>
+      <li>価格は税込です。改定する場合は1か月前にサイト上でお知らせします。</li>
+    </ul>
+    <h2>無料プランの制限について</h2>
+    <p>無料プランは1回の変換で20件までです。それ以上の行があるファイルは、先頭20件だけが出力対象になります（残りの行は画面で確認できます）。制限は「何件でも試せるが、実運用で毎月使うなら有料」という考え方です。</p>
+  </div>
+</section>
+<script>
+(function(){var btns=document.querySelectorAll('.billing button'),price=document.querySelector('.plan.hot .price'),unit=document.getElementById('unit'),note=document.getElementById('cycleNote');btns.forEach(function(b){b.addEventListener('click',function(){btns.forEach(function(x){x.classList.remove('on')});b.classList.add('on');var y=b.dataset.cycle==='year';price.childNodes[0].nodeValue=y?price.dataset.year:price.dataset.month;unit.textContent=y?'/年':'/月';note.textContent=y?'年払い（月あたり400円）。期間末まで利用可':'月払い。いつでも解約可';});});})();
+</script>
+<script src="src/site.js"></script>
+</body>
+</html>

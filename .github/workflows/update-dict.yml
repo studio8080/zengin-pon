@@ -1,0 +1,43 @@
+# 金融機関辞書（data/）を zengin-code/source-data から毎月自動で更新し、差分があれば PR を作る。
+# マージすれば GitHub Pages に反映される（アプリ側の変更は不要）。
+name: update-bank-dictionary
+
+on:
+  schedule:
+    - cron: '0 3 2 * *'   # 毎月2日 12:00 JST
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Fetch source and read its last update date
+        id: src
+        run: |
+          git clone --depth 1 https://github.com/zengin-code/source-data.git /tmp/source-data
+          echo "date=$(git -C /tmp/source-data log -1 --format=%cs)" >> "$GITHUB_OUTPUT"
+      - name: Build dictionary and bank pages
+        run: |
+          DICT_VERSION="${{ steps.src.outputs.date }}" node tools/build-dict.js /tmp/source-data
+          node tools/build-bank-pages.js
+      - name: Create pull request if changed
+        uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: "data: 金融機関辞書を ${{ steps.src.outputs.date }} 版に更新"
+          title: "金融機関辞書の更新（${{ steps.src.outputs.date }} 版）"
+          body: |
+            zengin-code/source-data の ${{ steps.src.outputs.date }} 版を取り込みました。
+            統廃合があった場合は `data/merged.json` にも旧→新コードを追記してください。
+          branch: auto/update-dict
+          add-paths: |
+            data/
+            banks/
+            sitemap.xml
