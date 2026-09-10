@@ -93,6 +93,61 @@ STRIPE_LINK_YEAR:  'https://buy.stripe.com/yyyyy',
 
 ---
 
+## 3-4. 月払いを自動化する（Cloud Functions のデプロイ）
+
+年払いだけで始めるなら飛ばしてよい。**月払いを売るならここまでやる**（解約されたら止まる仕組み）。
+
+### 仕組み
+
+```
+Stripe（支払い成功）──webhook──▶ zenginponStripeWebhook
+                                  ├─ キーを発行（期限＝今期末＋5日）
+                                  ├─ Firestore に保存
+                                  └─ 購入者にメール
+
+ブラウザ（期限10日前）──ライセンスIDのみ──▶ zenginponLicense ──▶ 新しいキー
+```
+
+解約すると次の請求が来ないので、支払い済み期間の末日＋5日でキーが自然に切れる。
+
+### 手順
+
+既存の Firebase プロジェクト **`misefits`**（Blaze 設定済み）に、別コードベース `zenginpon` として相乗りする。
+新しいプロジェクトも課金設定も要らない。**コードベースを分けてあるので Misefits の関数は消えない。**
+
+1. 依存を入れる
+   ```bash
+   cd functions && npm install && cd ..
+   ```
+2. シークレットを登録する（`misefits` プロジェクトに追加される）
+   ```bash
+   firebase functions:secrets:set ZP_LICENSE_PRIVATE_KEY
+   ```
+   → `C:\Users\chaha\.zengin-pon\license-private.pem` の中身を**全文貼り付け**（`-----BEGIN` から `-----END PRIVATE KEY-----` まで）
+   ```bash
+   firebase functions:secrets:set ZP_STRIPE_WEBHOOK_SECRET
+   ```
+   → 手順4で Stripe が出す `whsec_...`（先に空で登録し、あとで入れ直してもよい）
+
+   `STRIPE_SECRET_KEY` `SMTP_USER` `MAIL_FROM` `SMTP_PASS` は Misefits で登録済みのものが共有される。
+3. `functions/.env` を作る（`.env.example` をコピー。`SMTP_HOST` と `SMTP_PORT` を書く）
+4. デプロイする
+   ```bash
+   firebase deploy --only functions:zenginpon
+   ```
+   → 2つのURLが表示される。控える。
+   - `https://asia-northeast1-misefits.cloudfunctions.net/zenginponStripeWebhook`
+   - `https://asia-northeast1-misefits.cloudfunctions.net/zenginponLicense`
+5. Stripe → 開発者 → Webhook → エンドポイントを追加
+   - URL: 上の `zenginponStripeWebhook`
+   - 送信するイベント: `checkout.session.completed` / `invoice.paid` /
+     `customer.subscription.deleted` / `customer.subscription.updated`
+   - 表示された署名シークレット `whsec_...` を手順2の `ZP_STRIPE_WEBHOOK_SECRET` に入れて再デプロイ
+6. `config.js` の `LICENSE_API` に `zenginponLicense` のURLを入れて push
+7. テストモードで1回購入し、キーがメールで届くこと・「⭐ Pro」で有効になることを確認する
+
+---
+
 ## 4. 申し込みが来たときの作業（1件あたり 3分）
 
 Stripe から決済通知メールが届いたら、次を実行する。
@@ -105,9 +160,8 @@ node tools/issue-key.js --months 12 --mail --memo "buyer@example.com"
 - `--mail` を付けると**そのまま送れるメール文面**が出る。件名と本文をコピーして送るだけ
 - 発行記録は `tools/issued-keys.csv` に自動で追記される（Git には入らない）
 
-**月払いの注意**: いまの仕組みでは、解約されても期限までキーが有効なまま。
-当面は年払いを主に案内し、月払いは毎月キーを送り直す運用にする。
-件数が増えたら Stripe Webhook で自動化する（README の 3f 参照）。
+**手順3-4（Cloud Functions）を済ませていれば、この作業は不要**。支払いのたびに自動で発行・送信される。
+この節は、Functions を入れる前に売り始めた場合と、返金・特例対応のための手動発行用。
 
 ### 更新のとき
 

@@ -4,3 +4,5 @@ Thumbs.db
 *.log
 .claude/
 tools/issued-keys.csv
+functions/node_modules/
+functions/.env

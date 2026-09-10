@@ -54,6 +54,7 @@
   }
 
   function stored() { try { return localStorage.getItem(STORAGE) || ''; } catch (_) { return ''; } }
+  function save(k) { try { localStorage.setItem(STORAGE, String(k).trim().replace(/\s+/g, '')); } catch (_) { /* ignore */ } }
 
   /** 保存済みキーの現在の状態 */
   async function status() {
@@ -64,10 +65,49 @@
   }
   async function activate(keyStr) {
     const r = await verify(keyStr);
-    if (r.ok) { try { localStorage.setItem(STORAGE, String(keyStr).trim().replace(/\s+/g, '')); } catch (_) { /* ignore */ } }
+    if (r.ok) save(keyStr);
     return r;
   }
   function deactivate() { try { localStorage.removeItem(STORAGE); } catch (_) { /* ignore */ } }
 
-  return { verify, status, activate, deactivate, STORAGE, PUBLIC_KEY };
+  // ------------------------------------------------------------
+  // 自動更新（月払い向け）
+  //   期限が近いキーを、ライセンスIDだけを送って新しいものに差し替える。
+  //   送るのは英数字のライセンスIDだけで、振込データは一切送らない。
+  //   config.js の LICENSE_API が空なら何もしない（＝完全オフライン動作のまま）。
+  // ------------------------------------------------------------
+  const REFRESH_WITHIN_DAYS = 10;
+  function daysUntil(ymd) {
+    const t = new Date(ymd + 'T00:00:00').getTime() - new Date(new Date().toISOString().slice(0, 10) + 'T00:00:00').getTime();
+    return Math.round(t / 86400000);
+  }
+
+  /**
+   * 必要なら更新する。
+   * @returns {Promise<{refreshed:boolean, expiry?:string, reason?:string}>}
+   */
+  async function refreshIfNeeded(force) {
+    const api = ((typeof window !== 'undefined' && window.ZENGIN_CONFIG) || {}).LICENSE_API;
+    if (!api) return { refreshed: false, reason: 'no-api' };
+    const cur = await status();
+    // 期限切れでも payload は読めているので、その id で復帰を試みる
+    const id = cur.payload && cur.payload.id;
+    if (!id) return { refreshed: false, reason: 'no-key' };
+    if (!force && cur.active && daysUntil(cur.expiry) > REFRESH_WITHIN_DAYS) return { refreshed: false, reason: 'not-due' };
+    try {
+      const res = await fetch(`${api}?id=${encodeURIComponent(id)}`, { method: 'GET', cache: 'no-store' });
+      if (!res.ok) return { refreshed: false, reason: `http-${res.status}` };
+      const j = await res.json();
+      if (!j || !j.key) return { refreshed: false, reason: 'bad-response' };
+      const v = await verify(j.key);
+      if (!v.ok) return { refreshed: false, reason: v.reason };
+      if (v.expiry === cur.expiry) return { refreshed: false, reason: 'unchanged', expiry: v.expiry };
+      save(j.key);
+      return { refreshed: true, expiry: v.expiry };
+    } catch (e) {
+      return { refreshed: false, reason: 'offline' };
+    }
+  }
+
+  return { verify, status, activate, deactivate, refreshIfNeeded, STORAGE, PUBLIC_KEY };
 });

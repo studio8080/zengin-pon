@@ -18,7 +18,13 @@ zengin-pon/
   src/dict.js         金融機関辞書の読み込み＋名前→コードの逆引き
   src/gsheets.js      Googleスプレッドシート連携（Picker + drive.file + Drive export）
   src/app.js          画面ロジック（SheetJS / pdf.js は CDN）
+  src/license.js      Proライセンスの検証と自動更新（Ed25519 公開鍵）
+  src/holidays.js     銀行休業日の判定
+  src/site.js         共通ヘッダー／フッター＋アクセス解析
+  functions/          Stripe Webhook とライセンス更新API（Firebase・codebase "zenginpon"）
+  docs/launch-checklist.md  公開までの手作業
   test/organize.test.js 自動整理のテスト（5件）
+  test/license.test.js  ライセンス発行と検証のテスト（4件）
   data/banks.json     金融機関辞書（tools/build-dict.js で生成、元は zengin-code）
   data/branches/      銀行ごとの支店一覧（必要な分だけ取得）
   data/merged.json    統廃合の旧→新コード表（手で管理）
@@ -28,7 +34,8 @@ zengin-pon/
   samples/            総合振込・給与振込のサンプルCSV
 ```
 
-ローカル起動: `python -m http.server 8765 --directory zengin-fb` → http://127.0.0.1:8765/
+ローカル起動: `python -m http.server 8765` （このディレクトリで）→ http://127.0.0.1:8765/
+テスト: `node test/zengin.test.js` / `node test/organize.test.js` / `node test/license.test.js`
 
 ---
 
@@ -73,14 +80,12 @@ zengin-pon/
 2. 社労士・税理士事務所（顧問先ごとに依頼人情報を切り替えて何本も作る → 「複数プロファイル」機能が刺さる）
 3. 支払（総合振込）を毎月Excelで管理している業種（建設・運送・卸・不動産管理）
 
-**価格の目安**（仮。要検証）
+**価格**（2026-09-10 確定。詳細は 3f）
 
 | プラン | 価格 | 内容 |
 |---|---|---|
-| Free | ¥0 | 月3件（3行）まで／プレビューのみ、など機能制限 |
-| Standard | ¥980/月 または ¥9,800/年 | 無制限、Excel/CSV/PDF、プロファイル1件 |
-| Pro（事務所向け） | ¥2,980/月 | 依頼人プロファイル無制限、チーム共有、優先サポート |
-| 買い切り | ¥9,800〜¥14,800 | 1年間の更新付き（Misefits方式のライセンスキー） |
+| Free | ¥0 | 1回20件まで。登録不要 |
+| Pro | ¥480/月払い または ¥4,800/年払い | 件数無制限、テンプレート保存、振込元プロファイル、履歴、バックアップ |
 
 ---
 
@@ -288,7 +293,23 @@ tools/issue-key.js ── Ed25519 秘密鍵 ──▶ ZP1-<payload>.<署名>  �
 - 秘密鍵: `C:\Users\chaha\.zengin-pon\license-private.pem`（リポジトリ外。**失くすと発行できない**のでパスワードマネージャーにも控える）。
   公開鍵は `src/license.js` の `PUBLIC_KEY`。鍵の再生成は `tools/gen-keypair.js`（既存ファイルは上書きしない）。
 - 発行: `node tools/issue-key.js --months 12`（年払い）／`--months 1`（月払い）／`--until 2027-03-31`。台帳 `tools/issued-keys.csv` に追記（gitignore）。
-- 更新: 期限が来たら新しいキーを発行して送る。期限切れのキーは画面に「更新するとまた使えます」と出る。
+- 更新: **月払いは Cloud Functions が自動で発行・送信する**（下記）。手動発行は返金・特例対応用。
+
+### 月払いの自動化（`functions/`）
+
+既存の Firebase プロジェクト `misefits` に codebase `zenginpon` として相乗りする（新規プロジェクト・Blaze設定が不要、
+codebase が別なので Misefits の関数は消えない。Firestore ルールはこのリポジトリから配らない）。
+
+| 関数 | 役割 |
+|---|---|
+| `zenginponStripeWebhook` | `checkout.session.completed` / `invoice.paid` で、期限＝**サブスクの今期末＋猶予5日**のキーを発行し、Firestore に保存してメール送信。`customer.subscription.*` で状態を更新 |
+| `zenginponLicense` | `GET ?id=<ライセンスID>` で最新のキーを返す。CORS はサイトと localhost のみ |
+
+- ライセンスIDは**サブスクリプションIDのハッシュ**で、更新しても変わらない（`functions/sign.js`）。
+- ブラウザは期限10日前になると `LICENSE_API` を静かに叩いてキーを差し替える（`src/license.js` の `refreshIfNeeded`）。
+  **送るのはライセンスIDだけ**。オフラインなら何もせず期限まで使える。`config.js` の `LICENSE_API` が空なら完全オフライン動作。
+- 解約 → 次の請求が来ない → 支払い済み期間の末日＋5日で自然に失効。取り消し処理は不要。
+- デプロイ手順は [`docs/launch-checklist.md`](docs/launch-checklist.md) の 3-4。
 - 台数制限（2台）は技術的に強制しない（規約上の約束）。
 - **Free の制限**: 出力対象が20件まで（超過分は表で「Free上限外」）。列の割り当ての記憶（テンプレート）は Pro のみ。Free はページを閉じるまで。
 - **Pro の機能**: 件数無制限、テンプレート保存、振込元プロファイル複数、変換履歴（設定で有効化、最新20件、再ダウンロード）、バックアップ／復元（JSON）。

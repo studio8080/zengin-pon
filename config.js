@@ -26,6 +26,12 @@ window.ZENGIN_CONFIG = {
   STRIPE_LINK_MONTH: '',
   STRIPE_LINK_YEAR: '',
 
+  // Pro ライセンスの自動更新エンドポイント（月払いの更新を自動化する。空 = 完全オフライン）
+  //   デプロイ後の URL 例:
+  //   https://asia-northeast1-misefits.cloudfunctions.net/zenginponLicense
+  //   送信されるのはライセンスID（英数字12桁）だけ。振込データは一切送らない。
+  LICENSE_API: '',
+
   // Google アナリティクス（GA4 の測定ID "G-XXXXXXX"。空 = 解析タグを読み込まない）
   // 空のあいだは security.html / privacy.html の「アクセス解析」の記述が実態と合わないので、
   // 使わない方針にするならその2ページの記述も消すこと。

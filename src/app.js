@@ -48,7 +48,12 @@
   // ------------------------------------------------------------
   // Pro（ライセンス）
   // ------------------------------------------------------------
-  async function refreshPro() {
+  async function refreshPro(opts) {
+    // 月払いの更新: 期限が近い（または切れた）キーを、ライセンスIDだけ送って自動で取り直す。
+    // config.js の LICENSE_API が空なら何も起きない。オフラインでも黙って諦める。
+    if (opts && opts.tryRefresh) {
+      try { await L.refreshIfNeeded(opts.force); } catch (_) { /* ignore */ }
+    }
     const st = await L.status();
     state.pro = !!st.active; state.proExpiry = st.expiry || '';
     $('proBtn').textContent = state.pro ? `⭐ Pro 有効（〜${st.expiry}）` : '⭐ Pro';
@@ -64,6 +69,7 @@
     else if (st.key) box.innerHTML = `<span class="tag ng">無効</span> ${esc(st.reason || '')}`;
     else box.innerHTML = `<span class="tag">Free</span> 1回 ${FREE_LIMIT} 件まで。Proにすると件数無制限になり、列の割り当てを次回から自動復元します。`;
     $('proDeactivate').hidden = !st.key;
+    $('proRefresh').hidden = !(st.key && (window.ZENGIN_CONFIG || {}).LICENSE_API);
     if (state.step === 4) renderPreview();
     if (state.step === 2 && state.fileLoaded) renderMapping();
   }
@@ -72,6 +78,14 @@
     const r = await L.activate($('proKey').value);
     $('proMsg').textContent = r.ok ? `✔ 有効になりました（〜${r.expiry}）` : `✖ ${r.reason}`;
     $('proMsg').style.color = r.ok ? 'var(--ok)' : 'var(--ng)';
+    await refreshPro();
+  });
+  $('proRefresh').addEventListener('click', async () => {
+    $('proMsg').textContent = '確認中…'; $('proMsg').style.color = '';
+    const r = await L.refreshIfNeeded(true);
+    const msg = { 'no-api': '自動更新は設定されていません', 'no-key': 'キーが入っていません', unchanged: '最新の状態です', offline: 'サーバーに接続できませんでした', 'http-404': 'このライセンスが見つかりません（お問い合わせください）', 'http-410': 'ご契約が終了しています' };
+    $('proMsg').textContent = r.refreshed ? `✔ 更新しました（〜${r.expiry}）` : (msg[r.reason] || `更新できませんでした（${r.reason}）`);
+    $('proMsg').style.color = r.refreshed ? 'var(--ok)' : '';
     await refreshPro();
   });
   $('proDeactivate').addEventListener('click', async () => { L.deactivate(); $('proMsg').textContent = 'このブラウザのキーを削除しました'; await refreshPro(); });
@@ -551,7 +565,7 @@
 
   // ------------------------------------------------------------
   loadSettings();
-  refreshPro();
+  refreshPro({ tryRefresh: true });
   if (!G.configured()) $('gsheetHint').textContent = 'Googleスプレッドシート連携は準備中です。いまは「ファイル→ダウンロード→Microsoft Excel」で保存して読み込んでください。';
   D.load().then(() => { $('dictInfo').textContent = `金融機関一覧: ${D.version} 版（全銀協公開データ）。統廃合があった場合は一覧を更新すると自動で反映されます。`; })
     .catch(() => { $('dictInfo').textContent = '金融機関一覧を読み込めませんでした（銀行名の表示とコードの照合は行われません）'; });

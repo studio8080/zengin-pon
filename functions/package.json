@@ -1,0 +1,16 @@
+{
+  "name": "zenginpon-functions",
+  "private": true,
+  "main": "index.js",
+  "engines": { "node": "22" },
+  "scripts": {
+    "serve": "firebase emulators:start --only functions",
+    "deploy": "firebase deploy --only functions:zenginpon"
+  },
+  "dependencies": {
+    "firebase-admin": "^14.3.0",
+    "firebase-functions": "^7.3.2",
+    "nodemailer": "^9.1.0",
+    "stripe": "^18.0.0"
+  }
+}
