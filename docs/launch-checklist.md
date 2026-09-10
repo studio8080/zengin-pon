@@ -12,11 +12,8 @@
 `CNAME zenginpon → studio8080.github.io` を追加済み。既存レコード（A@ / MX / www / menufits /
 misefits / pitch / TXT各種）は変更していない。**サイトは https://zenginpon.kokokikaku.com/ で表示される。**
 
-**残: HTTPS の有効化。** GitHub の Pages 設定では「✓ DNS check successful」と出ており、証明書を発行中。
-発行されると `Settings → Pages → Enforce HTTPS` のチェックボックスが押せるようになるので、
-**チェックを入れる**（通常は数十分〜数時間、最大24時間）。それまでは http:// でのみ表示される。
-
-確認: `gh api repos/studio8080/zengin-pon/pages` の `https_certificate.state` が出れば発行済み。
+**HTTPS も有効化済み。** 証明書が発行され、Enforce HTTPS をON にした。http:// は https:// に301リダイレクトされる。
+公開サイトで実際にサンプルCSVを変換し、全銀ファイルの生成まで動作確認済み。
 
 <details><summary>やった手順（記録）</summary>
 
@@ -233,7 +230,10 @@ C:\Users\chaha\.zengin-pon\license-private.pem
 
 ---
 
-## 7. Googleスプレッドシート連携を有効にする（所要 30分。後回しで可）
+## 7. Googleスプレッドシート連携を有効にする（所要 30分。後回しで可）— **要・あなたの操作**
+
+> Google Cloud コンソールは `studio@kokokikaku.com` の**パスワード再認証**を求めてくるため、ここから先は
+> あなたが操作する必要がある（Claude はパスワードを入力しない）。
 
 `config.js` の冒頭コメントに手順を書いてある。GCP でプロジェクトを作り、
 Drive API と Picker API を有効化し、OAuth クライアントIDとAPIキーを作って3つの値を埋める。
@@ -245,9 +245,9 @@ Drive API と Picker API を有効化し、OAuth クライアントIDとAPIキ�
 
 ## 8. 公開前の最終確認
 
-- [ ] https://zenginpon.kokokikaku.com/ が HTTPS で開く（証明書発行後に Enforce HTTPS をON）
-- [ ] サンプルCSV（並びがバラバラなもの）で変換 → ダウンロードできる
-- [ ] 料金ページの「Proを申し込む」が Stripe に飛ぶ
+- [x] https://zenginpon.kokokikaku.com/ が HTTPS で開く
+- [x] サンプルCSV（並びがバラバラなもの）で変換 → ダウンロードできる（公開サイトで確認済み）
+- [x] 料金ページの「Proを申し込む」が Stripe に飛ぶ
 - [ ] 特商法ページに氏名・住所が入っている
 - [ ] 自分で1回テスト購入して、キー発行 → 有効化まで通す（Stripe のテストモードでも可）
 - [ ] **自社の口座で少額1件だけ実際に振込データを作り、銀行に取り込んで通ることを確認する**
