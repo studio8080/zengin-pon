@@ -14,9 +14,10 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;800&display=swap" rel="stylesheet">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com https://accounts.google.com https://apis.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://accounts.google.com; font-src https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://cdnjs.cloudflare.com https://www.googleapis.com https://accounts.google.com https://apis.google.com https://content.googleapis.com; frame-src https://docs.google.com https://accounts.google.com https://content.googleapis.com; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
 <link rel="stylesheet" href="style.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" integrity="sha384-vtjasyidUo0kW94K5MXDXntzOJpQgBKXmE7e2Ga4LG0skTTLeBi97eFAXsqewJjw" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" integrity="sha384-/1qUCSGwTur9vjf/z9lmu/eCUYbpOTgSjmpbMQZ1/CtX2v/WcAIKqRv+U1DUCG6e" crossorigin="anonymous"></script>
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"SoftwareApplication","name":"全銀ポン","applicationCategory":"BusinessApplication","operatingSystem":"Web","url":"https://zenginpon.kokokikaku.com/","description":"給与振込・総合振込のExcel/CSV/PDFを全銀フォーマット（FBデータ）に変換するブラウザ完結ツール","offers":[{"@type":"Offer","price":"0","priceCurrency":"JPY","name":"Free"},{"@type":"Offer","price":"480","priceCurrency":"JPY","name":"Pro（月払い）"},{"@type":"Offer","price":"4800","priceCurrency":"JPY","name":"Pro（年払い）"}]}
 </script>
@@ -74,8 +75,40 @@
 <main class="wrap tool" id="tool">
 <div class="tool-head">
   <h2>いますぐ変換</h2>
-  <p>4ステップ・約1分。<span class="badge-lock">🔒 サーバーに送信しません</span></p>
+  <p>4ステップ・約1分。<span class="badge-lock">🔒 サーバーに送信しません</span>
+    <button id="proBtn" class="btn mini" type="button" title="Proプランのライセンスキー">⭐ Pro</button>
+    <button id="settingsBtn" class="btn mini" type="button" title="バックアップ・設定の削除">⚙ 設定</button></p>
 </div>
+
+<dialog id="proDialog" class="dlg">
+  <form method="dialog">
+    <h3>⭐ Pro プラン</h3>
+    <div id="proStatus" class="pro-status"></div>
+    <p class="hint">ライセンスキー（メールで届いた「ZP1-」で始まる文字列）を貼り付けてください。通信は発生せず、このブラウザの中で検証します。</p>
+    <textarea id="proKey" rows="3" placeholder="ZP1-…" spellcheck="false"></textarea>
+    <div id="proMsg" class="hint"></div>
+    <div class="nav-btns">
+      <span><button type="button" id="proActivate" class="btn primary">有効にする</button> <button type="button" id="proDeactivate" class="btn" hidden>このブラウザで無効にする</button></span>
+      <span><a class="btn" href="pricing.html">プランを見る</a> <button class="btn" value="close">閉じる</button></span>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="settingsDialog" class="dlg">
+  <form method="dialog">
+    <h3>⚙ 設定</h3>
+    <h4>変換履歴 <span class="tag infer">Pro</span></h4>
+    <label class="chk"><input type="checkbox" id="historyOn"> ダウンロードしたファイルをこのブラウザに残す（最新20件・再ダウンロード可）</label>
+    <p class="hint">振込先の情報を含みます。共有PCでは有効にしないでください。</p>
+    <h4>バックアップ・復元 <span class="tag infer">Pro</span></h4>
+    <p class="hint">振込元の情報・プロファイル・列の割り当て・ライセンスキーをJSONファイルに書き出し、別のPCで読み込めます。</p>
+    <p><button type="button" id="backupBtn" class="btn">書き出す</button> <label class="btn">読み込む<input type="file" id="restoreFile" accept=".json" hidden></label></p>
+    <h4>このブラウザの設定を消す</h4>
+    <p class="hint">振込元の情報・プロファイル・列の割り当て・履歴・ライセンスキーをすべて削除します。共有PCで作業したあとに使ってください。</p>
+    <p><button type="button" id="clearBtn" class="btn danger">すべて削除する</button></p>
+    <div class="nav-btns"><span></span><button class="btn" value="close">閉じる</button></div>
+  </form>
+</dialog>
 
 <nav class="stepper" aria-label="手順">
   <button class="step is-active" data-step="1"><span class="dot">1</span><span class="lbl">ファイルを選ぶ</span></button>
@@ -135,6 +168,13 @@
 <section class="panel" id="panel3" hidden>
   <h2>振込元（自社）の情報</h2>
   <p class="desc">ネットバンキングの「振込依頼人コード（企業コード・委託者コード）」は銀行から通知された10桁の番号です。一度入力すればこのブラウザに保存されます。</p>
+  <div id="profileBar" class="profilebar" hidden>
+    <span class="tag infer">Pro</span>
+    <label>振込元プロファイル <select id="profileSel"><option value="">（現在の入力）</option></select></label>
+    <input id="profileName" placeholder="プロファイル名（例: 株式会社A）" style="max-width:220px">
+    <button type="button" id="profileSave" class="btn mini">この内容で保存</button>
+    <button type="button" id="profileDelete" class="btn mini" hidden>削除</button>
+  </div>
   <div class="grid">
     <label>振込依頼人コード（10桁）<input id="clientCode" inputmode="numeric" maxlength="10" placeholder="1234567890"></label>
     <label class="span2">振込依頼人名<input id="clientName" placeholder="株式会社ココキカク（→ ｶ)ｺｺｷｶｸ に自動変換）"><small id="clientNamePreview" class="preview"></small></label>
@@ -181,6 +221,7 @@
   <div id="summary" class="cards"></div>
   <div id="headerErrors" class="alert" hidden></div>
   <div id="dateWarn" class="alert warn" hidden></div>
+  <div id="freeLimit" class="alert warn" hidden></div>
   <p class="desc">受取人名は半角カナに変換済みです。<span class="tag ng">エラー</span>の行は直さないと出力できません。<span class="tag warn">確認</span>の行は出力できますが、銀行で弾かれる可能性があるので見直してください。名義はこの表で直接書き換えられます。</p>
   <div class="tablewrap"><table id="preview"></table></div>
 
@@ -193,6 +234,10 @@
     <summary>生成されたレコードを見る（120バイト固定長）</summary>
     <pre id="ruler" class="mono ruler"></pre>
     <pre id="out" class="mono out"></pre>
+  </details>
+  <details id="historyBox" hidden>
+    <summary>変換履歴（このブラウザ内）</summary>
+    <div id="historyList" class="history"></div>
   </details>
   <div class="nav-btns"><button class="btn" data-go="3">← 戻る</button><button class="btn" data-go="1">別のファイルを変換</button></div>
 </section>
@@ -258,6 +303,7 @@
 <script src="src/holidays.js"></script>
 <script src="src/dict.js"></script>
 <script src="src/gsheets.js"></script>
+<script src="src/license.js"></script>
 <script src="src/app.js"></script>
 <script src="src/site.js"></script>
 </body>

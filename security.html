@@ -52,8 +52,9 @@
   <ul>
     <li>サイトはHTTPSで配信します。</li>
     <li>Excel読み取りとPDF読み取りのライブラリはCDN（cdnjs）から取得しますが、バージョンを固定し、改ざん検知（Subresource Integrity）を設定しています。</li>
-    <li>Content Security Policy により、指定外のサーバーへの通信をブラウザ側で禁止しています。</li>
-    <li>ソースコードは公開しており、誰でも処理内容を確認できます。</li>
+    <li>Content Security Policy により、指定外のサーバーへの通信をブラウザ側で禁止しています（許可先は cdnjs、Googleフォント、Googleスプレッドシート連携のみ）。</li>
+    <li>ソースコードは <a href="https://github.com/studio8080/zengin-pon" target="_blank" rel="noopener">GitHub で公開</a>しており、誰でも処理内容を確認できます。</li>
+    <li>Proのライセンスキーも、埋め込まれた公開鍵で署名を検証するだけです。キーの入力時に通信は発生しません。</li>
   </ul>
 
   <h2>6. 法令上の位置づけ</h2>

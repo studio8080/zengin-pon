@@ -54,6 +54,7 @@ ${jsonld ? `<script type="application/ld+json">${JSON.stringify(jsonld)}</script
 </head>
 <body data-depth="1">
 ${body}
+<script src="../src/banks.js"></script>
 <script src="../src/site.js"></script>
 </body>
 </html>
@@ -85,10 +86,7 @@ ${rows}
   </tbody></table></div>
   ${cta}
   <p class="hint">支店の新設・統廃合により最新の情報と異なる場合があります。正確な情報は各金融機関にご確認ください。</p>
-</article>
-<script>
-(function(){var q=document.getElementById('q'),rows=[].slice.call(document.querySelectorAll('#t tbody tr'));q.addEventListener('input',function(){var v=q.value.trim().toLowerCase();rows.forEach(function(r){r.style.display=!v||r.textContent.toLowerCase().indexOf(v)>=0?'':'none';});});})();
-</script>`;
+</article>`;
   const url = `${SITE}/banks/${code}.html`;
   fs.writeFileSync(path.join(outDir, `${code}.html`), page({
     title: `${fn}の銀行コード（${code}）と支店コード一覧｜全銀ポン`,
@@ -113,10 +111,7 @@ const indexBody = `<article class="article" style="max-width:960px">
   <style>.banklist{list-style:none;padding:0;columns:3;column-gap:20px;font-size:14px}.banklist li{break-inside:avoid;margin:2px 0}.banklist a{text-decoration:none;color:var(--ink)}.banklist a:hover{color:var(--navy-2)}@media(max-width:700px){.banklist{columns:1}}</style>
   ${groupHtml}
   ${cta}
-</article>
-<script>
-(function(){var q=document.getElementById('q'),items=[].slice.call(document.querySelectorAll('.banklist li')),heads=[].slice.call(document.querySelectorAll('h2'));function norm(s){return s.toLowerCase().replace(/[\\s　]/g,'').replace(/[ぁ-ゖ]/g,function(c){return String.fromCharCode(c.charCodeAt(0)+96)}).replace(/[！-～]/g,function(c){return String.fromCharCode(c.charCodeAt(0)-65248)})}q.addEventListener('input',function(){var v=norm(q.value);items.forEach(function(li){li.style.display=!v||norm(li.getAttribute('data-s')).indexOf(v)>=0?'':'none';});heads.forEach(function(h){var ul=h.nextElementSibling;h.style.display=[].some.call(ul.children,function(li){return li.style.display!=='none'})?'':'none';});});})();
-</script>`;
+</article>`;
 fs.writeFileSync(path.join(outDir, 'index.html'), page({
   title: '銀行コード・支店コード検索（全国の金融機関一覧）｜全銀ポン',
   description: `全国${Object.keys(banks).length}金融機関の銀行コード（金融機関コード）と支店コードを検索。振込データ・全銀フォーマットの作成に。${version}版の全銀協公開データに基づき毎月更新。`,

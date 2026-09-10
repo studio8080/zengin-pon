@@ -78,9 +78,7 @@
     <p>無料プランは1回の変換で20件までです。それ以上の行があるファイルは、先頭20件だけが出力対象になります（残りの行は画面で確認できます）。制限は「何件でも試せるが、実運用で毎月使うなら有料」という考え方です。</p>
   </div>
 </section>
-<script>
-(function(){var btns=document.querySelectorAll('.billing button'),price=document.querySelector('.plan.hot .price'),unit=document.getElementById('unit'),note=document.getElementById('cycleNote');btns.forEach(function(b){b.addEventListener('click',function(){btns.forEach(function(x){x.classList.remove('on')});b.classList.add('on');var y=b.dataset.cycle==='year';price.childNodes[0].nodeValue=y?price.dataset.year:price.dataset.month;unit.textContent=y?'/年':'/月';note.textContent=y?'年払い（月あたり400円）。期間末まで利用可':'月払い。いつでも解約可';});});})();
-</script>
+<script src="src/pricing.js"></script>
 <script src="src/site.js"></script>
 </body>
 </html>

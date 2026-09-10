@@ -248,6 +248,25 @@ td .msg.ng { color: var(--ng); } td .msg.warn { color: var(--warn); } td .msg.in
 .tag.infer { background: #efe6ff; color: #5b2ca8; }
 
 .nav-btns { display: flex; justify-content: space-between; gap: 12px; margin-top: 22px; flex-wrap: wrap; }
+
+/* Pro・設定・プロファイル・履歴 */
+.btn.mini { padding: 5px 12px; font-size: 13px; border-radius: 8px; }
+.btn.on { background: var(--ok-bg); color: var(--ok); border-color: #b9e3c6; }
+.btn.danger { color: var(--ng); border-color: #e8b7b0; }
+.btn.danger:hover { background: var(--ng-bg); }
+.tool-head .btn.mini { margin-left: 6px; vertical-align: middle; }
+.dlg { border: 0; border-radius: 16px; padding: 22px 24px; max-width: 560px; width: calc(100% - 32px); box-shadow: 0 20px 60px rgba(20,30,50,.25); }
+.dlg::backdrop { background: rgba(20,30,50,.45); }
+.dlg h3 { font-size: 19px; margin: 0 0 10px; }
+.dlg h4 { font-size: 14px; margin: 18px 0 6px; color: var(--navy); }
+.dlg textarea { width: 100%; font-family: ui-monospace, Consolas, monospace; font-size: 13px; padding: 9px 11px; border: 1px solid #d8d3c8; border-radius: 10px; resize: vertical; }
+.dlg .nav-btns { margin-top: 14px; }
+.pro-status { background: #f7f5f0; border-radius: 10px; padding: 10px 14px; font-size: 14px; margin-bottom: 10px; }
+.chk { display: flex; gap: 8px; align-items: flex-start; font-size: 14px; }
+.profilebar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; background: #f7f5f0; border-radius: 12px; padding: 10px 14px; margin-bottom: 14px; font-size: 13px; }
+.profilebar label { display: flex; gap: 6px; align-items: center; color: var(--muted); }
+.history { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+.hist { display: flex; justify-content: space-between; gap: 12px; align-items: center; background: #f7f5f0; border-radius: 10px; padding: 10px 14px; font-size: 13px; flex-wrap: wrap; }
 .dl { margin: 20px 0 10px; padding: 18px; border-radius: 14px; background: var(--accent-soft); display: flex; flex-direction: column; gap: 6px; align-items: flex-start; }
 .ruler { margin: 10px 0 0; font-size: 12px; color: var(--muted); overflow-x: auto; }
 .out { margin: 0; font-size: 12px; background: #0f1720; color: #d7e0ea; padding: 12px; border-radius: 10px; overflow-x: auto; max-height: 360px; }

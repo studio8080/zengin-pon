@@ -132,9 +132,7 @@
   <div class="callout ok" style="margin-top:28px"><strong>このコードで振込データを作る:</strong> Excelの支払リストや給与計算表を、銀行名・支店名のままでも読み込んで全銀フォーマットに変換できます。<a href="../index.html#tool">全銀ポン（無料）</a></div>
   <p class="hint">支店の新設・統廃合により最新の情報と異なる場合があります。正確な情報は各金融機関にご確認ください。</p>
 </article>
-<script>
-(function(){var q=document.getElementById('q'),rows=[].slice.call(document.querySelectorAll('#t tbody tr'));q.addEventListener('input',function(){var v=q.value.trim().toLowerCase();rows.forEach(function(r){r.style.display=!v||r.textContent.toLowerCase().indexOf(v)>=0?'':'none';});});})();
-</script>
+<script src="../src/banks.js"></script>
 <script src="../src/site.js"></script>
 </body>
 </html>

@@ -1,10 +1,13 @@
 /* app.js — 画面まわり（4ステップのウィザード）。
- * 変換ロジックは zengin.js、表の自動整理は organize.js、金融機関辞書は dict.js、スプレッドシート連携は gsheets.js。 */
+ * 変換ロジックは zengin.js、表の自動整理は organize.js、金融機関辞書は dict.js、
+ * スプレッドシート連携は gsheets.js、休業日は holidays.js、Pro判定は license.js。 */
 (function () {
   'use strict';
-  const Z = window.Zengin, O = window.Organize, D = window.BankDict, G = window.GSheets;
+  const Z = window.Zengin, O = window.Organize, D = window.BankDict, G = window.GSheets, L = window.License;
   const $ = (id) => document.getElementById(id);
   const FIELDS = O.FIELDS;
+  const FREE_LIMIT = 20;
+  const KEYS = { settings: 'zenginpon.settings', profiles: 'zenginpon.profiles', history: 'zenginpon.history', historyOn: 'zenginpon.historyOn', mapPrefix: 'zenginpon.map.' };
 
   // ------------------------------------------------------------
   // 状態
@@ -12,14 +15,23 @@
   const state = {
     step: 1, sheets: {}, sheetNames: [], sheetName: '', raw: [], table: [], headerIdx: 0, forcedHeaderIdx: null,
     mapping: {}, info: {}, notes: [], rows: [], fileName: '', excluded: new Set(), fileLoaded: false,
+    pro: false, proExpiry: '', sessionMaps: {},
   };
-  let lastBytes = null, lastName = '';
+  let lastBytes = null, lastName = '', lastMeta = null;
 
   const SETTING_IDS = ['clientCode', 'clientName', 'date', 'bankCode', 'branchCode', 'depositType', 'accountNo', 'bankName', 'branchName', 'newline', 'ext', 'smallToLarge', 'transferType', 'fillNames'];
+  const PROFILE_IDS = ['clientCode', 'clientName', 'bankCode', 'branchCode', 'depositType', 'accountNo', 'bankName', 'branchName', 'newline', 'ext', 'smallToLarge', 'transferType', 'fillNames'];
+
+  const ls = {
+    get(k, def) { try { const v = localStorage.getItem(k); return v == null ? def : v; } catch (_) { return def; } },
+    set(k, v) { try { localStorage.setItem(k, v); } catch (_) { /* ignore */ } },
+    del(k) { try { localStorage.removeItem(k); } catch (_) { /* ignore */ } },
+    json(k, def) { try { return JSON.parse(localStorage.getItem(k) || 'null') ?? def; } catch (_) { return def; } },
+    keys() { try { return Object.keys(localStorage).filter((k) => k.startsWith('zenginpon.')); } catch (_) { return []; } },
+  };
 
   function loadSettings() {
-    let s = {};
-    try { s = JSON.parse(localStorage.getItem('zenginfb.settings') || '{}'); } catch (_) { /* ignore */ }
+    const s = ls.json(KEYS.settings, {});
     for (const id of SETTING_IDS) if (s[id] != null) $(id).value = s[id];
     const kind = s.kind || '21';
     document.querySelectorAll('input[name="kindRadio"]').forEach((r) => { r.checked = r.value === kind; });
@@ -28,10 +40,99 @@
   function saveSettings() {
     const s = { kind: currentKind() };
     for (const id of SETTING_IDS) s[id] = $(id).value;
-    try { localStorage.setItem('zenginfb.settings', JSON.stringify(s)); } catch (_) { /* ignore */ }
+    ls.set(KEYS.settings, JSON.stringify(s));
   }
   function currentKind() { const r = document.querySelector('input[name="kindRadio"]:checked'); return r ? r.value : '21'; }
   function convOpts() { return { smallToLarge: $('smallToLarge').value === '1', defaultTransferType: $('transferType').value }; }
+
+  // ------------------------------------------------------------
+  // Pro（ライセンス）
+  // ------------------------------------------------------------
+  async function refreshPro() {
+    const st = await L.status();
+    state.pro = !!st.active; state.proExpiry = st.expiry || '';
+    $('proBtn').textContent = state.pro ? `⭐ Pro 有効（〜${st.expiry}）` : '⭐ Pro';
+    $('proBtn').classList.toggle('on', state.pro);
+    $('profileBar').hidden = !state.pro;
+    $('historyBox').hidden = !state.pro;
+    $('historyOn').disabled = !state.pro; $('backupBtn').disabled = !state.pro; $('restoreFile').disabled = !state.pro;
+    if (state.pro) renderProfiles();
+    renderHistory();
+    // ダイアログ内の表示
+    const box = $('proStatus');
+    if (state.pro) box.innerHTML = `<span class="tag ok">有効</span> 有効期限 <b>${esc(st.expiry)}</b> まで。件数無制限・テンプレート保存・プロファイル・履歴・バックアップが使えます。`;
+    else if (st.key) box.innerHTML = `<span class="tag ng">無効</span> ${esc(st.reason || '')}`;
+    else box.innerHTML = `<span class="tag">Free</span> 1回 ${FREE_LIMIT} 件まで。Proにすると件数無制限になり、列の割り当てを次回から自動復元します。`;
+    $('proDeactivate').hidden = !st.key;
+    if (state.step === 4) renderPreview();
+    if (state.step === 2 && state.fileLoaded) renderMapping();
+  }
+  $('proBtn').addEventListener('click', () => { $('proKey').value = ''; $('proMsg').textContent = ''; $('proDialog').showModal(); });
+  $('proActivate').addEventListener('click', async () => {
+    const r = await L.activate($('proKey').value);
+    $('proMsg').textContent = r.ok ? `✔ 有効になりました（〜${r.expiry}）` : `✖ ${r.reason}`;
+    $('proMsg').style.color = r.ok ? 'var(--ok)' : 'var(--ng)';
+    await refreshPro();
+  });
+  $('proDeactivate').addEventListener('click', async () => { L.deactivate(); $('proMsg').textContent = 'このブラウザのキーを削除しました'; await refreshPro(); });
+  $('settingsBtn').addEventListener('click', () => { $('historyOn').checked = ls.get(KEYS.historyOn, '0') === '1'; $('settingsDialog').showModal(); });
+  $('historyOn').addEventListener('change', () => ls.set(KEYS.historyOn, $('historyOn').checked ? '1' : '0'));
+
+  // バックアップ・復元・削除
+  $('backupBtn').addEventListener('click', () => {
+    const data = {}; for (const k of ls.keys()) data[k] = ls.get(k, '');
+    const blob = new Blob([JSON.stringify({ app: 'zenginpon', exported: new Date().toISOString(), data }, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `zenginpon-backup-${new Date().toISOString().slice(0, 10)}.json`;
+    document.body.appendChild(a); a.click(); a.remove();
+  });
+  $('restoreFile').addEventListener('change', async (e) => {
+    const f = e.target.files[0]; if (!f) return;
+    try {
+      const j = JSON.parse(await f.text());
+      if (j.app !== 'zenginpon' || !j.data) throw new Error('全銀ポンのバックアップファイルではありません');
+      for (const [k, v] of Object.entries(j.data)) if (k.startsWith('zenginpon.')) ls.set(k, String(v));
+      alert('読み込みました。ページを再読み込みします。'); location.reload();
+    } catch (err) { alert(`読み込めませんでした: ${err.message}`); }
+    e.target.value = '';
+  });
+  $('clearBtn').addEventListener('click', () => {
+    if (!confirm('このブラウザに保存された全銀ポンの設定（振込元・プロファイル・列の割り当て・履歴・ライセンスキー）をすべて削除します。よろしいですか？')) return;
+    for (const k of ls.keys()) ls.del(k);
+    location.reload();
+  });
+
+  // ------------------------------------------------------------
+  // 振込元プロファイル（Pro）
+  // ------------------------------------------------------------
+  function profiles() { return ls.json(KEYS.profiles, []); }
+  function renderProfiles(selectedName) {
+    const sel = $('profileSel');
+    const list = profiles();
+    sel.innerHTML = '<option value="">（現在の入力）</option>' + list.map((p) => `<option value="${esc(p.name)}">${esc(p.name)}</option>`).join('');
+    if (selectedName) sel.value = selectedName;
+    $('profileDelete').hidden = !sel.value;
+  }
+  $('profileSel').addEventListener('change', () => {
+    const p = profiles().find((x) => x.name === $('profileSel').value);
+    $('profileDelete').hidden = !p;
+    if (!p) return;
+    for (const id of PROFILE_IDS) if (p.values[id] != null) $(id).value = p.values[id];
+    $('profileName').value = p.name;
+    saveSettings(); updateHeaderPreviews();
+  });
+  $('profileSave').addEventListener('click', () => {
+    const name = $('profileName').value.trim() || Z.toZenginChars($('clientName').value) || '';
+    if (!name) { alert('プロファイル名を入力してください'); return; }
+    const values = {}; for (const id of PROFILE_IDS) values[id] = $(id).value;
+    const list = profiles().filter((x) => x.name !== name); list.push({ name, values });
+    ls.set(KEYS.profiles, JSON.stringify(list));
+    renderProfiles(name);
+  });
+  $('profileDelete').addEventListener('click', () => {
+    const name = $('profileSel').value; if (!name || !confirm(`プロファイル「${name}」を削除しますか？`)) return;
+    ls.set(KEYS.profiles, JSON.stringify(profiles().filter((x) => x.name !== name)));
+    renderProfiles('');
+  });
 
   // ------------------------------------------------------------
   // ステップ遷移
@@ -49,7 +150,7 @@
     document.querySelectorAll('.stepper .bar').forEach((el, i) => el.classList.toggle('is-done', i + 1 < n));
     if (n === 3) updateHeaderPreviews();
     if (n === 4) rebuildRows();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    $('tool').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
   document.querySelectorAll('[data-go]').forEach((b) => b.addEventListener('click', () => goStep(Number(b.dataset.go))));
   document.querySelectorAll('.stepper .step').forEach((b) => b.addEventListener('click', () => { if (b.classList.contains('is-done')) goStep(Number(b.dataset.step)); }));
@@ -68,7 +169,7 @@
     const info = $('fileInfo');
     if (!G.configured()) {
       info.hidden = false; info.className = 'fileinfo err';
-      info.textContent = 'Googleスプレッドシート連携はまだ有効になっていません（config.js の設定が必要です）。いまは「ファイル→ダウンロード→Excel」で保存したファイルを読み込んでください。';
+      info.textContent = 'Googleスプレッドシート連携はまだ有効になっていません。いまは「ファイル→ダウンロード→Microsoft Excel」で保存したファイルを読み込んでください。';
       return;
     }
     try {
@@ -76,10 +177,7 @@
       const picked = await G.pickSpreadsheet();
       if (!picked) { info.hidden = true; return; }
       await handleBuffer(picked.name, picked.buffer, picked.buffer.byteLength);
-    } catch (e) {
-      console.error(e);
-      info.className = 'fileinfo err'; info.textContent = e.message;
-    }
+    } catch (e) { console.error(e); info.className = 'fileinfo err'; info.textContent = e.message; }
   });
 
   async function handleFile(file) { await handleBuffer(file.name, await file.arrayBuffer(), file.size); }
@@ -91,24 +189,16 @@
     info.textContent = `読み込み中… ${name}`;
     try {
       const ext = (name.split('.').pop() || '').toLowerCase();
-      if (ext === 'pdf') {
-        state.sheetNames = ['PDF']; state.sheets = { PDF: await extractPdfTable(buf) };
-      } else if (ext === 'csv' || ext === 'txt') {
-        setWorkbook(XLSX.read(decodeText(buf), { type: 'string', raw: true }));
-      } else {
-        setWorkbook(XLSX.read(buf, { type: 'array', raw: true, cellDates: false }));
-      }
+      if (ext === 'pdf') { state.sheetNames = ['PDF']; state.sheets = { PDF: await extractPdfTable(buf) }; }
+      else if (ext === 'csv' || ext === 'txt') setWorkbook(XLSX.read(decodeText(buf), { type: 'string', raw: true }));
+      else setWorkbook(XLSX.read(buf, { type: 'array', raw: true, cellDates: false }));
       state.fileLoaded = true; state.excluded = new Set(); state.rows = []; state.forcedHeaderIdx = null;
       info.textContent = `✔ ${name}（${(size / 1024).toFixed(1)} KB）を読み込みました`;
       $('sheet').innerHTML = state.sheetNames.map((n) => `<option>${esc(n)}</option>`).join('');
       state.sheetName = state.sheetNames[0];
       analyzeSheet();
       goStep(2);
-    } catch (e) {
-      console.error(e);
-      info.className = 'fileinfo err';
-      info.textContent = `読み込みに失敗しました: ${e.message}`;
-    }
+    } catch (e) { console.error(e); info.className = 'fileinfo err'; info.textContent = `読み込みに失敗しました: ${e.message}`; }
   }
 
   function decodeText(buf) {
@@ -125,31 +215,32 @@
   // ------------------------------------------------------------
   // Step 2: 自動整理と列の割り当て
   // ------------------------------------------------------------
+  function headerSignature(headers) { return KEYS.mapPrefix + headers.map(O.normHeader).join('|').slice(0, 400); }
+  function loadMapping(sig) { return state.pro ? ls.json(sig, null) : (state.sessionMaps[sig] || null); }
+  function storeMapping(sig, mapping) { if (state.pro) ls.set(sig, JSON.stringify(mapping)); else state.sessionMaps[sig] = mapping; }
+
   function analyzeSheet() {
     const raw = (state.sheets[state.sheetName] || []).map((r) => r.map((c) => (c == null ? '' : String(c).trim())));
     state.raw = raw;
     const a = O.analyze(raw, currentKind(), state.forcedHeaderIdx);
     state.table = a.table; state.headerIdx = a.headerIdx; state.info = a.info; state.notes = a.notes;
-    // 同じ見出しのファイルなら前回の手直しを復元
     const headers = state.table[state.headerIdx] || [];
-    let saved = null;
-    try { saved = JSON.parse(localStorage.getItem(headerSignature(headers)) || 'null'); } catch (_) { /* ignore */ }
+    const saved = loadMapping(headerSignature(headers));
     if (saved) { state.mapping = saved; state.info = {}; for (const k of Object.keys(saved)) state.info[k] = { method: 'saved', reason: '前回の設定' }; }
     else state.mapping = a.mapping;
-    // 見出し行セレクタ（自動整理後の表ではなく元の表で表示）
     const hs = $('headerRow');
     hs.innerHTML = raw.slice(0, 30).map((r, i) => `<option value="${i}">${i + 1}行目: ${esc(r.filter(Boolean).slice(0, 5).join(' | ')).slice(0, 60)}</option>`).join('');
     hs.value = String(a.hasHeader ? state.headerIdx : (state.forcedHeaderIdx != null ? state.forcedHeaderIdx : 0));
     renderMapping();
   }
 
-  function headerSignature(headers) { return 'zenginfb.map.' + headers.map(O.normHeader).join('|').slice(0, 400); }
   function dataRows() { return state.table.slice(state.headerIdx + 1).filter((r) => r.some((c) => c !== '')); }
   function mappingComplete() {
     const m = state.mapping;
-    const hasBank = m.bankCode != null || m.bankName != null || (m.yuchoKigo != null && m.yuchoBango != null);
-    const hasBranch = m.branchCode != null || m.branchName != null || (m.yuchoKigo != null && m.yuchoBango != null);
-    const hasAcct = m.accountNo != null || (m.yuchoKigo != null && m.yuchoBango != null);
+    const yucho = m.yuchoKigo != null && m.yuchoBango != null;
+    const hasBank = m.bankCode != null || m.bankName != null || yucho;
+    const hasBranch = m.branchCode != null || m.branchName != null || yucho;
+    const hasAcct = m.accountNo != null || yucho;
     return hasBank && hasBranch && hasAcct && m.name != null && m.amount != null;
   }
 
@@ -166,10 +257,9 @@
       let basis = '';
       if (v !== '' && inf) {
         if (inf.method === 'inferred') basis = `<span class="tag infer">推定</span> <span class="sub">${esc(inf.reason)}</span>`;
-        else if (inf.method === 'saved') basis = `<span class="tag ok">前回</span>`;
+        else if (inf.method === 'saved') basis = '<span class="tag ok">前回</span>';
         else basis = `<span class="sub">${esc(inf.reason)}</span>`;
       }
-      // 銀行コード・支店コードが無くても銀行名・支店名があれば辞書で逆引きできる
       let req = f.required;
       if (f.key === 'bankCode' && state.mapping.bankName != null) req = false;
       if (f.key === 'branchCode' && state.mapping.branchName != null) req = false;
@@ -183,12 +273,14 @@
     tbl.querySelectorAll('select').forEach((sel) => sel.addEventListener('change', () => {
       const key = sel.dataset.key;
       if (sel.value === '') delete state.mapping[key]; else { state.mapping[key] = Number(sel.value); state.info[key] = { method: 'header', reason: '手動で選択' }; }
-      try { localStorage.setItem(headerSignature(headers), JSON.stringify(state.mapping)); } catch (_) { /* ignore */ }
+      storeMapping(headerSignature(headers), state.mapping);
       renderMapping();
     }));
     const notes = $('organizeNotes');
-    notes.hidden = !state.notes.length;
-    notes.innerHTML = state.notes.map((n) => `<div>🧹 ${esc(n)}</div>`).join('');
+    const extra = state.pro ? [] : ['列の割り当てを次回から自動で復元するには Pro が必要です（この画面で直した内容は、ページを閉じるまで有効です）'];
+    const all = state.notes.concat(extra);
+    notes.hidden = !all.length;
+    notes.innerHTML = all.map((n) => `<div>🧹 ${esc(n)}</div>`).join('');
     const rows = dataRows();
     const totals = rows.filter((r) => O.isTotalRow(r, state.mapping)).length;
     $('rowCount').textContent = `${rows.length - totals} 行を認識${totals ? `（合計行 ${totals} 行を除外）` : ''}`;
@@ -196,7 +288,7 @@
   }
 
   // ------------------------------------------------------------
-  // Step 3: 振込元情報のプレビュー（辞書で銀行名を表示）
+  // Step 3: 振込元情報のプレビュー
   // ------------------------------------------------------------
   function dateWarning() {
     const s = $('date').value;
@@ -255,39 +347,28 @@
     let dictOk = false;
     try { await D.load(); dictOk = true; } catch (_) { dictOk = false; }
     if (dictOk) {
-      // 1) 銀行名 → 銀行コード の逆引き
       for (const r of rows) {
         if (r.bankCode || !r._rawBankName) continue;
         const c = D.findBank(r._rawBankName);
         const exact = c.filter((x) => x.exact);
         if (exact.length === 1 || (exact.length === 0 && c.length === 1)) {
-          const hit = exact[0] || c[0];
-          r.bankCode = hit.code;
+          const hit = exact[0] || c[0]; r.bankCode = hit.code;
           r._info.push(`銀行名「${r._rawBankName}」から銀行コード ${hit.code}（${hit.name}）を補いました`);
-        } else if (c.length > 1) {
-          r._warn.push(`銀行名「${r._rawBankName}」に候補が複数あります: ${c.slice(0, 4).map((x) => `${x.code} ${x.name}`).join(' / ')}`);
-        } else {
-          r._warn.push(`銀行名「${r._rawBankName}」が金融機関一覧に見つかりません`);
-        }
+        } else if (c.length > 1) r._warn.push(`銀行名「${r._rawBankName}」に候補が複数あります: ${c.slice(0, 4).map((x) => `${x.code} ${x.name}`).join(' / ')}`);
+        else r._warn.push(`銀行名「${r._rawBankName}」が金融機関一覧に見つかりません`);
       }
       const codes = [...new Set(rows.map((r) => r.bankCode).filter(Boolean))];
       await Promise.all(codes.map((c) => D.branches(c)));
-      // 2) 支店名 → 支店コード の逆引き
       for (const r of rows) {
         if (r.branchCode || !r._rawBranchName || !r.bankCode) continue;
         const c = D.findBranch(r.bankCode, r._rawBranchName);
         const exact = c.filter((x) => x.exact);
         if (exact.length === 1 || (exact.length === 0 && c.length === 1)) {
-          const hit = exact[0] || c[0];
-          r.branchCode = hit.code;
+          const hit = exact[0] || c[0]; r.branchCode = hit.code;
           r._info.push(`支店名「${r._rawBranchName}」から支店コード ${hit.code}（${hit.name}）を補いました`);
-        } else if (c.length > 1) {
-          r._warn.push(`支店名「${r._rawBranchName}」に候補が複数あります: ${c.slice(0, 4).map((x) => `${x.code} ${x.name}`).join(' / ')}`);
-        } else {
-          r._warn.push(`支店名「${r._rawBranchName}」がこの銀行の支店一覧に見つかりません`);
-        }
+        } else if (c.length > 1) r._warn.push(`支店名「${r._rawBranchName}」に候補が複数あります: ${c.slice(0, 4).map((x) => `${x.code} ${x.name}`).join(' / ')}`);
+        else r._warn.push(`支店名「${r._rawBranchName}」がこの銀行の支店一覧に見つかりません`);
       }
-      // 3) コードの存在チェックと名称補完
       const fill = $('fillNames').value === '1';
       for (const r of rows) {
         const b = D.bank(r.bankCode);
@@ -306,6 +387,12 @@
     renderPreview();
   }
 
+  /** 出力対象（除外・無料上限を反映） */
+  function targetRows() {
+    const inc = state.rows.filter((r) => !state.excluded.has(r._src));
+    return state.pro ? inc : inc.slice(0, FREE_LIMIT);
+  }
+
   function renderPreview() {
     const kind = currentKind();
     const tbl = $('preview');
@@ -313,15 +400,17 @@
     if (kind === '21') cols.push('顧客コード'); else cols.push('社員番号', '所属');
     cols.push('メッセージ');
     let html = '<thead><tr><th></th>' + cols.map((c) => `<th class="${c === '金額' ? 'r' : ''}">${c}</th>`).join('') + '</tr></thead><tbody>';
-    let okCount = 0, ngCount = 0, warnCount = 0, total = 0;
+    let okCount = 0, ngCount = 0, warnCount = 0, total = 0, overLimit = 0, seen = 0;
     state.rows.forEach((r, i) => {
       const errs = Z.validateRow(r, kind);
       const warns = r._warn || [], infos = r._info || [];
       const skipped = state.excluded.has(r._src);
-      if (!skipped) { if (errs.length) ngCount++; else { okCount++; total += r.amount; if (warns.length) warnCount++; } }
+      let limited = false;
+      if (!skipped) { seen++; if (!state.pro && seen > FREE_LIMIT) { limited = true; overLimit++; } }
+      if (!skipped && !limited) { if (errs.length) ngCount++; else { okCount++; total += r.amount; if (warns.length) warnCount++; } }
       const dep = { 1: '普通', 2: '当座', 4: '貯蓄', 9: 'その他' }[r.depositType] || r.depositType;
-      const status = skipped ? '<span class="tag">除外</span>' : errs.length ? '<span class="tag ng">エラー</span>' : warns.length ? '<span class="tag warn">確認</span>' : '<span class="tag ok">OK</span>';
-      html += `<tr class="${skipped ? 'skip' : errs.length ? 'bad' : warns.length ? 'warn' : ''}" data-i="${i}">`
+      const status = skipped ? '<span class="tag">除外</span>' : limited ? '<span class="tag warn">Free上限外</span>' : errs.length ? '<span class="tag ng">エラー</span>' : warns.length ? '<span class="tag warn">確認</span>' : '<span class="tag ok">OK</span>';
+      html += `<tr class="${skipped || limited ? 'skip' : errs.length ? 'bad' : warns.length ? 'warn' : ''}" data-i="${i}">`
         + `<td><input type="checkbox" class="inc" ${skipped ? '' : 'checked'} title="この行を含める"></td><td>${status}</td><td>${r._src}</td>`
         + `<td>${esc(r.bankCode)}${r._dictBank ? `<br><span class="sub">${esc(r._dictBank)}</span>` : ''}</td>`
         + `<td>${esc(r.branchCode)}${r._dictBranch ? `<br><span class="sub">${esc(r._dictBranch)}</span>` : ''}</td>`
@@ -348,11 +437,15 @@
       + `<div class="${warnCount ? 'warn' : ''}"><small>要確認</small><b>${warnCount}</b> 件</div>`
       + `<div class="${ngCount ? 'ng' : ''}"><small>エラー</small><b>${ngCount}</b> 件</div>`
       + `<div><small>合計金額</small><b>¥${total.toLocaleString()}</b></div>`;
+    const fl = $('freeLimit');
+    fl.hidden = !overLimit;
+    fl.innerHTML = overLimit ? `無料プランは1回 ${FREE_LIMIT} 件までです。<b>${overLimit} 件</b>が出力対象外になっています（表の「Free上限外」）。Proにすると件数無制限になります。 <button type="button" class="btn mini" id="freeLimitPro">⭐ Proのキーを入力</button> <a class="btn mini" href="pricing.html">料金を見る</a>` : '';
+    if (overLimit) $('freeLimitPro').addEventListener('click', () => $('proBtn').click());
     generate(ngCount === 0 && okCount > 0);
   }
 
   // ------------------------------------------------------------
-  // 生成・ダウンロード
+  // 生成・ダウンロード・履歴
   // ------------------------------------------------------------
   function readHeader() {
     const d = $('date').value;
@@ -369,10 +462,10 @@
     const h = readHeader();
     const hErrs = Z.validateHeader(h);
     const btn = $('download');
-    const rows = state.rows.filter((r) => !state.excluded.has(r._src));
+    const rows = targetRows();
     const he = $('headerErrors');
     he.hidden = !hErrs.length;
-    he.innerHTML = hErrs.length ? `振込元の情報を確認してください: ${esc(hErrs.join(' / '))} <button class="btn" data-go="3" style="margin-left:8px">直す</button>` : '';
+    he.innerHTML = hErrs.length ? `振込元の情報を確認してください: ${esc(hErrs.join(' / '))} <button class="btn mini" data-go="3" style="margin-left:8px">直す</button>` : '';
     he.querySelectorAll('[data-go]').forEach((b) => b.addEventListener('click', () => goStep(3)));
     const dw = dateWarning();
     $('dateWarn').hidden = !dw;
@@ -387,27 +480,46 @@
       const out = Z.build(h, rows, { newline: $('newline').value });
       lastBytes = Z.encode(out.text);
       lastName = `${Z.KIND_LABEL[h.kind]}_${$('date').value.replace(/-/g, '')}.${$('ext').value}`;
+      lastMeta = { kind: Z.KIND_LABEL[h.kind], count: out.count, total: out.total, file: state.fileName, date: $('date').value };
       btn.disabled = false;
       $('downloadName').textContent = `${lastName}（${lastBytes.length.toLocaleString()} バイト・${out.count} 件・¥${out.total.toLocaleString()}）`;
       $('ruler').textContent = '         1         2         3         4         5         6         7         8         9        10        11        12\n123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890';
       $('out').textContent = out.records.join('\n');
-    } catch (e) {
-      btn.disabled = true; lastBytes = null;
-      $('downloadName').textContent = `生成エラー: ${e.message}`;
-    }
+    } catch (e) { btn.disabled = true; lastBytes = null; $('downloadName').textContent = `生成エラー: ${e.message}`; }
   }
 
-  $('download').addEventListener('click', () => {
-    if (!lastBytes) return;
-    const blob = new Blob([lastBytes], { type: 'application/octet-stream' });
+  function saveBlob(bytes, name) {
+    const blob = new Blob([bytes], { type: 'application/octet-stream' });
     const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob); a.download = lastName;
+    a.href = URL.createObjectURL(blob); a.download = name;
     document.body.appendChild(a); a.click(); a.remove();
     setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  }
+  $('download').addEventListener('click', () => {
+    if (!lastBytes) return;
+    saveBlob(lastBytes, lastName);
+    if (state.pro && ls.get(KEYS.historyOn, '0') === '1') {
+      const list = ls.json(KEYS.history, []);
+      list.unshift({ ts: new Date().toISOString(), name: lastName, meta: lastMeta, data: bytesToB64(lastBytes) });
+      ls.set(KEYS.history, JSON.stringify(list.slice(0, 20)));
+      renderHistory();
+    }
   });
+  function bytesToB64(u8) { let s = ''; for (const b of u8) s += String.fromCharCode(b); return btoa(s); }
+  function b64ToBytes(s) { const bin = atob(s); const u8 = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i); return u8; }
+  function renderHistory() {
+    const box = $('historyList');
+    const list = state.pro ? ls.json(KEYS.history, []) : [];
+    if (!list.length) { box.innerHTML = `<p class="hint">${ls.get(KEYS.historyOn, '0') === '1' ? 'まだ履歴はありません' : '履歴の保存は「⚙ 設定」で有効にできます'}</p>`; return; }
+    box.innerHTML = list.map((h, i) => `<div class="hist"><div><b>${esc(h.name)}</b><br><span class="sub">${esc(h.ts.replace('T', ' ').slice(0, 16))} ・ ${esc(h.meta.kind)} ・ ${h.meta.count} 件 ・ ¥${Number(h.meta.total).toLocaleString()} ・ 元: ${esc(h.meta.file || '')}</span></div><div><button type="button" class="btn mini" data-dl="${i}">再ダウンロード</button> <button type="button" class="btn mini" data-rm="${i}">削除</button></div></div>`).join('')
+      + '<p><button type="button" class="btn mini" id="histClear">履歴をすべて削除</button></p>';
+    box.querySelectorAll('[data-dl]').forEach((b) => b.addEventListener('click', () => { const h = list[Number(b.dataset.dl)]; saveBlob(b64ToBytes(h.data), h.name); }));
+    box.querySelectorAll('[data-rm]').forEach((b) => b.addEventListener('click', () => { list.splice(Number(b.dataset.rm), 1); ls.set(KEYS.history, JSON.stringify(list)); renderHistory(); }));
+    $('histClear').addEventListener('click', () => { ls.del(KEYS.history); renderHistory(); });
+  }
 
   // ------------------------------------------------------------
-  // PDF → 表（テキスト層のあるPDFのみ。座標で行と列を復元する）
+  // PDF → 表（テキスト層のあるPDFのみ）
   // ------------------------------------------------------------
   async function extractPdfTable(buf) {
     if (!window.pdfjsLib) throw new Error('PDF ライブラリが読み込めませんでした');
@@ -420,10 +532,7 @@
       const items = tc.items.filter((it) => it.str && it.str.trim()).map((it) => ({ x: it.transform[4], y: it.transform[5], w: it.width, s: it.str }));
       items.sort((a, b) => b.y - a.y || a.x - b.x);
       const lines = [];
-      for (const it of items) {
-        const ln = lines.find((l) => Math.abs(l.y - it.y) <= 3);
-        if (ln) ln.items.push(it); else lines.push({ y: it.y, items: [it] });
-      }
+      for (const it of items) { const ln = lines.find((l) => Math.abs(l.y - it.y) <= 3); if (ln) ln.items.push(it); else lines.push({ y: it.y, items: [it] }); }
       for (const ln of lines) {
         ln.items.sort((a, b) => a.x - b.x);
         const cells = []; let cur = null;
@@ -442,7 +551,8 @@
 
   // ------------------------------------------------------------
   loadSettings();
-  if (!G.configured()) $('gsheetHint').textContent = 'Googleスプレッドシート連携は準備中です。いまは「ファイル→ダウンロード→Excel」で保存して読み込んでください。';
+  refreshPro();
+  if (!G.configured()) $('gsheetHint').textContent = 'Googleスプレッドシート連携は準備中です。いまは「ファイル→ダウンロード→Microsoft Excel」で保存して読み込んでください。';
   D.load().then(() => { $('dictInfo').textContent = `金融機関一覧: ${D.version} 版（全銀協公開データ）。統廃合があった場合は一覧を更新すると自動で反映されます。`; })
     .catch(() => { $('dictInfo').textContent = '金融機関一覧を読み込めませんでした（銀行名の表示とコードの照合は行われません）'; });
 })();
