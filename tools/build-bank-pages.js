@@ -59,6 +59,7 @@ ${jsonld ? `<script type="application/ld+json">${JSON.stringify(jsonld)}</script
 </head>
 <body data-depth="1">
 ${body}
+<script src="../config.js"></script>
 <script src="../src/banks.js"></script>
 <script src="../src/site.js"></script>
 </body>

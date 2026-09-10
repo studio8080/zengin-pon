@@ -26,6 +26,11 @@ window.ZENGIN_CONFIG = {
   STRIPE_LINK_MONTH: '',
   STRIPE_LINK_YEAR: '',
 
+  // Google アナリティクス（GA4 の測定ID "G-XXXXXXX"。空 = 解析タグを読み込まない）
+  // 空のあいだは security.html / privacy.html の「アクセス解析」の記述が実態と合わないので、
+  // 使わない方針にするならその2ページの記述も消すこと。
+  GA_MEASUREMENT_ID: '',
+
   // Googleスプレッドシート連携
   GOOGLE_CLIENT_ID: '',
   GOOGLE_API_KEY: '',

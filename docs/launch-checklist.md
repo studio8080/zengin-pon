@@ -142,6 +142,17 @@ C:\Users\chaha\.zengin-pon\license-private.pem
 
 ---
 
+### 6-2. アクセス解析（GA4）を入れる
+
+`config.js` の `GA_MEASUREMENT_ID` に GA4 の測定ID（`G-XXXXXXXXXX`）を入れて push すれば有効になる。
+入れなければ解析タグは読み込まれない。
+
+> ⚠️ **`security.html` と `privacy.html` には「Googleアナリティクスで集計します」と書いてある。**
+> 解析を入れない方針にするなら、この2ページの該当行を消すこと（書いてあるのに使っていない状態も、
+> 使っているのに書いていない状態も避ける）。
+
+---
+
 ## 7. Googleスプレッドシート連携を有効にする（所要 30分。後回しで可）
 
 `config.js` の冒頭コメントに手順を書いてある。GCP でプロジェクトを作り、

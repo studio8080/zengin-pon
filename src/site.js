@@ -1,6 +1,20 @@
-/* site.js — 共通ヘッダー／フッターの差し込み（静的サイトで全ページ同じにするため） */
+/* site.js — 共通ヘッダー／フッターの差し込み（静的サイトで全ページ同じにするため）＋アクセス解析 */
 (function () {
   'use strict';
+
+  // ---- Google アナリティクス（config.js に測定IDがあるときだけ読み込む） ----
+  // 変換対象のデータは一切送らない。ページの閲覧しか計測しない。
+  const gaId = (window.ZENGIN_CONFIG || {}).GA_MEASUREMENT_ID;
+  if (gaId) {
+    const s = document.createElement('script');
+    s.async = true; s.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(gaId);
+    document.head.appendChild(s);
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = function () { window.dataLayer.push(arguments); };
+    window.gtag('js', new Date());
+    window.gtag('config', gaId, { anonymize_ip: true });
+  }
+
   const depth = (document.body.dataset.depth || '') === '1' ? '../' : '';
   const path = location.pathname.replace(/\/index\.html$/, '/');
   const links = [
