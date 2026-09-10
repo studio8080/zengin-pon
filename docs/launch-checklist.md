@@ -12,7 +12,11 @@
 `CNAME zenginpon → studio8080.github.io` を追加済み。既存レコード（A@ / MX / www / menufits /
 misefits / pitch / TXT各種）は変更していない。**サイトは https://zenginpon.kokokikaku.com/ で表示される。**
 
-残: GitHub の証明書発行を待って **Settings → Pages → Enforce HTTPS にチェック**（発行後に押せるようになる）。
+**残: HTTPS の有効化。** GitHub の Pages 設定では「✓ DNS check successful」と出ており、証明書を発行中。
+発行されると `Settings → Pages → Enforce HTTPS` のチェックボックスが押せるようになるので、
+**チェックを入れる**（通常は数十分〜数時間、最大24時間）。それまでは http:// でのみ表示される。
+
+確認: `gh api repos/studio8080/zengin-pon/pages` の `https_certificate.state` が出れば発行済み。
 
 <details><summary>やった手順（記録）</summary>
 
@@ -204,13 +208,15 @@ C:\Users\chaha\.zengin-pon\license-private.pem
 
 ---
 
-## 6. Search Console に登録する（所要 10分。DNS 反映後）
+## 6. Search Console — **完了済み（2026-09-10）**
 
-1. https://search.google.com/search-console/ を開く（**`studio@kokokikaku.com`**）
-2. プロパティを追加 → 「URLプレフィックス」→ `https://zenginpon.kokokikaku.com/`
-3. 所有権の確認 → HTMLタグ方式を選び、表示された `<meta name="google-site-verification" ...>` を
-   `index.html` の `<head>` に貼って push（反映後に「確認」を押す）
-4. サイトマップ → `sitemap.xml` を送信
+`studio@kokokikaku.com` で `https://zenginpon.kokokikaku.com/` を URLプレフィックスとして登録し、
+所有権の確認まで完了。確認方法は HTMLファイル方式で、`googleb736d92e1fe0566c.html` をリポジトリ直下に置いてある。
+
+> ⚠️ **`googleb736d92e1fe0566c.html` は消さないこと。** 消すと所有権の確認が外れる。
+
+`sitemap.xml` も送信済み。ただし送信直後の状態は「取得できませんでした」— **HTTPS証明書がまだ発行されていないため**。
+証明書が出れば Google が自動で取り直すので、放置してよい（気になるなら Search Console で「再送信」）。
 
 銀行コードのページが1,146枚あるので、インデックスには数週間かかる。
 
@@ -239,7 +245,7 @@ Drive API と Picker API を有効化し、OAuth クライアントIDとAPIキ�
 
 ## 8. 公開前の最終確認
 
-- [ ] https://zenginpon.kokokikaku.com/ が HTTPS で開く
+- [ ] https://zenginpon.kokokikaku.com/ が HTTPS で開く（証明書発行後に Enforce HTTPS をON）
 - [ ] サンプルCSV（並びがバラバラなもの）で変換 → ダウンロードできる
 - [ ] 料金ページの「Proを申し込む」が Stripe に飛ぶ
 - [ ] 特商法ページに氏名・住所が入っている
