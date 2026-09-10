@@ -83,7 +83,7 @@
   $('proRefresh').addEventListener('click', async () => {
     $('proMsg').textContent = '確認中…'; $('proMsg').style.color = '';
     const r = await L.refreshIfNeeded(true);
-    const msg = { 'no-api': '自動更新は設定されていません', 'no-key': 'キーが入っていません', unchanged: '最新の状態です', offline: 'サーバーに接続できませんでした', 'http-404': 'このライセンスが見つかりません（お問い合わせください）', 'http-410': 'ご契約が終了しています' };
+    const msg = { 'no-api': '自動更新は設定されていません', 'no-key': 'キーが入っていません', unchanged: '最新の状態です', offline: 'サーバーに接続できませんでした', 'http-404': 'このライセンスが見つかりません（お問い合わせください）', 'not-entitled': 'ご契約が終了しているため、Proを解除しました' };
     $('proMsg').textContent = r.refreshed ? `✔ 更新しました（〜${r.expiry}）` : (msg[r.reason] || `更新できませんでした（${r.reason}）`);
     $('proMsg').style.color = r.refreshed ? 'var(--ok)' : '';
     await refreshPro();

@@ -76,15 +76,26 @@
   //   送るのは英数字のライセンスIDだけで、振込データは一切送らない。
   //   config.js の LICENSE_API が空なら何もしない（＝完全オフライン動作のまま）。
   // ------------------------------------------------------------
-  const REFRESH_WITHIN_DAYS = 10;
+  const REFRESH_WITHIN_DAYS = 10;   // 期限がこれ以内に迫ったら取り直す
+  const RECHECK_AFTER_DAYS = 7;     // 前回の確認からこれだけ経ったら取り直す（解約を早く反映するため）
+  const LAST_CHECK = 'zenginpon.licenseChecked';
+
+  function today() { return new Date().toISOString().slice(0, 10); }
   function daysUntil(ymd) {
-    const t = new Date(ymd + 'T00:00:00').getTime() - new Date(new Date().toISOString().slice(0, 10) + 'T00:00:00').getTime();
+    const t = new Date(ymd + 'T00:00:00').getTime() - new Date(today() + 'T00:00:00').getTime();
     return Math.round(t / 86400000);
   }
+  function lastChecked() { try { return localStorage.getItem(LAST_CHECK) || ''; } catch (_) { return ''; } }
+  function markChecked() { try { localStorage.setItem(LAST_CHECK, today()); } catch (_) { /* ignore */ } }
 
   /**
    * 必要なら更新する。
-   * @returns {Promise<{refreshed:boolean, expiry?:string, reason?:string}>}
+   *
+   * 契約が続いていれば期限が延びたキーに差し替わる（利用者は何もしなくてよい）。
+   * 解約・未払いでサーバーが 410 を返したら、保存済みのキーを削除して Free に戻す。
+   * オフラインや通信エラーのときは何もしない（手元のキーの期限までは使える）。
+   *
+   * @returns {Promise<{refreshed:boolean, expiry?:string, reason?:string, revoked?:boolean}>}
    */
   async function refreshIfNeeded(force) {
     const api = ((typeof window !== 'undefined' && window.ZENGIN_CONFIG) || {}).LICENSE_API;
@@ -93,20 +104,33 @@
     // 期限切れでも payload は読めているので、その id で復帰を試みる
     const id = cur.payload && cur.payload.id;
     if (!id) return { refreshed: false, reason: 'no-key' };
-    if (!force && cur.active && daysUntil(cur.expiry) > REFRESH_WITHIN_DAYS) return { refreshed: false, reason: 'not-due' };
+    if (!force) {
+      const soon = cur.active && daysUntil(cur.expiry) <= REFRESH_WITHIN_DAYS;
+      const stale = !lastChecked() || daysUntil(lastChecked()) <= -RECHECK_AFTER_DAYS;
+      if (cur.active && !soon && !stale) return { refreshed: false, reason: 'not-due' };
+    }
+    let res;
     try {
-      const res = await fetch(`${api}?id=${encodeURIComponent(id)}`, { method: 'GET', cache: 'no-store' });
-      if (!res.ok) return { refreshed: false, reason: `http-${res.status}` };
-      const j = await res.json();
-      if (!j || !j.key) return { refreshed: false, reason: 'bad-response' };
-      const v = await verify(j.key);
-      if (!v.ok) return { refreshed: false, reason: v.reason };
-      if (v.expiry === cur.expiry) return { refreshed: false, reason: 'unchanged', expiry: v.expiry };
-      save(j.key);
-      return { refreshed: true, expiry: v.expiry };
+      res = await fetch(`${api}?id=${encodeURIComponent(id)}`, { method: 'GET', cache: 'no-store' });
     } catch (e) {
       return { refreshed: false, reason: 'offline' };
     }
+    if (res.status === 410) {
+      // 契約が終了している。手元のキーを消して Free に戻す
+      deactivate();
+      markChecked();
+      return { refreshed: false, revoked: true, reason: 'not-entitled' };
+    }
+    if (!res.ok) return { refreshed: false, reason: `http-${res.status}` };
+    let j;
+    try { j = await res.json(); } catch (_) { return { refreshed: false, reason: 'bad-response' }; }
+    if (!j || !j.key) return { refreshed: false, reason: 'bad-response' };
+    const v = await verify(j.key);
+    if (!v.ok) return { refreshed: false, reason: v.reason };
+    markChecked();
+    if (v.expiry === cur.expiry) return { refreshed: false, reason: 'unchanged', expiry: v.expiry };
+    save(j.key);
+    return { refreshed: true, expiry: v.expiry };
   }
 
   return { verify, status, activate, deactivate, refreshIfNeeded, STORAGE, PUBLIC_KEY };

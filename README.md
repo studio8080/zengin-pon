@@ -293,24 +293,36 @@ tools/issue-key.js ── Ed25519 秘密鍵 ──▶ ZP1-<payload>.<署名>  �
 - 秘密鍵: `C:\Users\chaha\.zengin-pon\license-private.pem`（リポジトリ外。**失くすと発行できない**のでパスワードマネージャーにも控える）。
   公開鍵は `src/license.js` の `PUBLIC_KEY`。鍵の再生成は `tools/gen-keypair.js`（既存ファイルは上書きしない）。
 - 発行: `node tools/issue-key.js --months 12`（年払い）／`--months 1`（月払い）／`--until 2027-03-31`。台帳 `tools/issued-keys.csv` に追記（gitignore）。
-- 更新: **月払いは Cloud Functions が自動で発行・送信する**（下記）。手動発行は返金・特例対応用。
+- 更新: **Cloud Functions が自動で発行・送信する**（下記）。手動発行は返金・特例対応用。
+- 台数制限（2台）は技術的に強制しない（規約上の約束）。
 
 ### 月払いの自動化（`functions/`）
 
 既存の Firebase プロジェクト `misefits` に codebase `zenginpon` として相乗りする（新規プロジェクト・Blaze設定が不要、
 codebase が別なので Misefits の関数は消えない。Firestore ルールはこのリポジトリから配らない）。
 
+**考え方**: 月払いも年払いも Stripe のサブスクリプション（自動更新）。オフラインで検証できる署名付きキーは
+そのままだと解約後も期限まで使えてしまうので、**キーの寿命を短くして（最長30日）定期的に取り直す**。
+取り直すたびにサーバーが Stripe の契約状態を見に行くので、解約されればそこで止まる。
+
 | 関数 | 役割 |
 |---|---|
-| `zenginponStripeWebhook` | `checkout.session.completed` / `invoice.paid` で、期限＝**サブスクの今期末＋猶予5日**のキーを発行し、Firestore に保存してメール送信。`customer.subscription.*` で状態を更新 |
-| `zenginponLicense` | `GET ?id=<ライセンスID>` で最新のキーを返す。CORS はサイトと localhost のみ |
+| `zenginponStripeWebhook` | `checkout.session.completed` / `invoice.paid` でキーを発行し、Firestore に保存してメール送信。`customer.subscription.deleted` で解約日を記録し、解約確認メールを送る |
+| `zenginponLicense` | `GET ?id=<ライセンスID>`。**Stripe に契約状態を直接問い合わせて**、契約中なら新しいキー、解約済み・期限切れなら `410` を返す。CORS はサイトと localhost のみ |
 
-- ライセンスIDは**サブスクリプションIDのハッシュ**で、更新しても変わらない（`functions/sign.js`）。
-- ブラウザは期限10日前になると `LICENSE_API` を静かに叩いてキーを差し替える（`src/license.js` の `refreshIfNeeded`）。
-  **送るのはライセンスIDだけ**。オフラインなら何もせず期限まで使える。`config.js` の `LICENSE_API` が空なら完全オフライン動作。
-- 解約 → 次の請求が来ない → 支払い済み期間の末日＋5日で自然に失効。取り消し処理は不要。
+発行する期限は `min(契約期間の末日 + 猶予3日, 今日 + 30日)`（`functions/sign.js` の `cappedExpiry`）。
+
+| 状況 | 起きること |
+|---|---|
+| 契約中（月払い・年払いとも） | 取り直すたびに「今日+30日」まで延びる。利用者は何もしなくてよい |
+| 期間末で解約 | 期間の末日+3日を超えて延びない → その後 `410` → **ブラウザが手元のキーを削除して Free に戻る** |
+| 即時解約・未払い | 次の確認（最長7日以内）で `410` → 同上 |
+| オフライン | 何もしない。手元のキーの期限（最長30日）までは使える |
+
+- ライセンスIDは**サブスクリプションIDのハッシュ**で、更新しても変わらない。
+- ブラウザは「期限が10日以内」または「前回の確認から7日以上」で取り直す（`src/license.js` の `refreshIfNeeded`）。
+  **送るのはライセンスIDだけ**。`config.js` の `LICENSE_API` が空なら完全オフライン動作（更新も失効もしない）。
 - デプロイ手順は [`docs/launch-checklist.md`](docs/launch-checklist.md) の 3-4。
-- 台数制限（2台）は技術的に強制しない（規約上の約束）。
 - **Free の制限**: 出力対象が20件まで（超過分は表で「Free上限外」）。列の割り当ての記憶（テンプレート）は Pro のみ。Free はページを閉じるまで。
 - **Pro の機能**: 件数無制限、テンプレート保存、振込元プロファイル複数、変換履歴（設定で有効化、最新20件、再ダウンロード）、バックアップ／復元（JSON）。
 - 「⚙ 設定 → すべて削除」で `zenginpon.*` の localStorage を全消去（共有PC向け）。

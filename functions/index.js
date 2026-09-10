@@ -1,13 +1,17 @@
 /*
  * 全銀ポン Pro のライセンス発行API（Stripe Webhook + キー更新エンドポイント）
  *
- * なぜサーバーが要るか:
- *   月払いは「解約したら止まる」必要がある。ライセンスキーはオフラインで検証できる署名付きトークンなので、
- *   有効期限を「サブスクの今期末＋猶予5日」にして、支払いのたびに新しいキーを発行し直す。
- *   解約されると次の請求が来ないのでキーは自然に期限切れになる（＝支払った期間の末日までは使える）。
+ * 方針:
+ *   月払いも年払いも Stripe のサブスクリプション（自動更新）。
+ *   ライセンスキーはオフラインで検証できる署名付きトークンなので、そのままだと解約しても
+ *   期限まで使えてしまう。そこで **キーの寿命を短く（既定30日）** して、ブラウザが定期的に
+ *   取り直す設計にした。取り直すたびに Stripe の契約状態を見に行くので、
  *
- * 利用者の手間をなくすため、ブラウザは期限が近づくと zenginponLicense を静かに叩いて
- * 新しいキーを取りに行く（送るのはライセンスIDだけ。振込データは一切送らない）。
+ *     - 契約中        → 期限を「今日+30日」まで延ばして返す（年払いでも同じ。利用者は気づかない）
+ *     - 解約・未払い  → 410 を返す。ブラウザは保存済みのキーを削除して Free に戻る
+ *     - 期間末で解約  → 期間の末日+猶予までは延ばすが、それ以上は延ばさない → 自然に失効
+ *
+ *   完全にオフラインで使い続けた場合でも、手元のキーは最長30日で切れる。
  *
  * 置き場所:
  *   既存の Firebase プロジェクト "misefits"（Blaze 設定済み）に codebase "zenginpon" として相乗りする。
@@ -28,7 +32,7 @@ const { initializeApp, getApps } = require('firebase-admin/app');
 const { getFirestore } = require('firebase-admin/firestore');
 const Stripe = require('stripe');
 const nodemailer = require('nodemailer');
-const { licenseIdFor, signKey, expiryFromUnix } = require('./sign');
+const { licenseIdFor, signKey, expiryFromUnix, daysFromToday, cappedExpiry } = require('./sign');
 
 if (!getApps().length) initializeApp();
 const db = getFirestore();
@@ -44,7 +48,9 @@ const smtpPort = defineString('SMTP_PORT', { default: '465' });
 
 const SITE = 'https://zenginpon.kokokikaku.com';
 const COLLECTION = 'zenginponLicenses';
-const GRACE_DAYS = 5;          // 期間末を過ぎても数日は使える（更新の行き違い対策）
+const GRACE_DAYS = 3;          // 契約期間の末日を過ぎても数日は使える（更新の行き違い対策）
+const MAX_OFFLINE_DAYS = 30;   // キーの最長寿命。これを超える期限は発行しない
+const ACTIVE = ['active', 'trialing', 'past_due'];  // past_due は Stripe が再請求中なので使わせる
 const ALLOWED_ORIGINS = [SITE, 'http://localhost:8765'];
 
 // ------------------------------------------------------------
@@ -63,11 +69,14 @@ async function sendMail(to, subject, text) {
   return true;
 }
 
-function keyMail(key, expiry, id, isRenewal) {
-  const head = isRenewal
-    ? `全銀ポン Proプランを更新しました。新しいライセンスキーをお送りします。\n（サイトを開いていれば自動で更新されるため、多くの場合この作業は不要です。念のための控えです。）`
-    : `このたびは全銀ポン Proプランをお申し込みいただき、ありがとうございます。\nライセンスキーをお送りします。`;
-  const how = isRenewal ? '' : `
+function welcomeMail(key, id, planLabel) {
+  return `このたびは全銀ポン Proプラン（${planLabel}）をお申し込みいただき、ありがとうございます。
+ライセンスキーをお送りします。
+
+────────────────────────────
+${key}
+────────────────────────────
+
 【使い方】
 1. ${SITE}/ を開く
 2. 「いますぐ変換」の右にある「⭐ Pro」ボタンを押す
@@ -76,19 +85,18 @@ function keyMail(key, expiry, id, isRenewal) {
 これで件数無制限になり、列の割り当ての保存・振込元プロファイル・変換履歴・
 バックアップが使えるようになります。会社のPCと自宅のPCなど、2台までご利用いただけます。
 
-【更新について】
-月払いの方は、毎月のお支払いのあとにキーが自動で更新されます（サイトを開いたときに
-静かに更新されるので、貼り直しは不要です）。うまくいかないときは、このメールのキーを
-貼り直してください。
-`;
-  return `${head}
+【キーの有効期限について】
+キーには短い有効期限が入っていますが、**ご契約が続いているかぎり、サイトを開いたときに
+自動で更新されます**（貼り直しの必要はありません）。ご契約は自動更新のため、
+解約のお手続きをされない限り、そのままお使いいただけます。
 
-────────────────────────────
-${key}
-────────────────────────────
+うまく更新されないときは「⭐ Pro」ボタンの「更新を確認」を押してください。
+このメールのキーを貼り直しても復帰できますので、保管をお願いします。
 
-有効期限: ${expiry}
-${how}
+【解約について】
+お申し込み時の領収書メールにある管理画面、またはこのメールへのご返信で解約できます。
+解約後は、お支払い済みの期間の末日までご利用いただけます。
+
 ご不明な点、取込エラーなどありましたら、このメールにご返信ください。
 ※ 振込先の一覧やファイルそのものはお送りにならないでください。
 
@@ -98,31 +106,50 @@ ${SITE}/
 （ライセンスID: ${id}）`;
 }
 
+function renewalMail(key, expiry, id) {
+  return `全銀ポン Proプランのお支払いを確認しました。ありがとうございます。
+
+サイトを開いていればキーは自動で更新されますので、**通常この作業は不要です**。
+念のため、新しいキーの控えをお送りします。
+
+────────────────────────────
+${key}
+────────────────────────────
+
+（このキー自体の有効期限: ${expiry}。ご契約中は自動で延長されます）
+
+--
+全銀ポン（ここ企画）
+${SITE}/
+（ライセンスID: ${id}）`;
+}
+
+function canceledMail(endDate) {
+  return `全銀ポン Proプランの解約を承りました。
+
+${endDate} までは引き続きProの機能をご利用いただけます。
+その後は自動的に無料プラン（1回20件まで）に戻ります。お手続きは不要です。
+
+またのご利用をお待ちしています。ご不便な点がありましたら、
+このメールにご返信いただけると今後の改善に役立ちます。
+
+--
+全銀ポン（ここ企画）
+${SITE}/`;
+}
+
 // ------------------------------------------------------------
-// キーの発行と保存
+// 共通処理
 // ------------------------------------------------------------
-async function issueForSubscription(stripe, subscription, email, isRenewal) {
-  const id = licenseIdFor(subscription.id);
-  const periodEnd = subscription.current_period_end
+function periodEndOf(subscription) {
+  return subscription.current_period_end
     || (subscription.items && subscription.items.data[0] && subscription.items.data[0].current_period_end);
-  if (!periodEnd) throw new Error(`current_period_end が取れません: ${subscription.id}`);
-  const expiry = expiryFromUnix(periodEnd, GRACE_DAYS);
-  const key = signKey(zpPrivateKey.value(), expiry, id);
+}
 
-  await db.collection(COLLECTION).doc(id).set({
-    email: email || null,
-    customerId: subscription.customer || null,
-    subscriptionId: subscription.id,
-    status: subscription.status || 'active',
-    expiry,
-    updatedAt: new Date().toISOString(),
-  }, { merge: true });
-
-  if (email) {
-    await sendMail(email, isRenewal ? '【全銀ポン】Proプランを更新しました' : '【全銀ポン】Proプランのライセンスキーをお送りします',
-      keyMail(key, expiry, id, isRenewal));
-  }
-  return { id, expiry };
+function planLabelOf(subscription) {
+  const item = subscription.items && subscription.items.data[0];
+  const interval = item && item.price && item.price.recurring && item.price.recurring.interval;
+  return interval === 'year' ? '年払い' : '月払い';
 }
 
 async function emailOf(stripe, subscription, fallback) {
@@ -131,6 +158,29 @@ async function emailOf(stripe, subscription, fallback) {
     const customer = await stripe.customers.retrieve(subscription.customer);
     return (customer && !customer.deleted && customer.email) || null;
   } catch (e) { console.error('顧客のメール取得に失敗', e); return null; }
+}
+
+/** 契約状態から「この契約の最終利用可能日」を決めて Firestore に保存する */
+async function saveState(subscription, email) {
+  const id = licenseIdFor(subscription.id);
+  const periodEnd = periodEndOf(subscription);
+  if (!periodEnd) throw new Error(`current_period_end が取れません: ${subscription.id}`);
+  await db.collection(COLLECTION).doc(id).set({
+    email: email || null,
+    customerId: subscription.customer || null,
+    subscriptionId: subscription.id,
+    status: subscription.status || 'active',
+    // 契約として使える最終日（ここが上限。キーの期限はこれと30日先の小さいほう）
+    entitledUntil: expiryFromUnix(periodEnd, GRACE_DAYS),
+    updatedAt: new Date().toISOString(),
+  }, { merge: true });
+  return { id, periodEnd };
+}
+
+/** 実際に配るキーを作る */
+function makeKey(periodEndUnix, id) {
+  const expiry = cappedExpiry(periodEndUnix, GRACE_DAYS, MAX_OFFLINE_DAYS);
+  return { key: signKey(zpPrivateKey.value(), expiry, id), expiry };
 }
 
 // ------------------------------------------------------------
@@ -154,22 +204,40 @@ exports.zenginponStripeWebhook = onRequest(
         const session = event.data.object;
         if (session.mode !== 'subscription' || !session.subscription) { res.json({ received: true, skipped: 'not a subscription' }); return; }
         const sub = await stripe.subscriptions.retrieve(session.subscription);
-        const email = session.customer_details && session.customer_details.email;
-        const r = await issueForSubscription(stripe, sub, await emailOf(stripe, sub, email), false);
-        console.log('新規発行', r.id, r.expiry);
+        const email = await emailOf(stripe, sub, session.customer_details && session.customer_details.email);
+        const { id, periodEnd } = await saveState(sub, email);
+        const { key, expiry } = makeKey(periodEnd, id);
+        if (email) await sendMail(email, '【全銀ポン】Proプランのライセンスキーをお送りします', welcomeMail(key, id, planLabelOf(sub)));
+        console.log('新規発行', id, expiry);
+
       } else if (event.type === 'invoice.paid') {
         const invoice = event.data.object;
         const subId = invoice.subscription || (invoice.parent && invoice.parent.subscription_details && invoice.parent.subscription_details.subscription);
         if (!subId) { res.json({ received: true, skipped: 'no subscription' }); return; }
         if (invoice.billing_reason === 'subscription_create') { res.json({ received: true, skipped: 'initial invoice (handled by checkout)' }); return; }
         const sub = await stripe.subscriptions.retrieve(subId);
-        const r = await issueForSubscription(stripe, sub, await emailOf(stripe, sub, invoice.customer_email), true);
-        console.log('更新発行', r.id, r.expiry);
-      } else if (event.type === 'customer.subscription.deleted' || event.type === 'customer.subscription.updated') {
+        const email = await emailOf(stripe, sub, invoice.customer_email);
+        const { id, periodEnd } = await saveState(sub, email);
+        const { key, expiry } = makeKey(periodEnd, id);
+        if (email) await sendMail(email, '【全銀ポン】Proプランを更新しました', renewalMail(key, expiry, id));
+        console.log('更新発行', id, expiry);
+
+      } else if (event.type === 'customer.subscription.deleted') {
+        // 即時解約なら ended_at が「今」。期間末解約なら ended_at は期間の末日。
         const sub = event.data.object;
         const id = licenseIdFor(sub.id);
-        await db.collection(COLLECTION).doc(id).set({ status: sub.status, updatedAt: new Date().toISOString() }, { merge: true });
-        console.log('状態更新', id, sub.status);
+        const end = sub.ended_at || periodEndOf(sub);
+        const entitledUntil = expiryFromUnix(end, GRACE_DAYS);
+        await db.collection(COLLECTION).doc(id).set({ status: sub.status || 'canceled', entitledUntil, updatedAt: new Date().toISOString() }, { merge: true });
+        const snap = await db.collection(COLLECTION).doc(id).get();
+        const email = snap.exists && snap.data().email;
+        if (email) await sendMail(email, '【全銀ポン】Proプランの解約を承りました', canceledMail(entitledUntil));
+        console.log('解約', id, entitledUntil);
+
+      } else if (event.type === 'customer.subscription.updated') {
+        const sub = event.data.object;
+        await saveState(sub, null);
+        console.log('状態更新', licenseIdFor(sub.id), sub.status);
       }
       res.json({ received: true });
     } catch (e) {
@@ -180,12 +248,14 @@ exports.zenginponStripeWebhook = onRequest(
 );
 
 // ------------------------------------------------------------
-// キー更新エンドポイント（ブラウザが期限前に静かに叩く）
-//   GET ?id=<ライセンスID>  →  { key, expiry }
+// キー更新エンドポイント（ブラウザが定期的に叩く）
+//   GET ?id=<ライセンスID>
+//     200 { key, expiry }  … 契約中
+//     410 { error }        … 解約済み・期限切れ（ブラウザは保存済みキーを消す）
 //   送られてくるのはライセンスIDだけ。振込データは一切扱わない。
 // ------------------------------------------------------------
 exports.zenginponLicense = onRequest(
-  { secrets: [zpPrivateKey], region: 'asia-northeast1', cors: false },
+  { secrets: [stripeSecretKey, zpPrivateKey], region: 'asia-northeast1', cors: false },
   async (req, res) => {
     const origin = req.headers.origin;
     if (origin && ALLOWED_ORIGINS.includes(origin)) {
@@ -197,16 +267,45 @@ exports.zenginponLicense = onRequest(
 
     const id = String(req.query.id || '');
     if (!/^[A-Za-z0-9_-]{6,32}$/.test(id)) { res.status(400).json({ error: 'bad id' }); return; }
+    res.set('Cache-Control', 'no-store');
 
     try {
       const snap = await db.collection(COLLECTION).doc(id).get();
       if (!snap.exists) { res.status(404).json({ error: 'not found' }); return; }
       const d = snap.data();
       const today = new Date().toISOString().slice(0, 10);
-      if (!d.expiry || d.expiry < today) { res.status(410).json({ error: 'expired', expiry: d.expiry || null }); return; }
-      // 解約済みでも、支払い済み期間の末日までは使える（expiry がその日付になっている）
-      res.set('Cache-Control', 'no-store');
-      res.json({ key: signKey(zpPrivateKey.value(), d.expiry, id), expiry: d.expiry, status: d.status || null });
+
+      // Stripe に現在の契約状態を直接確認する（Webhook の取りこぼしがあっても正しく判定できる）
+      let sub = null;
+      try {
+        const stripe = new Stripe(stripeSecretKey.value());
+        sub = await stripe.subscriptions.retrieve(d.subscriptionId);
+      } catch (e) {
+        console.error('Stripe 参照に失敗、Firestore の値で判定します', e.message);
+      }
+
+      let entitledUntil = d.entitledUntil || null;
+      let periodEnd = null;
+      if (sub) {
+        periodEnd = periodEndOf(sub);
+        if (!ACTIVE.includes(sub.status)) {
+          // 解約済み。支払い済み期間の末日までは使わせる
+          const end = sub.ended_at || periodEnd;
+          entitledUntil = end ? expiryFromUnix(end, GRACE_DAYS) : today;
+        } else if (periodEnd) {
+          entitledUntil = expiryFromUnix(periodEnd, GRACE_DAYS);
+        }
+        await db.collection(COLLECTION).doc(id).set({ status: sub.status, entitledUntil, updatedAt: new Date().toISOString() }, { merge: true });
+      }
+
+      if (!entitledUntil || entitledUntil < today) {
+        res.status(410).json({ error: 'not entitled', entitledUntil: entitledUntil || null });
+        return;
+      }
+      // 配るキーは「契約の最終日」と「今日+30日」の小さいほう
+      const soft = daysFromToday(MAX_OFFLINE_DAYS);
+      const expiry = entitledUntil < soft ? entitledUntil : soft;
+      res.json({ key: signKey(zpPrivateKey.value(), expiry, id), expiry, status: sub ? sub.status : (d.status || null) });
     } catch (e) {
       console.error('更新に失敗', e);
       res.status(500).json({ error: 'internal error' });

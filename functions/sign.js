@@ -31,4 +31,26 @@ function expiryFromUnix(unixSeconds, graceDays) {
   return d.toISOString().slice(0, 10);
 }
 
-module.exports = { licenseIdFor, signKey, expiryFromUnix };
+/** 今日から n 日後の 'YYYY-MM-DD' */
+function daysFromToday(n) {
+  const d = new Date();
+  d.setDate(d.getDate() + n);
+  return d.toISOString().slice(0, 10);
+}
+
+/**
+ * 実際に発行する有効期限を決める。
+ *
+ *   min( 契約期間の末日 + 猶予 , 今日 + オフライン上限 )
+ *
+ * 後者の上限があるので、年払いでもキーは30日程度しか持たない。
+ * ブラウザが定期的に取り直すので利用者は気づかないが、解約された場合は
+ * 「今の期間の末日＋猶予」を超えて延長されないため、放っておいても失効する。
+ */
+function cappedExpiry(periodEndUnix, graceDays, maxOfflineDays) {
+  const hard = expiryFromUnix(periodEndUnix, graceDays);
+  const soft = daysFromToday(maxOfflineDays);
+  return hard < soft ? hard : soft;
+}
+
+module.exports = { licenseIdFor, signKey, expiryFromUnix, daysFromToday, cappedExpiry };
