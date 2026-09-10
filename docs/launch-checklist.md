@@ -7,9 +7,14 @@
 
 ---
 
-## 1. DNS を設定してサイトを見えるようにする（所要 10分＋反映待ち）
+## 1. DNS を設定してサイトを見えるようにする — **完了済み（2026-09-10）**
 
-GitHub Pages の設定と `CNAME` ファイルは投入済み。**あとはDNSレコードを1本足すだけ。**
+`CNAME zenginpon → studio8080.github.io` を追加済み。既存レコード（A@ / MX / www / menufits /
+misefits / pitch / TXT各種）は変更していない。**サイトは https://zenginpon.kokokikaku.com/ で表示される。**
+
+残: GitHub の証明書発行を待って **Settings → Pages → Enforce HTTPS にチェック**（発行後に押せるようになる）。
+
+<details><summary>やった手順（記録）</summary>
 
 1. Squarespace の DNS 管理画面を開く（`kokokikaku.com`。ログインは **`mikan@kokokikaku.com`**）
    - Xserver ではない。`kokokikaku.com` は Squarespace 管理。
@@ -25,17 +30,14 @@ GitHub Pages の設定と `CNAME` ファイルは投入済み。**あとはDNS�
 > **種別は手で選び、保存前に一覧の表示を読んで照合すること。**
 > 既存の `@` の A レコード、`MX`、`www`、`menufits` / `misefits` / `pitch` の3件には触らない。
 
-4. 15分〜1時間ほど待ってから https://zenginpon.kokokikaku.com/ を開く
-5. 表示されたら GitHub → リポジトリ `zengin-pon` → Settings → Pages で
-   **「Enforce HTTPS」にチェック**（証明書の発行後に押せるようになる）
+</details>
 
-**確認コマンド**（反映されたか調べる）
+**確認コマンド**
 
 ```bash
 nslookup zenginpon.kokokikaku.com
 ```
 
-`studio8080.github.io` が返れば成功。
 
 ---
 
@@ -55,7 +57,12 @@ nslookup zenginpon.kokokikaku.com
 
 ## 3. Stripe で支払いリンクを作る（所要 20分）
 
-### 3-1. 商品と価格
+### 3-1. 商品と価格 — **完了済み**
+
+商品「全銀ポン Pro」（`prod_VEa5100IEJu6JE`）に ¥480/月 と ¥4,800/年 を作成済み。
+商品税コードは **サービスとしてのソフトウェア (SaaS): 業務使用**（`txcd_10103001`）。
+
+<details><summary>やった手順（記録）</summary>
 
 Stripe ダッシュボード → 商品 → 商品を追加
 
@@ -65,7 +72,11 @@ Stripe ダッシュボード → 商品 → 商品を追加
   - `¥480` / 月
   - `¥4,800` / 年
 
-### 3-2. 支払いリンクを2本作る
+</details>
+
+### 3-2. 支払いリンクを2本作る — **完了済み**
+
+<details><summary>やった設定（記録）</summary>
 
 商品 → 各価格 → 「支払いリンクを作成」
 
@@ -80,16 +91,25 @@ Stripe ダッシュボード → 商品 → 商品を追加
   ```
 - 「請求書を顧客に送信」ON（領収書メールが自動で届く）
 
-### 3-3. サイトに反映する
+</details>
 
-`config.js` の2行に、発行された `https://buy.stripe.com/...` を貼って push する。
+### 3-3. サイトに反映する — **完了済み**
 
-```js
-STRIPE_LINK_MONTH: 'https://buy.stripe.com/xxxxx',
-STRIPE_LINK_YEAR:  'https://buy.stripe.com/yyyyy',
-```
+`config.js` に貼り済み。料金ページの「Proを申し込む」から購入できる状態。
 
-空のままだと料金ページのボタンは「準備中」のままで押せない（意図的な動作）。
+| プラン | 支払いリンク |
+|---|---|
+| 月払い ¥480 | https://buy.stripe.com/4gM8wI0lA03i5zl3dV9R602 |
+| 年払い ¥4,800 | https://buy.stripe.com/8x2bIU5FU2bqaTFbKr9R603 |
+
+**販売を一時停止したいとき**は `config.js` の2行を `''` に戻して push すれば「準備中」に戻る。
+
+> ⚠️ **銀行での取込テスト（第8節）が終わるまでは、SNSや広告での告知を控えること。**
+> リンクは有効なので、URLを知っている人は購入できる。
+
+> ⚠️ **Managed Payments が有効で、取引あたり 3.5% の手数料が上乗せされる**（通常のStripe手数料に加えて）。
+> Stripeがグローバルな税務コンプライアンスと不正利用対応を代行する仕組み。国内のみの販売なら
+> 外すことも検討する価値がある（¥480 の取引で ¥17 前後の差）。決済リンクの編集画面で切り替えられる。
 
 ---
 

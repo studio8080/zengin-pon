@@ -23,8 +23,8 @@
  */
 window.ZENGIN_CONFIG = {
   // Stripe 支払いリンク（空 = 準備中表示）
-  STRIPE_LINK_MONTH: '',
-  STRIPE_LINK_YEAR: '',
+  STRIPE_LINK_MONTH: 'https://buy.stripe.com/4gM8wI0lA03i5zl3dV9R602',
+  STRIPE_LINK_YEAR: 'https://buy.stripe.com/8x2bIU5FU2bqaTFbKr9R603',
 
   // Pro ライセンスの自動更新エンドポイント（月払いの更新を自動化する。空 = 完全オフライン）
   //   デプロイ後の URL 例:
