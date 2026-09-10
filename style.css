@@ -112,6 +112,7 @@ h3 { font-size: 17px; margin: 0 0 6px; }
 .plan li::before { content: '✔ '; color: var(--ok); font-weight: 700; }
 .plan li.no { color: var(--muted); } .plan li.no::before { content: '— '; color: #b9c0c9; }
 .plan .btn { margin-top: auto; }
+.btn.is-disabled { opacity: .55; cursor: not-allowed; pointer-events: none; }
 
 /* ---------- FAQ ---------- */
 .faq details { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 4px 18px; margin-bottom: 10px; }

@@ -2,6 +2,11 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#14305c">
 <title>料金プラン｜全銀ポン（全銀フォーマット変換ツール）</title>
 <meta name="description" content="全銀ポンの料金。無料プランは登録不要で1回20件まで。Proプランは月払い480円または年払い4,800円で件数無制限。他の方法との比較つき。">
 <link rel="canonical" href="https://zenginpon.kokokikaku.com/pricing.html">
@@ -32,7 +37,7 @@
         <div class="price" data-month="¥480" data-year="¥4,800">¥480<small id="unit">/月</small></div>
         <p class="hint" id="cycleNote" style="margin:0">月払い。いつでも解約可</p>
         <ul><li>件数無制限</li><li>Freeの全機能</li><li>列の割り当てテンプレートを保存・再利用</li><li>変換履歴（このブラウザ内に保存）</li><li>設定のバックアップ・復元</li><li>振込元プロファイルを複数保存（顧問先ごとの切替に）</li><li>メールサポート（2営業日以内）</li><li>新機能を優先利用</li></ul>
-        <a class="btn primary" href="#buy">Proを申し込む（準備中）</a></div>
+        <a class="btn primary" id="proCta" href="#buy">Proを申し込む（準備中）</a></div>
     </div>
     <p class="hint center" style="margin-top:18px">社労士・税理士事務所で顧問先の分をまとめて作る場合も Pro ひとつで足ります（振込元プロファイルを顧問先ごとに保存できます）。</p>
   </div>
@@ -78,6 +83,7 @@
     <p>無料プランは1回の変換で20件までです。それ以上の行があるファイルは、先頭20件だけが出力対象になります（残りの行は画面で確認できます）。制限は「何件でも試せるが、実運用で毎月使うなら有料」という考え方です。</p>
   </div>
 </section>
+<script src="config.js"></script>
 <script src="src/pricing.js"></script>
 <script src="src/site.js"></script>
 </body>

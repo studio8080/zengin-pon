@@ -5,8 +5,11 @@
 
 このリポジトリには **計画（このファイル）** と **動くMVP**（`index.html` + `src/`）が入っている。
 
+> 🚀 **公開・販売開始のためにあなたが手を動かす作業は [`docs/launch-checklist.md`](docs/launch-checklist.md) にまとめてある。**
+> DNS・特商法・Stripe・秘密鍵のバックアップ・Search Console。上から順に進めれば公開できる。
+
 ```
-zengin-fb/
+zengin-pon/
   index.html          画面（4ステップのウィザード: ファイル → 列の確認 → 振込元 → 確認・DL）
   style.css
   config.js           公開設定（Google連携のクライアントID等。秘密情報は置かない）

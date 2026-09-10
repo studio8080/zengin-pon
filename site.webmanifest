@@ -1,0 +1,15 @@
+{
+  "name": "全銀ポン — 全銀フォーマット変換ツール",
+  "short_name": "全銀ポン",
+  "description": "給与振込・総合振込のExcel／CSV／PDFを全銀フォーマット（FBデータ）に変換します。データはブラウザ内だけで処理します。",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fbfaf7",
+  "theme_color": "#14305c",
+  "lang": "ja",
+  "icons": [
+    { "src": "/assets/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/assets/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/assets/favicon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}
