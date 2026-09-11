@@ -115,7 +115,7 @@ Managed Payments は**作成時にしか切り替えられない**（既存リ�
 
 ---
 
-## 3-4. 月払い・年払いの自動化（Cloud Functions）— **デプロイ済み（2026-09-11）。Webhook だけ未作成**
+## 3-4. 月払い・年払いの自動化（Cloud Functions）— **設定完了（2026-09-11）。テストのみ未実施**
 
 ### 仕組み
 
@@ -142,29 +142,19 @@ Stripe（支払い成功）──webhook──▶ zenginponStripeWebhook
 | `config.js` の `LICENSE_API` | 済み |
 | `index.html` の CSP `connect-src` に関数のドメインを許可 | 済み。**消さないこと**（消すと更新が黙って失敗し、有料会員の Pro が30日で切れる） |
 | 外部からの動作確認（不正ID=400 / 未登録=404 / 他サイトからのCORS拒否 / 署名なしWebhook=400） | 済み |
-| **Stripe の Webhook 送信先** | **未作成** |
-| **`ZP_STRIPE_WEBHOOK_SECRET` の値** | **仮の値のまま** |
+| Stripe の Webhook 送信先（イベント4件、ペイロードはスナップショット） | 作成済み |
+| `ZP_STRIPE_WEBHOOK_SECRET` の値 | 本物の値（バージョン2）に入れ替え、関数も再デプロイ済み。仮の値のバージョン1は残っているが未使用 |
 
-> ⚠️ **Webhook が無い間は、購入してもキーが自動で届かない。** 申し込みが来たら4節の手動発行で対応する。
+> ⚠️ **テストが済むまでは、署名が正しく通るか未確認。** 申し込みが来てキーが届かない場合は、4節の手動発行で対応する。
 
 ### 残りの手順
 
-1. Stripe → Workbench → Webhook →「送信先を追加」
-   - 送信するイベント: `checkout.session.completed` / `invoice.paid` /
-     `customer.subscription.deleted` / `customer.subscription.updated`
-   - 送信先の種類: Webhook エンドポイント
-   - URL: `https://asia-northeast1-misefits.cloudfunctions.net/zenginponStripeWebhook`
-2. 作成後の画面で「署名シークレット」（`whsec_...`）を表示してコピーする
-3. リポジトリのフォルダで、シークレットを入れ直す（値を聞かれたら貼り付ける）
-   ```bash
-   firebase functions:secrets:set ZP_STRIPE_WEBHOOK_SECRET --project misefits
-   ```
-4. 再デプロイする（新しいシークレットは再デプロイで反映される）
-   ```bash
-   firebase deploy --only functions:zenginpon --project misefits
-   ```
-5. 自分でテスト購入して、キーがメールで届く → 「⭐ Pro」で有効になる → Stripe で解約する →
-   数日以内に無料プランへ戻る、を確認する
+1. Stripe の Webhook の画面で「テストイベントを送信」→ `checkout.session.completed` を送る。
+   配信結果が成功（200）なら署名の設定は正しい。失敗（400）なら署名シークレットの貼り間違い。
+   ※ テストイベントは実在しないサブスクを指すので、関数側で「処理に失敗（500）」になることがある。
+   **400 でなければ署名は通っている**。
+2. 自分でテスト購入して、キーがメールで届く → 「⭐ Pro」で有効になる → Stripe で解約する →
+   無料プランへ戻る、を確認する
 
 ### メモ
 
