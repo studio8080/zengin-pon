@@ -30,7 +30,7 @@ window.ZENGIN_CONFIG = {
   //   デプロイ後の URL 例:
   //   https://asia-northeast1-misefits.cloudfunctions.net/zenginponLicense
   //   送信されるのはライセンスID（英数字12桁）だけ。振込データは一切送らない。
-  LICENSE_API: '',
+  LICENSE_API: 'https://asia-northeast1-misefits.cloudfunctions.net/zenginponLicense',
 
   // Google アナリティクス（GA4 の測定ID "G-XXXXXXX"。空 = 解析タグを読み込まない）
   // 空のあいだは security.html / privacy.html の「アクセス解析」の記述が実態と合わないので、

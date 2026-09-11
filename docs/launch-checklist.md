@@ -115,63 +115,66 @@ Managed Payments は**作成時にしか切り替えられない**（既存リ�
 
 ---
 
-## 3-4. 月払いを自動化する（Cloud Functions のデプロイ）
-
-年払いだけで始めるなら飛ばしてよい。**月払いを売るならここまでやる**（解約されたら止まる仕組み）。
+## 3-4. 月払い・年払いの自動化（Cloud Functions）— **デプロイ済み（2026-09-11）。Webhook だけ未作成**
 
 ### 仕組み
 
 ```
 Stripe（支払い成功）──webhook──▶ zenginponStripeWebhook
-                                  ├─ キーを発行（期限＝今期末＋5日）
+                                  ├─ キーを発行
                                   ├─ Firestore に保存
                                   └─ 購入者にメール
 
-ブラウザ（期限10日前）──ライセンスIDのみ──▶ zenginponLicense ──▶ 新しいキー
+ブラウザ（期限10日前 か 前回確認から7日）──ライセンスIDのみ──▶ zenginponLicense
+                                  └─ Stripe に契約状態を直接照会 ─▶ 新しいキー（契約中）／ 410（解約済み）
 ```
 
 キーの期限は `min(契約期間の末日+3日, 今日+30日)`。契約中は取り直すたびに延びるが、解約されると
 更新エンドポイントが `410` を返し、**ブラウザが手元のキーを削除して無料プランに戻る**。
-ブラウザは「期限が10日以内」または「前回の確認から7日以上」で取り直すので、解約は最長でも
-1週間ほどで反映される（完全にオフラインで使い続けた場合は、手元のキーの期限=最長30日まで）。
+月払い・年払いとも Stripe のサブスクなので**自動更新は Stripe 側で行われる**。
 
-**この節をやらないと「解約しても使えてしまう」状態のままになる。** 有料販売を始める前に済ませること。
+### 現状
 
-### 手順
+| 項目 | 状態 |
+|---|---|
+| 関数のデプロイ（Firebase `misefits` / codebase `zenginpon` / asia-northeast1） | 済み |
+| シークレット6つ（`STRIPE_SECRET_KEY` `SMTP_USER` `MAIL_FROM` `SMTP_PASS` `ZP_LICENSE_PRIVATE_KEY` `ZP_STRIPE_WEBHOOK_SECRET`） | 済み（すべて ENABLED） |
+| `config.js` の `LICENSE_API` | 済み |
+| `index.html` の CSP `connect-src` に関数のドメインを許可 | 済み。**消さないこと**（消すと更新が黙って失敗し、有料会員の Pro が30日で切れる） |
+| 外部からの動作確認（不正ID=400 / 未登録=404 / 他サイトからのCORS拒否 / 署名なしWebhook=400） | 済み |
+| **Stripe の Webhook 送信先** | **未作成** |
+| **`ZP_STRIPE_WEBHOOK_SECRET` の値** | **仮の値のまま** |
 
-既存の Firebase プロジェクト **`misefits`**（Blaze 設定済み）に、別コードベース `zenginpon` として相乗りする。
-新しいプロジェクトも課金設定も要らない。**コードベースを分けてあるので Misefits の関数は消えない。**
+> ⚠️ **Webhook が無い間は、購入してもキーが自動で届かない。** 申し込みが来たら4節の手動発行で対応する。
 
-1. 依存を入れる
-   ```bash
-   cd functions && npm install && cd ..
-   ```
-2. シークレットを登録する（`misefits` プロジェクトに追加される）
-   ```bash
-   firebase functions:secrets:set ZP_LICENSE_PRIVATE_KEY
-   ```
-   → `C:\Users\chaha\.zengin-pon\license-private.pem` の中身を**全文貼り付け**（`-----BEGIN` から `-----END PRIVATE KEY-----` まで）
-   ```bash
-   firebase functions:secrets:set ZP_STRIPE_WEBHOOK_SECRET
-   ```
-   → 手順4で Stripe が出す `whsec_...`（先に空で登録し、あとで入れ直してもよい）
+### 残りの手順
 
-   `STRIPE_SECRET_KEY` `SMTP_USER` `MAIL_FROM` `SMTP_PASS` は Misefits で登録済みのものが共有される。
-3. `functions/.env` を作る（`.env.example` をコピー。`SMTP_HOST` と `SMTP_PORT` を書く）
-4. デプロイする
-   ```bash
-   firebase deploy --only functions:zenginpon
-   ```
-   → 2つのURLが表示される。控える。
-   - `https://asia-northeast1-misefits.cloudfunctions.net/zenginponStripeWebhook`
-   - `https://asia-northeast1-misefits.cloudfunctions.net/zenginponLicense`
-5. Stripe → 開発者 → Webhook → エンドポイントを追加
-   - URL: 上の `zenginponStripeWebhook`
+1. Stripe → Workbench → Webhook →「送信先を追加」
    - 送信するイベント: `checkout.session.completed` / `invoice.paid` /
      `customer.subscription.deleted` / `customer.subscription.updated`
-   - 表示された署名シークレット `whsec_...` を手順2の `ZP_STRIPE_WEBHOOK_SECRET` に入れて再デプロイ
-6. `config.js` の `LICENSE_API` に `zenginponLicense` のURLを入れて push
-7. テストモードで1回購入し、キーがメールで届くこと・「⭐ Pro」で有効になることを確認する
+   - 送信先の種類: Webhook エンドポイント
+   - URL: `https://asia-northeast1-misefits.cloudfunctions.net/zenginponStripeWebhook`
+2. 作成後の画面で「署名シークレット」（`whsec_...`）を表示してコピーする
+3. リポジトリのフォルダで、シークレットを入れ直す（値を聞かれたら貼り付ける）
+   ```bash
+   firebase functions:secrets:set ZP_STRIPE_WEBHOOK_SECRET --project misefits
+   ```
+4. 再デプロイする（新しいシークレットは再デプロイで反映される）
+   ```bash
+   firebase deploy --only functions:zenginpon --project misefits
+   ```
+5. 自分でテスト購入して、キーがメールで届く → 「⭐ Pro」で有効になる → Stripe で解約する →
+   数日以内に無料プランへ戻る、を確認する
+
+### メモ
+
+- デプロイの最後に出る「cleanup policy を設定できませんでした」というエラーは、関数の動作とは無関係。
+  古いコンテナイメージが溜まって少額の課金になるという注意。気になれば次を実行する。
+  ```bash
+  firebase functions:artifacts:setpolicy --project misefits --location asia-northeast1
+  ```
+- Firebase CLI が「Fatal process out of memory」で落ちたら、PC のメモリ枯渇が原因。再起動で直る。
+- リポジトリの外で実行すると「No currently active project」になる。`--project misefits` を付けるか、リポジトリで実行する。
 
 ---
 
