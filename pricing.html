@@ -2,11 +2,25 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- site:head -->
 <link rel="icon" href="/favicon.ico" sizes="32x32">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#14305c">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="format-detection" content="telephone=no">
+<meta property="og:site_name" content="全銀ポン">
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="料金プラン｜全銀ポン（全銀フォーマット変換ツール）">
+<meta property="og:description" content="全銀ポンの料金。無料プランは登録不要で1回20件まで。Proプランは月払い480円または年払い4,800円で件数無制限。他の方法との比較つき。">
+<meta property="og:url" content="https://zenginpon.kokokikaku.com/pricing.html">
+<meta property="og:image" content="https://zenginpon.kokokikaku.com/assets/ogp.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<!-- /site:head -->
 <title>料金プラン｜全銀ポン（全銀フォーマット変換ツール）</title>
 <meta name="description" content="全銀ポンの料金。無料プランは登録不要で1回20件まで。Proプランは月払い480円または年払い4,800円で件数無制限。他の方法との比較つき。">
 <link rel="canonical" href="https://zenginpon.kokokikaku.com/pricing.html">
@@ -19,11 +33,34 @@
 .billing .save { font-size: 11px; color: var(--accent); margin-left: 4px; }
 .plans.two { max-width: 720px; margin: 0 auto; }
 </style>
+<!-- site:ld -->
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://zenginpon.kokokikaku.com/"},{"@type":"ListItem","position":2,"name":"料金プラン","item":"https://zenginpon.kokokikaku.com/pricing.html"}]}</script>
+<!-- /site:ld -->
 </head>
 <body>
+<!-- site:header -->
+<a class="skip-link" href="#main">本文へ移動</a>
+<header class="site-head">
+  <div class="wrap in">
+    <a class="brand" href="/"><svg class="logo" viewBox="0 0 40 40" aria-hidden="true" focusable="false"><rect x="4" y="6" width="32" height="28" rx="6" fill="#14305c"/><path d="M11 15h18M11 20h18M11 25h11" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/><circle cx="29" cy="27" r="6" fill="#ff7a1a"/><path d="M26.5 27l1.8 1.8L32 25.6" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg><span><b>全銀ポン</b><small>全銀フォーマット変換ツール</small></span></a>
+    <button class="nav-toggle" type="button" aria-label="メニューを開く" aria-expanded="false" aria-controls="site-nav">☰</button>
+    <nav class="nav" id="site-nav" aria-label="サイト内メニュー">
+      <a href="/guide.html">使い方</a>
+      <a href="/zengin-format.html">全銀フォーマットとは</a>
+      <a href="/free-tools/">無料ツール</a>
+      <a href="/pricing.html" class="is-current" aria-current="page">料金</a>
+      <a href="/security.html">安心・安全</a>
+      <a href="/faq.html">よくある質問</a>
+      <a class="cta" href="/#tool">無料で変換する</a>
+    </nav>
+  </div>
+</header>
+<nav class="crumbs wrap" aria-label="現在位置"><ol><li><a href="/">ホーム</a></li><li aria-current="page">料金プラン</li></ol></nav>
+<span id="main" tabindex="-1"></span>
+<!-- /site:header -->
 <section class="section">
   <div class="wrap">
-    <h2>料金プラン</h2>
+    <h1 class="page-h1">料金プラン</h1>
     <p class="sub">まずは無料で。毎月使うならPro。月払いでも年払いでも、いつでも解約できます。すべて税込です。</p>
     <p class="center"><span class="billing" role="group" aria-label="支払い方法">
       <button type="button" class="on" data-cycle="month">月払い</button>
@@ -38,6 +75,18 @@
         <p class="hint" id="cycleNote" style="margin:0">月払い。いつでも解約可</p>
         <ul><li>件数無制限</li><li>Freeの全機能</li><li>列の割り当てテンプレートを保存・再利用</li><li>変換履歴（このブラウザ内に保存）</li><li>設定のバックアップ・復元</li><li>振込元プロファイルを複数保存（顧問先ごとの切替に）</li><li>メールサポート（2営業日以内）</li><li>新機能を優先利用</li></ul>
         <a class="btn primary" id="proCta" href="#buy">Proを申し込む（準備中）</a></div>
+    </div>
+    <div class="confirm-box" id="confirm">
+      <h3>お申し込み前の確認事項</h3>
+      <table>
+        <tr><th>提供するもの</th><td>全銀ポン Pro の利用権（1契約につき1名、ブラウザ2台まで）。お支払いの確認後、ライセンスキーをメールでお送りします</td></tr>
+        <tr><th>料金</th><td>月払い 480円（税込）／年払い 4,800円（税込）。ほかに費用はかかりません</td></tr>
+        <tr><th>支払いの時期と方法</th><td>クレジットカード（Stripe）。お申し込み時に初回分を決済し、以後は<strong>毎月（年払いは毎年）同じ日に、同じ金額を自動で決済</strong>します</td></tr>
+        <tr><th>契約期間</th><td><strong>期間の定めのない自動更新</strong>です。解約のお手続きをされるまで継続します</td></tr>
+        <tr><th>解約の方法</th><td>領収書メールにある管理画面のリンク、または <a href="mailto:studio@kokokikaku.com">studio@kokokikaku.com</a> へのメールで、いつでも解約できます。次回の決済日の前日までのお手続きで、次回分は請求されません</td></tr>
+        <tr><th>解約後</th><td>お支払い済みの期間の末日まで使えます。その後は自動的に無料プランに戻ります。年払いの途中解約による日割りの返金はありません</td></tr>
+        <tr><th>返金</th><td>初回決済から7日以内のお申し出に限り、全額を返金します</td></tr>
+      </table>
     </div>
     <p class="hint center" style="margin-top:18px">社労士・税理士事務所で顧問先の分をまとめて作る場合も Pro ひとつで足ります（振込元プロファイルを顧問先ごとに保存できます）。</p>
   </div>
@@ -59,11 +108,12 @@
         <tr><th>データの保存先</th><td class="y">ブラウザ内のみ（送信しない）</td><td>PC内（マクロの警告あり）</td><td>クラウド</td><td>銀行</td></tr>
         <tr><th>複数の会社（顧問先）</th><td class="y">Proでプロファイル切替</td><td class="n">ファイルを分けて管理</td><td>会社ごとに契約</td><td class="n">—</td></tr>
         <tr><th>Mac・スマホ</th><td class="y">ブラウザがあれば</td><td class="n">Windows Excelのみが多い</td><td class="y">対応</td><td class="y">対応</td></tr>
-        <tr><th>広告</th><td class="y">なし</td><td>あるものが多い</td><td>なし</td><td>なし</td></tr>
-        <tr><th>所要時間（30件）</th><td class="y">約1分</td><td>5〜10分</td><td>マスタ整備後は数分</td><td>30〜60分</td></tr>
+        <tr><th>広告の表示</th><td class="y">なし</td><td>ツールによる</td><td>なし</td><td>なし</td></tr>
+        <tr><th>作業のしかた</th><td class="y">いまの表を読み込んで確認するだけ</td><td>雛形に入力し直してから変換</td><td>振込先をソフトに登録してから出力</td><td>1件ずつ画面に入力</td></tr>
       </tbody>
     </table>
     </div>
+    <p class="hint">この比較は、各方法の一般的な特徴を当社が公開情報をもとに整理したものです（2026年9月時点）。個々の製品・サービスによって内容は異なります。</p>
     <p class="hint">クラウド会計・給与ソフトを既にお使いで、その中でFBデータが出ている方には当サービスは不要です。「Excelで給与計算している」「支払リストがExcel」「税理士さんからExcelが届く」方向けです。</p>
   </div>
 </section>
@@ -85,6 +135,43 @@
     <p>無料プランは1回の変換で20件までです。それ以上の行があるファイルは、先頭20件だけが出力対象になります（残りの行は画面で確認できます）。制限は「何件でも試せるが、実運用で毎月使うなら有料」という考え方です。</p>
   </div>
 </section>
+<!-- site:footer -->
+<footer class="site-foot">
+  <div class="wrap in">
+    <div>
+      <h2 class="foot-h">全銀ポン</h2>
+      <p>給与振込・総合振込の Excel／CSV／PDF／Googleスプレッドシートを、ネットバンキングに取り込める全銀フォーマットへ。データはブラウザの中だけで処理します。</p>
+      <p class="made-by">企画・開発・運営：<a href="https://kokokikaku.com/" rel="noopener">ここ企画</a>（<a href="/about.html">運営者情報</a>）</p>
+      <p class="made-by">ここ企画のほかの道具：<a href="https://misefits.kokokikaku.com/" rel="noopener">MiseFits（店舗レイアウト）</a>・<a href="https://menufits.kokokikaku.com/" rel="noopener">MenuFits（メニュー表）</a></p>
+    </div>
+    <div>
+      <h2 class="foot-h">使う</h2>
+      <a href="/#tool">全銀フォーマットに変換する</a>
+      <a href="/guide.html">使い方・銀行別の取込方法</a>
+      <a href="/pricing.html">料金プラン</a>
+      <a href="/faq.html">よくある質問</a>
+    </div>
+    <div>
+      <h2 class="foot-h">調べる・無料ツール</h2>
+      <a href="/zengin-format.html">全銀フォーマットとは（仕様の解説）</a>
+      <a href="/banks/">銀行コード・支店コード検索</a>
+      <a href="/free-tools/yucho.html">ゆうちょ 記号番号の変換</a>
+      <a href="/free-tools/kana.html">口座名義のカナ変換・法人略語</a>
+    </div>
+    <div>
+      <h2 class="foot-h">安心・規約</h2>
+      <a href="/security.html">セキュリティとデータの扱い</a>
+      <a href="/legal.html">法令上の位置づけ</a>
+      <a href="/terms.html">利用規約</a>
+      <a href="/privacy.html">プライバシーポリシー</a>
+      <a href="/tokushoho.html">特定商取引法に基づく表記</a>
+      <a href="/accessibility.html">アクセシビリティ</a>
+      <a href="/about.html">運営者情報・お問い合わせ</a>
+    </div>
+  </div>
+  <div class="wrap copy">© ここ企画 — 本サービスは振込データ（ファイル）の作成のみを行い、送金は行いません。振込内容の最終確認はご自身のネットバンキングで行ってください。</div>
+</footer>
+<!-- /site:footer -->
 <script src="config.js"></script>
 <script src="src/pricing.js"></script>
 <script src="src/site.js"></script>

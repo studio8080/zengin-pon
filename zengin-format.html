@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- site:head -->
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#14305c">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="format-detection" content="telephone=no">
+<meta property="og:site_name" content="全銀ポン">
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="全銀フォーマットとは？レコードの仕様・桁数・使える文字をやさしく解説｜全銀ポン">
+<meta property="og:description" content="全銀フォーマット（全銀協規定フォーマット・FBデータ）は、振込データを銀行に渡すための1行120バイトの固定長ファイルです。ヘッダー・データ・トレーラ・エンドの4種類のレコードの桁数、使える文字、よくある取込エラーの原因を表でまとめました。">
+<meta property="og:url" content="https://zenginpon.kokokikaku.com/zengin-format.html">
+<meta property="og:image" content="https://zenginpon.kokokikaku.com/assets/ogp.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<!-- /site:head -->
+<title>全銀フォーマットとは？レコードの仕様・桁数・使える文字をやさしく解説｜全銀ポン</title>
+<meta name="description" content="全銀フォーマット（全銀協規定フォーマット・FBデータ）は、振込データを銀行に渡すための1行120バイトの固定長ファイルです。ヘッダー・データ・トレーラ・エンドの4種類のレコードの桁数、使える文字、よくある取込エラーの原因を表でまとめました。">
+<link rel="canonical" href="https://zenginpon.kokokikaku.com/zengin-format.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"TechArticle","headline":"全銀フォーマットとは？レコードの仕様・桁数・使える文字をやさしく解説","description":"全銀フォーマット（全銀協規定フォーマット・FBデータ）のレコード構成、桁数、使える文字、取込エラーの原因の解説。","inLanguage":"ja","datePublished":"2026-09-18","dateModified":"2026-09-18","author":{"@type":"Organization","name":"ここ企画","url":"https://kokokikaku.com/"},"publisher":{"@type":"Organization","name":"ここ企画","url":"https://kokokikaku.com/"},"mainEntityOfPage":"https://zenginpon.kokokikaku.com/zengin-format.html"}
+</script>
+<!-- site:ld -->
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://zenginpon.kokokikaku.com/"},{"@type":"ListItem","position":2,"name":"全銀フォーマットとは","item":"https://zenginpon.kokokikaku.com/zengin-format.html"}]}</script>
+<!-- /site:ld -->
+</head>
+<body>
+<!-- site:header -->
+<a class="skip-link" href="#main">本文へ移動</a>
+<header class="site-head">
+  <div class="wrap in">
+    <a class="brand" href="/"><svg class="logo" viewBox="0 0 40 40" aria-hidden="true" focusable="false"><rect x="4" y="6" width="32" height="28" rx="6" fill="#14305c"/><path d="M11 15h18M11 20h18M11 25h11" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/><circle cx="29" cy="27" r="6" fill="#ff7a1a"/><path d="M26.5 27l1.8 1.8L32 25.6" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg><span><b>全銀ポン</b><small>全銀フォーマット変換ツール</small></span></a>
+    <button class="nav-toggle" type="button" aria-label="メニューを開く" aria-expanded="false" aria-controls="site-nav">☰</button>
+    <nav class="nav" id="site-nav" aria-label="サイト内メニュー">
+      <a href="/guide.html">使い方</a>
+      <a href="/zengin-format.html" class="is-current" aria-current="page">全銀フォーマットとは</a>
+      <a href="/free-tools/">無料ツール</a>
+      <a href="/pricing.html">料金</a>
+      <a href="/security.html">安心・安全</a>
+      <a href="/faq.html">よくある質問</a>
+      <a class="cta" href="/#tool">無料で変換する</a>
+    </nav>
+  </div>
+</header>
+<nav class="crumbs wrap" aria-label="現在位置"><ol><li><a href="/">ホーム</a></li><li aria-current="page">全銀フォーマットとは</li></ol></nav>
+<span id="main" tabindex="-1"></span>
+<!-- /site:header -->
+<article class="article">
+  <h1>全銀フォーマットとは？</h1>
+  <p class="updated">最終更新: 2026年9月18日 ／ 執筆: ここ企画（全銀ポン開発チーム）</p>
+
+  <div class="callout ok answer">
+    <p><strong>全銀フォーマットは、振込の一覧を銀行に渡すための共通ファイル形式です。</strong>全国銀行協会（全銀協）が定めたもので、1行がちょうど120バイトの固定長テキストになっています。「全銀協規定フォーマット」「FBデータ」「全銀形式」「振込データファイル」は、どれも同じものを指します。</p>
+    <p>メガバンク・地方銀行・信用金庫・ネット銀行など、法人向けネットバンキングの「振込データ取込（ファイル受付）」は、ほぼすべてこの形式に対応しています。</p>
+  </div>
+
+  <nav class="toc" aria-label="このページの目次">
+    <strong>目次</strong>
+    <ol>
+      <li><a href="#overview">どんなときに使うか</a></li>
+      <li><a href="#structure">ファイルの全体像（4種類のレコード）</a></li>
+      <li><a href="#header">ヘッダーレコードの桁数</a></li>
+      <li><a href="#data">データレコードの桁数</a></li>
+      <li><a href="#trailer">トレーラレコードとエンドレコード</a></li>
+      <li><a href="#chars">使える文字・使えない文字</a></li>
+      <li><a href="#rules">数字と文字の埋め方のルール</a></li>
+      <li><a href="#errors">取込エラーのよくある原因</a></li>
+      <li><a href="#make">Excelから作る3つの方法</a></li>
+      <li><a href="#terms">用語集</a></li>
+    </ol>
+  </nav>
+
+  <h2 id="overview">1. どんなときに使うか</h2>
+  <p>振込先が数件ならネットバンキングの画面に手で入力できますが、給与や取引先への支払いのように毎月何十件もあると、入力の手間と打ち間違いが問題になります。そこで、振込先と金額を1つのファイルにまとめて銀行に渡す方法が用意されています。そのファイルの書き方を決めたものが全銀フォーマットです。</p>
+  <table>
+    <tr><th>種類</th><th>種別コード</th><th>用途</th></tr>
+    <tr><td>総合振込</td><td><code>21</code></td><td>取引先への支払い、経費の精算など</td></tr>
+    <tr><td>給与振込</td><td><code>11</code></td><td>従業員への毎月の給与</td></tr>
+    <tr><td>賞与振込</td><td><code>12</code></td><td>従業員へのボーナス</td></tr>
+  </table>
+  <p class="hint">公務員の給与・賞与には <code>71</code>・<code>72</code> という別の種別コードが使われます。口座振替（引落）にも全銀フォーマットがありますが、項目が異なります。このページでは振込（総合・給与・賞与）を扱います。</p>
+
+  <h2 id="structure">2. ファイルの全体像（4種類のレコード）</h2>
+  <p>ファイルは次の4種類の行（レコード）でできています。どの行も120バイトで、先頭の1桁（データ区分）で種類を見分けます。</p>
+  <table>
+    <tr><th>順番</th><th>レコード</th><th>データ区分</th><th>行数</th><th>中身</th></tr>
+    <tr><td>1</td><td>ヘッダーレコード</td><td><code>1</code></td><td>1行</td><td>振込元（自社）の情報と振込指定日</td></tr>
+    <tr><td>2</td><td>データレコード</td><td><code>2</code></td><td>振込の件数分</td><td>振込先の口座・名義・金額</td></tr>
+    <tr><td>3</td><td>トレーラレコード</td><td><code>8</code></td><td>1行</td><td>合計件数と合計金額</td></tr>
+    <tr><td>4</td><td>エンドレコード</td><td><code>9</code></td><td>1行</td><td>ファイルの終わりの印</td></tr>
+  </table>
+  <p>実際のファイルは次のように見えます（給与振込・2件の例。右側の空白は省略）。</p>
+  <pre class="mono out" aria-label="全銀フォーマットのファイルの例">11101234567890ｶ)ｺｺｷｶｸ                                 09250005               001               11234567
+20005               001                   11234567ﾔﾏﾀﾞ ﾀﾛｳ                      0000285600000000000010000000010
+20009               123                   17654321ｻﾄｳ ﾊﾅｺ                       0000243100000000000020000000010
+8000002000000528700
+9</pre>
+
+  <h2 id="header">3. ヘッダーレコードの桁数</h2>
+  <div class="tablewrap"><table>
+    <thead><tr><th>項目</th><th>桁数</th><th>型</th><th>内容</th></tr></thead>
+    <tbody>
+    <tr><td>データ区分</td><td>1</td><td>数字</td><td><code>1</code></td></tr>
+    <tr><td>種別コード</td><td>2</td><td>数字</td><td><code>21</code>総合 ／ <code>11</code>給与 ／ <code>12</code>賞与</td></tr>
+    <tr><td>コード区分</td><td>1</td><td>数字</td><td><code>0</code>＝JIS（パソコンで作る場合はこれ）／ <code>1</code>＝EBCDIC</td></tr>
+    <tr><td>振込依頼人コード</td><td>10</td><td>数字</td><td>銀行から通知される番号。「委託者コード」「企業コード」とも</td></tr>
+    <tr><td>振込依頼人名</td><td>40</td><td>文字</td><td>半角カナ</td></tr>
+    <tr><td>振込指定日</td><td>4</td><td>数字</td><td>月日（MMDD）。例: 9月25日 → <code>0925</code></td></tr>
+    <tr><td>仕向銀行番号</td><td>4</td><td>数字</td><td>振込元の銀行コード</td></tr>
+    <tr><td>仕向銀行名</td><td>15</td><td>文字</td><td>半角カナ。空白でも可</td></tr>
+    <tr><td>仕向支店番号</td><td>3</td><td>数字</td><td>振込元の支店コード</td></tr>
+    <tr><td>仕向支店名</td><td>15</td><td>文字</td><td>半角カナ。空白でも可</td></tr>
+    <tr><td>預金種目</td><td>1</td><td>数字</td><td><code>1</code>普通 ／ <code>2</code>当座</td></tr>
+    <tr><td>口座番号</td><td>7</td><td>数字</td><td>振込元の口座番号</td></tr>
+    <tr><td>ダミー</td><td>17</td><td>文字</td><td>空白</td></tr>
+    <tr><th>合計</th><th>120</th><th></th><th></th></tr>
+    </tbody>
+  </table></div>
+
+  <h2 id="data">4. データレコードの桁数</h2>
+  <p>振込1件につき1行です。後半の項目は、総合振込と給与・賞与振込で意味が変わります。</p>
+  <div class="tablewrap"><table>
+    <thead><tr><th>項目</th><th>桁数</th><th>型</th><th>総合振込（21）</th><th>給与・賞与振込（11・12）</th></tr></thead>
+    <tbody>
+    <tr><td>データ区分</td><td>1</td><td>数字</td><td colspan="2"><code>2</code></td></tr>
+    <tr><td>被仕向銀行番号</td><td>4</td><td>数字</td><td colspan="2">振込先の銀行コード</td></tr>
+    <tr><td>被仕向銀行名</td><td>15</td><td>文字</td><td colspan="2">半角カナ。空白でも可</td></tr>
+    <tr><td>被仕向支店番号</td><td>3</td><td>数字</td><td colspan="2">振込先の支店コード</td></tr>
+    <tr><td>被仕向支店名</td><td>15</td><td>文字</td><td colspan="2">半角カナ。空白でも可</td></tr>
+    <tr><td>手形交換所番号</td><td>4</td><td>数字</td><td colspan="2">使わない（空白）</td></tr>
+    <tr><td>預金種目</td><td>1</td><td>数字</td><td><code>1</code>普通 <code>2</code>当座 <code>4</code>貯蓄 <code>9</code>その他</td><td><code>1</code>普通 <code>2</code>当座 のみ</td></tr>
+    <tr><td>口座番号</td><td>7</td><td>数字</td><td colspan="2">7桁に満たなければ先頭に0</td></tr>
+    <tr><td>受取人名</td><td>30</td><td>文字</td><td colspan="2">半角カナ。口座名義と一致させる</td></tr>
+    <tr><td>振込金額</td><td>10</td><td>数字</td><td colspan="2">円単位。先頭に0</td></tr>
+    <tr><td>新規コード</td><td>1</td><td>数字</td><td colspan="2"><code>0</code>その他 ／ <code>1</code>第1回振込分 ／ <code>2</code>変更分</td></tr>
+    <tr><td>顧客コード1 ／ 社員番号</td><td>10</td><td>数字</td><td>顧客コード1（自由に使える）</td><td>社員番号</td></tr>
+    <tr><td>顧客コード2 ／ 所属コード</td><td>10</td><td>数字</td><td>顧客コード2（自由に使える）</td><td>所属コード</td></tr>
+    <tr><td>振込指定区分</td><td>1</td><td>数字</td><td><code>7</code>電信 ／ <code>8</code>文書</td><td rowspan="3">ダミー 9桁（空白）</td></tr>
+    <tr><td>識別表示</td><td>1</td><td>文字</td><td><code>Y</code>＝EDI情報あり ／ 空白</td></tr>
+    <tr><td>ダミー</td><td>7</td><td>文字</td><td>空白</td></tr>
+    <tr><th>合計</th><th>120</th><th></th><th colspan="2"></th></tr>
+    </tbody>
+  </table></div>
+  <div class="callout">銀行が振込先を判定するのに使うのは<strong>銀行コード・支店コード・預金種目・口座番号・受取人名</strong>です。銀行名と支店名の欄は空白でもよく、入れた場合もコードのほうが優先されます。コードの調べ方は<a href="/banks/">銀行コード・支店コード検索</a>をご利用ください。</div>
+
+  <h2 id="trailer">5. トレーラレコードとエンドレコード</h2>
+  <div class="tablewrap"><table>
+    <thead><tr><th>レコード</th><th>項目</th><th>桁数</th><th>内容</th></tr></thead>
+    <tbody>
+    <tr><td rowspan="4">トレーラ</td><td>データ区分</td><td>1</td><td><code>8</code></td></tr>
+    <tr><td>合計件数</td><td>6</td><td>データレコードの行数。先頭に0</td></tr>
+    <tr><td>合計金額</td><td>12</td><td>振込金額の合計。先頭に0</td></tr>
+    <tr><td>ダミー</td><td>101</td><td>空白</td></tr>
+    <tr><td rowspan="2">エンド</td><td>データ区分</td><td>1</td><td><code>9</code></td></tr>
+    <tr><td>ダミー</td><td>119</td><td>空白</td></tr>
+    </tbody>
+  </table></div>
+  <p>トレーラの合計件数・合計金額がデータレコードと合わないと、銀行側でエラーになります。行を手で消したり足したりしたときに起きやすい間違いです。</p>
+
+  <h2 id="chars">6. 使える文字・使えない文字</h2>
+  <table>
+    <tr><th>使える</th><td>数字 <code>0-9</code>、英大文字 <code>A-Z</code>、半角カナ（<code>ｱ</code>〜<code>ﾝ</code>、濁点 <code>ﾞ</code>、半濁点 <code>ﾟ</code>）、空白、記号 <code>( ) - . / ¥ ｢ ｣</code></td></tr>
+    <tr><th>使えない</th><td>漢字、ひらがな、全角カナ、全角英数、英小文字、中点「・」、長音の全角「ー」</td></tr>
+  </table>
+  <ul>
+    <li><strong>濁点は1文字として数えます。</strong>「ダ」は <code>ﾀ</code> と <code>ﾞ</code> の2文字です。受取人名の30桁はこの数え方での30文字です。</li>
+    <li><strong>小さい「ャュョッ」は大きい文字で書く</strong>のが銀行の慣例です（例: キャノン → <code>ｷﾔﾉﾝ</code>）。口座名義もこの形で登録されていることが多くあります。</li>
+    <li><strong>法人名は略語にします。</strong>先頭の「株式会社」は <code>ｶ)</code>、末尾なら <code>(ｶ</code>、途中なら <code>(ｶ)</code> です。ほかの略語は<a href="/free-tools/kana.html#abbr">法人略語の一覧</a>にまとめています。</li>
+    <li>文字コードは JIS X 0201（Shift_JIS の1バイト部分）です。UTF-8 で保存すると半角カナが3バイトになり、120バイトに収まらなくなります。</li>
+  </ul>
+  <p>名義を1件ずつ確かめたいときは、<a href="/free-tools/kana.html">口座名義のカナ変換ツール</a>で、使えない文字が残っていないかを調べられます。</p>
+
+  <h2 id="rules">7. 数字と文字の埋め方のルール</h2>
+  <table>
+    <tr><th>型</th><th>詰め方</th><th>余りの埋め方</th><th>例（7桁の口座番号に 12345）</th></tr>
+    <tr><td>数字項目</td><td>右詰め</td><td>先頭を <code>0</code> で埋める</td><td><code>0012345</code></td></tr>
+    <tr><td>文字項目</td><td>左詰め</td><td>後ろを空白で埋める</td><td><code>ﾔﾏﾀﾞ ﾀﾛｳ</code> ＋ 空白21個（計30桁）</td></tr>
+  </table>
+  <p>Excelで銀行コード「0005」が「5」になってしまっていても、4桁になるよう先頭に0を足せば同じ意味です。</p>
+
+  <h2 id="errors">8. 取込エラーのよくある原因</h2>
+  <div class="tablewrap"><table>
+    <thead><tr><th>銀行の画面のメッセージ例</th><th>原因</th><th>直し方</th></tr></thead>
+    <tbody>
+    <tr><td>レコード長が不正／フォーマットエラー</td><td>1行が120バイトでない。UTF-8で保存した、Excelで開いて保存し直した、改行の指定が違う</td><td>文字コードをJIS（Shift_JIS）にする。改行の有無を銀行の指定に合わせる</td></tr>
+    <tr><td>依頼人コードが一致しない</td><td>ヘッダーの振込依頼人コードが、ネットバンキングの登録と違う</td><td>銀行の「企業情報」「委託者情報」の画面で10桁の番号を確認する</td></tr>
+    <tr><td>使用できない文字が含まれる</td><td>受取人名に漢字・全角・小文字・「・」がある</td><td>半角カナに直す。中点は <code>.</code> にするか取り除く</td></tr>
+    <tr><td>金融機関・支店が存在しない</td><td>コードの打ち間違い、または統廃合でコードが変わった</td><td><a href="/banks/">銀行コード検索</a>で確認する</td></tr>
+    <tr><td>合計件数・合計金額の不一致</td><td>データ行を手で増減した</td><td>トレーラレコードを計算し直す（作り直すのが確実）</td></tr>
+    <tr><td>振込指定日が不正</td><td>土日祝・年末年始、または受付の締めを過ぎた日付</td><td>銀行営業日を指定する。締め時刻は銀行ごとに異なる</td></tr>
+    </tbody>
+  </table></div>
+  <p class="hint">改行については、各行の末尾に CR+LF を付ける銀行が多数派ですが、「改行なしで120バイトを連続させる」指定の金融機関もあります。拡張子（.txt / .dat など）の指定がある場合もあります。</p>
+
+  <h2 id="make">9. Excelから作る3つの方法</h2>
+  <table>
+    <tr><th>方法</th><th>向いている人</th><th>注意点</th></tr>
+    <tr><td><strong>変換ツールを使う</strong></td><td>いまのExcelをそのまま使いたい人</td><td><a href="/#tool">全銀ポン</a>は、列の並びや見出しが違う表でもそのまま読み込めます。20件までは登録なしで無料です</td></tr>
+    <tr><td>銀行が配っているExcelマクロを使う</td><td>その銀行だけを使い、決まった雛形に入力し直せる人</td><td>Windows版Excelが必要なものが多い。マクロの実行を許可する必要がある</td></tr>
+    <tr><td>会計・給与ソフトから出力する</td><td>すでにクラウド会計や給与ソフトを使っている人</td><td>ソフトに振込先を登録しておく必要がある</td></tr>
+  </table>
+  <p><a class="btn primary" href="/#tool">Excelを全銀フォーマットに変換する（無料）</a></p>
+
+  <h2 id="terms">10. 用語集</h2>
+  <dl class="glossary">
+    <dt>FBデータ</dt><dd>ファームバンキング（企業と銀行のあいだのデータ通信）で使うデータのこと。実務では全銀フォーマットの振込ファイルを指して使われます。</dd>
+    <dt>振込依頼人コード（委託者コード・企業コード）</dt><dd>法人ネットバンキングの契約時に銀行が割り当てる10桁の番号。ヘッダーレコードに入れます。</dd>
+    <dt>仕向（しむけ）／被仕向（ひしむけ）</dt><dd>仕向は振込を出す側（自社の銀行）、被仕向は受け取る側（振込先の銀行）です。</dd>
+    <dt>総合振込と給与振込の違い</dt><dd>給与振込は手数料が安く設定されていることが多い代わりに、銀行と給与振込の契約が必要で、振込先は普通・当座口座に限られます。</dd>
+    <dt>電信と文書</dt><dd>振込指定区分のこと。現在はほぼすべて電信（<code>7</code>）です。</dd>
+    <dt>全銀EDIシステム（ZEDI）</dt><dd>振込に請求書番号などの詳しい情報をXML形式で添えられる仕組み。固定長の全銀フォーマットとは別のもので、ネットバンキングのファイル取込では今も固定長が広く使われています。</dd>
+  </dl>
+
+  <p class="hint">このページは、全国銀行協会が公開している規定フォーマットの内容をもとに、全銀ポンの開発で実際に確かめたことを加えてまとめたものです。銀行ごとの細かな指定は、ご利用の金融機関の案内を優先してください。誤りにお気づきの場合は<a href="/about.html#contact">お問い合わせ</a>からお知らせください。</p>
+</article>
+<!-- site:footer -->
+<footer class="site-foot">
+  <div class="wrap in">
+    <div>
+      <h2 class="foot-h">全銀ポン</h2>
+      <p>給与振込・総合振込の Excel／CSV／PDF／Googleスプレッドシートを、ネットバンキングに取り込める全銀フォーマットへ。データはブラウザの中だけで処理します。</p>
+      <p class="made-by">企画・開発・運営：<a href="https://kokokikaku.com/" rel="noopener">ここ企画</a>（<a href="/about.html">運営者情報</a>）</p>
+      <p class="made-by">ここ企画のほかの道具：<a href="https://misefits.kokokikaku.com/" rel="noopener">MiseFits（店舗レイアウト）</a>・<a href="https://menufits.kokokikaku.com/" rel="noopener">MenuFits（メニュー表）</a></p>
+    </div>
+    <div>
+      <h2 class="foot-h">使う</h2>
+      <a href="/#tool">全銀フォーマットに変換する</a>
+      <a href="/guide.html">使い方・銀行別の取込方法</a>
+      <a href="/pricing.html">料金プラン</a>
+      <a href="/faq.html">よくある質問</a>
+    </div>
+    <div>
+      <h2 class="foot-h">調べる・無料ツール</h2>
+      <a href="/zengin-format.html">全銀フォーマットとは（仕様の解説）</a>
+      <a href="/banks/">銀行コード・支店コード検索</a>
+      <a href="/free-tools/yucho.html">ゆうちょ 記号番号の変換</a>
+      <a href="/free-tools/kana.html">口座名義のカナ変換・法人略語</a>
+    </div>
+    <div>
+      <h2 class="foot-h">安心・規約</h2>
+      <a href="/security.html">セキュリティとデータの扱い</a>
+      <a href="/legal.html">法令上の位置づけ</a>
+      <a href="/terms.html">利用規約</a>
+      <a href="/privacy.html">プライバシーポリシー</a>
+      <a href="/tokushoho.html">特定商取引法に基づく表記</a>
+      <a href="/accessibility.html">アクセシビリティ</a>
+      <a href="/about.html">運営者情報・お問い合わせ</a>
+    </div>
+  </div>
+  <div class="wrap copy">© ここ企画 — 本サービスは振込データ（ファイル）の作成のみを行い、送金は行いません。振込内容の最終確認はご自身のネットバンキングで行ってください。</div>
+</footer>
+<!-- /site:footer -->
+<script src="/config.js"></script>
+<script src="/src/site.js"></script>
+</body>
+</html>

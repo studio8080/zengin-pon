@@ -7,6 +7,9 @@
 
 > 🚀 **公開・販売開始のためにあなたが手を動かす作業は [`docs/launch-checklist.md`](docs/launch-checklist.md) にまとめてある。**
 > DNS・特商法・Stripe・秘密鍵のバックアップ・Search Console。上から順に進めれば公開できる。
+>
+> 作業の決まりごとは [`AGENTS.md`](AGENTS.md)、集客と認知の計画は [`docs/growth-plan.md`](docs/growth-plan.md)、
+> 検索・AI検索まわりの点検記録は [`docs/seo-ai-audit.md`](docs/seo-ai-audit.md)、法令の確認メモは [`docs/compliance-check.md`](docs/compliance-check.md)。
 
 ```
 zengin-pon/
@@ -20,7 +23,17 @@ zengin-pon/
   src/app.js          画面ロジック（SheetJS / pdf.js は CDN）
   src/license.js      Proライセンスの検証と自動更新（Ed25519 公開鍵）
   src/holidays.js     銀行休業日の判定
-  src/site.js         共通ヘッダー／フッター＋アクセス解析
+  src/site.js         メニューの開閉とアクセス解析の読み込みだけ（ヘッダー／フッターは HTML に静的に埋め込む）
+  src/tool-yucho.js   無料ツール: ゆうちょ 記号番号の変換
+  src/tool-kana.js    無料ツール: 口座名義のカナ変換
+  zengin-format.html  全銀フォーマットの仕様解説（検索の入口）
+  free-tools/         無料ツール（ゆうちょ変換・名義カナ変換）
+  legal.html about.html accessibility.html  法令上の位置づけ／運営者情報／アクセシビリティ方針
+  llms.txt robots.txt .well-known/security.txt  AI・検索・脆弱性報告むけの案内
+  tools/site-template.js  共通部品（メニュー、フッター、OGP、Organization）
+  tools/build-site.js     共通部品の埋め込み＋ sitemap.xml の生成（--check で埋め込み忘れを検出）
+  tools/build-bank-pages.js 銀行コードのページ 1,146枚の生成
+  tools/indexnow.js       公開後に Bing 系へ更新を通知
   functions/          Stripe Webhook とライセンス更新API（Firebase・codebase "zenginpon"）
   docs/launch-checklist.md  公開までの手作業
   test/organize.test.js 自動整理のテスト（5件）
@@ -34,7 +47,7 @@ zengin-pon/
   samples/            総合振込・給与振込のサンプルCSV
 ```
 
-ローカル起動: `python -m http.server 8765` （このディレクトリで）→ http://127.0.0.1:8765/
+ローカル起動: `python -m http.server 8877` （このディレクトリで）→ http://127.0.0.1:8877/ （8765 と 8790 は別プロジェクトが使用）
 テスト: `node test/zengin.test.js` / `node test/organize.test.js` / `node test/license.test.js`
 
 ---
@@ -246,7 +259,7 @@ zengin-pon/
 | `terms.html` `privacy.html` `tokushoho.html` `404.html` | 規約類（noindex） | |
 | `sitemap.xml` `robots.txt` | | `data/` `samples/` はクロール除外 |
 
-共通ヘッダー・フッターは `src/site.js` が差し込む。デザイントークンは `style.css` 先頭（ネイビー #14305c ×
+共通ヘッダー・フッターは、2026-09-18 から `tools/build-site.js` が HTML に静的に埋め込む（下の 3g）。デザイントークンは `style.css` 先頭（ネイビー #14305c ×
 オレンジ #ff7a1a、生成りの背景、Noto Sans JP）。イラストはインラインSVG（外部画像なし・軽量）。
 AI生成のヒーロー画像や Figma での調整は、この構造の上に載せ替える前提。
 
@@ -334,6 +347,30 @@ codebase が別なので Misefits の関数は消えない。Firestore ルール
 3. 月に数十件を超えたら、Misefits の `functions/index.js` を流用して Stripe Webhook → 自動発行・自動送信に切り替える（署名は Cloud Functions の Secret に秘密鍵を置いて同じ `issue` ロジックを呼ぶ）。
 4. 月払いの更新は、Stripe のサブスク更新 Webhook で毎月キーを再発行するか、初回に「12か月分のキー」を渡して解約時に失効させない運用（簡単だが解約後も使える）のどちらか。当面は年払いを推し、月払いは Webhook 実装後に本格化。
 
+## 3g. 検索・AI検索・法務・初心者むけ画面・制作実績（2026-09-18）
+
+**方針。** Google は2026年5月の公式ガイドで「AI検索むけの特別な対策は不要。従来のSEOの基本が効く」と明言し、
+FAQ のリッチリザルトも同月に廃止した。小手先はやらず、**独自で役に立つページ・内部リンク・正確な事実**に投資する。
+
+| 追加したもの | ねらい |
+|---|---|
+| ヘッダー／フッター／パンくず／OGP／構造化データの**静的埋め込み**（`tools/build-site.js`） | JavaScript を実行しないクローラーにもメニューと運営者表記が見える。全ページに canonical と OGP |
+| `zengin-format.html`（仕様解説。レコード表、文字、詰め方、エラー原因、用語集） | 「全銀フォーマットとは」「FBデータ」「120バイト」で調べる人の入口。AIが引用しやすい「最初の2文で答える」構成 |
+| `free-tools/yucho.html` `free-tools/kana.html` | 「ゆうちょ 記号番号 変換」「口座名義 カナ 株式会社 略」の長尾。登録不要で1つの悩みをすぐ解決 → 本体へ誘導 |
+| `llms.txt`、`robots.txt` の AI クローラー明記、`.well-known/security.txt`、IndexNow | 読める・正しく引用される状態にする。順位やおすすめを操作するものではない |
+| トップの構造化データを `@graph`（Organization＋WebSite＋WebApplication）に | 運営者「ここ企画」と会社サイトの Organization を同じ `@id` でつなぐ |
+| `legal.html`（銀行法・資金決済法・特商法・個情法・電気通信事業法・消費者契約法・景表法） | 「登録が要らない理由」を条文つきで公開。稟議・士業の確認に使える |
+| `pricing.html#confirm`（申込み前の確認事項） | 特商法12条の6（最終確認画面）に沿って、分量・価格・支払時期・自動更新・解約・返金を1つの表に |
+| `privacy.html#external`（外部送信の一覧）、委託先、外国にある第三者 | 電気通信事業法の外部送信規律、個情法28条に沿う情報提供 |
+| `accessibility.html`、スキップリンク、フォーカス表示、動きを減らす設定への対応、ドロップ領域のキーボード操作 | 障害者差別解消法の合理的配慮。JIS X 8341-3:2016 AA に「配慮」（試験未実施なので「準拠」とは書かない） |
+| 「サンプルで試す」ボタン2種、振込元のお試し入力、整理前→整理後の図、用語のヘルプ | 手元にファイルが無くても30秒で最後まで体験できる。お試しの値は保存しない |
+| `about.html`（運営者情報・制作メモ）、フッターの「企画・開発・運営：ここ企画」 | ここ企画の制作実績として読める形にする |
+
+ページを足すとき・共通部品を直すときの手順は `AGENTS.md` の 2。CI（`.github/workflows/check-site.yml`）が
+テストと「埋め込み忘れ」を push のたびに確認する。
+
+---
+
 ## 4. 銀行ごとの取込条件（要・実機確認）
 
 | 銀行/サービス | 形式 | メモ |
@@ -413,7 +450,8 @@ Stripe: Checkout（サブスク or 買い切り）
 
 ## 7. 法務・注意点
 
-- ファイル生成だけで送金は行わないので、資金移動業・電子決済等代行業の登録は不要。
+- ファイル生成だけで送金は行わないので、資金移動業・電子決済等代行業の登録は不要。根拠の整理は `legal.html` に公開し、
+  社内メモは `docs/compliance-check.md`。**銀行への送信や口座情報の取得（API連携）を足すと結論が変わる**ので、足す前に必ず再確認する。
 - 特定商取引法に基づく表記、利用規約（生成データの誤りによる損害の免責と、ユーザーが銀行画面で内容確認・承認する旨）、プライバシーポリシー（データを送信しない旨）を用意する。
 - 弊社はインボイス（適格請求書発行事業者）未登録。領収書は Stripe の自動メールのみで、適格請求書は発行できない旨をサイトに明記済み。
 - 振込先口座情報は個人情報。ブラウザ完結でも、localStorage に残す項目は依頼人情報と列割り当てだけにし、振込先データは保存しない（現状そうなっている）。

@@ -39,8 +39,21 @@
   }
   function saveSettings() {
     const s = { kind: currentKind() };
-    for (const id of SETTING_IDS) s[id] = $(id).value;
+    // サンプル用に入れた仮の値（data-demo）は保存しない
+    for (const id of SETTING_IDS) s[id] = $(id).dataset.demo === '1' ? '' : $(id).value;
     ls.set(KEYS.settings, JSON.stringify(s));
+  }
+
+  // サンプルを試すとき、振込元が未入力だと最後まで進めないので、空欄にだけ仮の値を入れる
+  const DEMO = { clientCode: '1234567890', clientName: '株式会社サンプルショウジ', bankCode: '0005', branchCode: '001', accountNo: '1234567' };
+  function fillDemo() {
+    let filled = false;
+    for (const [id, v] of Object.entries(DEMO)) { const el = $(id); if (!el.value) { el.value = v; el.dataset.demo = '1'; filled = true; } }
+    $('demoNote').hidden = !filled && !document.querySelector('[data-demo="1"]');
+  }
+  function clearDemo() {
+    for (const id of Object.keys(DEMO)) { const el = $(id); if (el.dataset.demo === '1') { el.value = ''; delete el.dataset.demo; } }
+    $('demoNote').hidden = true;
   }
   function currentKind() { const r = document.querySelector('input[name="kindRadio"]:checked'); return r ? r.value : '21'; }
   function convOpts() { return { smallToLarge: $('smallToLarge').value === '1', defaultTransferType: $('transferType').value }; }
@@ -160,6 +173,8 @@
       const s = Number(el.dataset.step);
       el.classList.toggle('is-active', s === n);
       el.classList.toggle('is-done', s < n);
+      if (s === n) el.setAttribute('aria-current', 'step'); else el.removeAttribute('aria-current');
+      el.disabled = !(s < n); // 戻れるのは済んだ手順だけ。進むのは各画面の「次へ」から
     });
     document.querySelectorAll('.stepper .bar').forEach((el, i) => el.classList.toggle('is-done', i + 1 < n));
     if (n === 3) updateHeaderPreviews();
@@ -176,6 +191,27 @@
   ['dragenter', 'dragover'].forEach((ev) => drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.add('over'); }));
   ['dragleave', 'drop'].forEach((ev) => drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.remove('over'); }));
   drop.addEventListener('drop', (e) => { const f = e.dataTransfer.files[0]; if (f) handleFile(f); });
+  // キーボードだけでもファイルを選べるようにする（Enter / Space でファイル選択を開く）
+  drop.addEventListener('keydown', (e) => {
+    if (e.target !== drop) return;
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); $('file').click(); }
+  });
+
+  // はじめての人向け: サンプルデータをその場で読み込む（ダウンロードして選び直す手間をなくす）
+  document.querySelectorAll('[data-sample]').forEach((b) => b.addEventListener('click', async () => {
+    const info = $('fileInfo');
+    try {
+      const kind = b.dataset.kind;
+      if (kind) { document.querySelectorAll('input[name="kindRadio"]').forEach((r) => { r.checked = r.value === kind; }); saveSettings(); }
+      const res = await fetch(b.dataset.sample);
+      if (!res.ok) throw new Error('サンプルを読み込めませんでした');
+      const buf = await res.arrayBuffer();
+      state.isSample = true;
+      fillDemo();
+      await handleBuffer(b.dataset.sample.split('/').pop(), buf, buf.byteLength);
+      info.textContent += '（架空のサンプルデータです）';
+    } catch (e) { info.hidden = false; info.className = 'fileinfo err'; info.textContent = e.message; }
+  }));
   $('file').addEventListener('change', (e) => { const f = e.target.files[0]; if (f) handleFile(f); e.target.value = ''; });
   document.querySelectorAll('input[name="kindRadio"]').forEach((r) => r.addEventListener('change', () => { saveSettings(); if (state.fileLoaded) analyzeSheet(); }));
 
@@ -194,7 +230,7 @@
     } catch (e) { console.error(e); info.className = 'fileinfo err'; info.textContent = e.message; }
   });
 
-  async function handleFile(file) { await handleBuffer(file.name, await file.arrayBuffer(), file.size); }
+  async function handleFile(file) { state.isSample = false; clearDemo(); await handleBuffer(file.name, await file.arrayBuffer(), file.size); }
 
   async function handleBuffer(name, buf, size) {
     state.fileName = name;
@@ -332,7 +368,7 @@
     } else { brp.textContent = ''; brp.className = 'preview'; }
   }
   for (const id of SETTING_IDS) {
-    $(id).addEventListener('input', () => { saveSettings(); if (state.step === 3) updateHeaderPreviews(); });
+    $(id).addEventListener('input', () => { delete $(id).dataset.demo; saveSettings(); if (state.step === 3) updateHeaderPreviews(); });
     $(id).addEventListener('change', () => { saveSettings(); if (state.step === 3) updateHeaderPreviews(); });
   }
 

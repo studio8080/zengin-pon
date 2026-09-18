@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- site:head -->
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#14305c">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="format-detection" content="telephone=no">
+<meta property="og:site_name" content="全銀ポン">
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="ゆうちょ銀行の記号・番号を支店名（店番）・口座番号に変換｜全銀ポン">
+<meta property="og:description" content="ゆうちょ銀行の通帳にある「記号5桁・番号」を、他の銀行から振り込むときに必要な店名（漢数字3桁）・店番・預金種目・口座番号7桁に変換する無料ツール。入力した番号はブラウザの中だけで処理し、どこにも送信しません。変換の決まりも解説。">
+<meta property="og:url" content="https://zenginpon.kokokikaku.com/free-tools/yucho.html">
+<meta property="og:image" content="https://zenginpon.kokokikaku.com/assets/ogp.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<!-- /site:head -->
+<title>ゆうちょ銀行の記号・番号を支店名（店番）・口座番号に変換｜全銀ポン</title>
+<meta name="description" content="ゆうちょ銀行の通帳にある「記号5桁・番号」を、他の銀行から振り込むときに必要な店名（漢数字3桁）・店番・預金種目・口座番号7桁に変換する無料ツール。入力した番号はブラウザの中だけで処理し、どこにも送信しません。変換の決まりも解説。">
+<link rel="canonical" href="https://zenginpon.kokokikaku.com/free-tools/yucho.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;800&display=swap" rel="stylesheet">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com; object-src 'none'; base-uri 'self'; form-action 'none'">
+<link rel="stylesheet" href="/style.css">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"ゆうちょ銀行 記号・番号変換ツール","url":"https://zenginpon.kokokikaku.com/free-tools/yucho.html","applicationCategory":"FinanceApplication","operatingSystem":"Web","inLanguage":"ja","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"JPY"},"description":"ゆうちょ銀行の記号・番号を、振込用の店名・店番・預金種目・口座番号に変換する。","publisher":{"@type":"Organization","name":"ここ企画","url":"https://kokokikaku.com/"}}
+</script>
+<!-- site:ld -->
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://zenginpon.kokokikaku.com/"},{"@type":"ListItem","position":2,"name":"無料ツール","item":"https://zenginpon.kokokikaku.com/free-tools/"},{"@type":"ListItem","position":3,"name":"ゆうちょ 記号番号の変換","item":"https://zenginpon.kokokikaku.com/free-tools/yucho.html"}]}</script>
+<!-- /site:ld -->
+</head>
+<body>
+<!-- site:header -->
+<a class="skip-link" href="#main">本文へ移動</a>
+<header class="site-head">
+  <div class="wrap in">
+    <a class="brand" href="/"><svg class="logo" viewBox="0 0 40 40" aria-hidden="true" focusable="false"><rect x="4" y="6" width="32" height="28" rx="6" fill="#14305c"/><path d="M11 15h18M11 20h18M11 25h11" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/><circle cx="29" cy="27" r="6" fill="#ff7a1a"/><path d="M26.5 27l1.8 1.8L32 25.6" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg><span><b>全銀ポン</b><small>全銀フォーマット変換ツール</small></span></a>
+    <button class="nav-toggle" type="button" aria-label="メニューを開く" aria-expanded="false" aria-controls="site-nav">☰</button>
+    <nav class="nav" id="site-nav" aria-label="サイト内メニュー">
+      <a href="/guide.html">使い方</a>
+      <a href="/zengin-format.html">全銀フォーマットとは</a>
+      <a href="/free-tools/" class="is-current" aria-current="page">無料ツール</a>
+      <a href="/pricing.html">料金</a>
+      <a href="/security.html">安心・安全</a>
+      <a href="/faq.html">よくある質問</a>
+      <a class="cta" href="/#tool">無料で変換する</a>
+    </nav>
+  </div>
+</header>
+<nav class="crumbs wrap" aria-label="現在位置"><ol><li><a href="/">ホーム</a></li><li><a href="/free-tools/">無料ツール</a></li><li aria-current="page">ゆうちょ 記号番号の変換</li></ol></nav>
+<span id="main" tabindex="-1"></span>
+<!-- /site:header -->
+<article class="article">
+  <h1>ゆうちょ銀行の記号・番号を、振込用の店番・口座番号に変換</h1>
+  <p class="updated">無料・登録不要 ／ 入力した番号はこのページの外に送信されません</p>
+
+  <div class="callout ok answer">
+    <p>ゆうちょ銀行の口座に<strong>他の銀行から振り込む</strong>ときや、<strong>全銀フォーマットの振込データ</strong>に入れるときは、通帳の「記号・番号」ではなく、<strong>店名（店番）・預金種目・口座番号（7桁）</strong>が必要です。下に記号と番号を入れると、その場で変換します。</p>
+  </div>
+
+  <section class="minitool" aria-labelledby="yt">
+    <h2 id="yt" class="minitool-h">変換する</h2>
+    <div class="grid">
+      <label for="kigo">記号（5桁）<input id="kigo" inputmode="numeric" autocomplete="off" maxlength="7" placeholder="例: 12340" aria-describedby="kigoHelp"></label>
+      <label for="bango">番号（最大8桁）<input id="bango" inputmode="numeric" autocomplete="off" maxlength="10" placeholder="例: 12345671" aria-describedby="bangoHelp"></label>
+    </div>
+    <p class="hint" id="kigoHelp">通帳の見開きや、キャッシュカードに書いてあります。記号と番号のあいだに1桁の数字（「-1-」など）がある場合、その数字は入れないでください。</p>
+    <p class="hint" id="bangoHelp">全角の数字やハイフンが混ざっていても、そのまま貼り付けて大丈夫です。</p>
+    <div id="yuchoResult" class="result" role="status" aria-live="polite">
+      <p class="hint">記号と番号を入れると、ここに結果が出ます。</p>
+    </div>
+  </section>
+
+  <h2>変換の決まり</h2>
+  <p>記号の<strong>1桁目</strong>で口座の種類が分かれ、計算のしかたが変わります。</p>
+  <div class="tablewrap"><table>
+    <thead><tr><th>記号の1桁目</th><th>口座の種類</th><th>店番（3桁）</th><th>預金種目</th><th>口座番号（7桁）</th></tr></thead>
+    <tbody>
+      <tr><td><code>1</code></td><td>総合口座・通常貯金・通常貯蓄貯金</td><td>記号の2・3桁目 ＋ <code>8</code></td><td>普通</td><td>番号の<strong>末尾の1桁を除いた</strong>数字。7桁に満たなければ先頭に0</td></tr>
+      <tr><td><code>0</code></td><td>振替口座</td><td>記号の2・3桁目 ＋ <code>9</code></td><td>当座</td><td>番号そのまま。7桁に満たなければ先頭に0</td></tr>
+    </tbody>
+  </table></div>
+  <h3>例</h3>
+  <table>
+    <tr><th>通帳の表記</th><th>店名</th><th>店番</th><th>預金種目</th><th>口座番号</th></tr>
+    <tr><td>記号 12340 ／ 番号 12345671</td><td>二三八（ニサンハチ）</td><td>238</td><td>普通</td><td>1234567</td></tr>
+    <tr><td>記号 00120 ／ 番号 123456</td><td>〇一九（ゼロイチキユウ）</td><td>019</td><td>当座</td><td>0123456</td></tr>
+  </table>
+  <ul>
+    <li>銀行コード（金融機関コード）は <strong>9900</strong>、銀行名は「ゆうちょ銀行」（カナは <code>ﾕｳﾁﾖ</code>）です。</li>
+    <li>店名は店番を漢数字で読んだものです（238 → 二三八店）。ネットバンキングの支店検索では、この漢数字の店名で探します。</li>
+    <li>総合口座の番号は末尾が「1」になっています。その「1」を取り除いた残りが口座番号です。</li>
+  </ul>
+
+  <h2>振込データ（全銀フォーマット）に入れるとき</h2>
+  <p>給与や支払いの一覧にゆうちょ銀行の口座が混ざっている場合、<a href="/#tool">全銀ポンの変換ツール</a>では、表に「ゆうちょ記号」「ゆうちょ番号」の列があれば、1件ずつ変換しなくても自動で店番と口座番号に直します。ほかの銀行の行と混ざっていても大丈夫です。</p>
+  <p><a class="btn primary" href="/#tool">Excelの振込一覧を全銀フォーマットに変換する（無料）</a></p>
+
+  <h2>よくある質問</h2>
+  <div class="faq">
+    <details><summary>変換した結果は公式のものと同じですか？</summary><div class="a">ゆうちょ銀行が公開している変換の決まりと同じ計算をしています。大切な振込の前には、ゆうちょ銀行の公式サイトにある「記号番号から振込用の店名・預金種目・口座番号を調べる」でも確かめておくと確実です。</div></details>
+    <details><summary>入力した口座番号はどこかに送られますか？</summary><div class="a">送られません。計算はこのページの中（あなたのブラウザ）だけで行い、入力内容を保存することもありません。ページを閉じれば消えます。</div></details>
+    <details><summary>記号が5桁ではありません</summary><div class="a">記号と番号のあいだに1桁の数字がある通帳があります（再発行された通帳など）。その1桁は変換には使いません。記号の5桁と、番号だけを入れてください。</div></details>
+    <details><summary>受取人の名義はどう書けばいいですか？</summary><div class="a">通帳に書かれている名義のカナを、半角カナで入れます。会社名の「株式会社」などは略語にします。<a href="/free-tools/kana.html">口座名義のカナ変換ツール</a>で確かめられます。</div></details>
+  </div>
+</article>
+<!-- site:footer -->
+<footer class="site-foot">
+  <div class="wrap in">
+    <div>
+      <h2 class="foot-h">全銀ポン</h2>
+      <p>給与振込・総合振込の Excel／CSV／PDF／Googleスプレッドシートを、ネットバンキングに取り込める全銀フォーマットへ。データはブラウザの中だけで処理します。</p>
+      <p class="made-by">企画・開発・運営：<a href="https://kokokikaku.com/" rel="noopener">ここ企画</a>（<a href="/about.html">運営者情報</a>）</p>
+      <p class="made-by">ここ企画のほかの道具：<a href="https://misefits.kokokikaku.com/" rel="noopener">MiseFits（店舗レイアウト）</a>・<a href="https://menufits.kokokikaku.com/" rel="noopener">MenuFits（メニュー表）</a></p>
+    </div>
+    <div>
+      <h2 class="foot-h">使う</h2>
+      <a href="/#tool">全銀フォーマットに変換する</a>
+      <a href="/guide.html">使い方・銀行別の取込方法</a>
+      <a href="/pricing.html">料金プラン</a>
+      <a href="/faq.html">よくある質問</a>
+    </div>
+    <div>
+      <h2 class="foot-h">調べる・無料ツール</h2>
+      <a href="/zengin-format.html">全銀フォーマットとは（仕様の解説）</a>
+      <a href="/banks/">銀行コード・支店コード検索</a>
+      <a href="/free-tools/yucho.html">ゆうちょ 記号番号の変換</a>
+      <a href="/free-tools/kana.html">口座名義のカナ変換・法人略語</a>
+    </div>
+    <div>
+      <h2 class="foot-h">安心・規約</h2>
+      <a href="/security.html">セキュリティとデータの扱い</a>
+      <a href="/legal.html">法令上の位置づけ</a>
+      <a href="/terms.html">利用規約</a>
+      <a href="/privacy.html">プライバシーポリシー</a>
+      <a href="/tokushoho.html">特定商取引法に基づく表記</a>
+      <a href="/accessibility.html">アクセシビリティ</a>
+      <a href="/about.html">運営者情報・お問い合わせ</a>
+    </div>
+  </div>
+  <div class="wrap copy">© ここ企画 — 本サービスは振込データ（ファイル）の作成のみを行い、送金は行いません。振込内容の最終確認はご自身のネットバンキングで行ってください。</div>
+</footer>
+<!-- /site:footer -->
+<script src="/config.js"></script>
+<script src="/src/zengin.js"></script>
+<script src="/src/tool-yucho.js"></script>
+<script src="/src/site.js"></script>
+</body>
+</html>

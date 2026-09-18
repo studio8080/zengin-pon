@@ -2,17 +2,44 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- site:head -->
 <link rel="icon" href="/favicon.ico" sizes="32x32">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#14305c">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="format-detection" content="telephone=no">
+<!-- /site:head -->
 <title>プライバシーポリシー｜全銀ポン</title>
 <meta name="robots" content="noindex">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
+<!-- site:ld -->
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://zenginpon.kokokikaku.com/"},{"@type":"ListItem","position":2,"name":"プライバシーポリシー","item":"https://zenginpon.kokokikaku.com/privacy.html"}]}</script>
+<!-- /site:ld -->
 </head>
 <body>
+<!-- site:header -->
+<a class="skip-link" href="#main">本文へ移動</a>
+<header class="site-head">
+  <div class="wrap in">
+    <a class="brand" href="/"><svg class="logo" viewBox="0 0 40 40" aria-hidden="true" focusable="false"><rect x="4" y="6" width="32" height="28" rx="6" fill="#14305c"/><path d="M11 15h18M11 20h18M11 25h11" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/><circle cx="29" cy="27" r="6" fill="#ff7a1a"/><path d="M26.5 27l1.8 1.8L32 25.6" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg><span><b>全銀ポン</b><small>全銀フォーマット変換ツール</small></span></a>
+    <button class="nav-toggle" type="button" aria-label="メニューを開く" aria-expanded="false" aria-controls="site-nav">☰</button>
+    <nav class="nav" id="site-nav" aria-label="サイト内メニュー">
+      <a href="/guide.html">使い方</a>
+      <a href="/zengin-format.html">全銀フォーマットとは</a>
+      <a href="/free-tools/">無料ツール</a>
+      <a href="/pricing.html">料金</a>
+      <a href="/security.html">安心・安全</a>
+      <a href="/faq.html">よくある質問</a>
+      <a class="cta" href="/#tool">無料で変換する</a>
+    </nav>
+  </div>
+</header>
+<nav class="crumbs wrap" aria-label="現在位置"><ol><li><a href="/">ホーム</a></li><li aria-current="page">プライバシーポリシー</li></ol></nav>
+<span id="main" tabindex="-1"></span>
+<!-- /site:header -->
 <article class="article">
   <h1>プライバシーポリシー</h1>
   <p class="updated">制定: 2026年9月3日</p>
@@ -35,14 +62,40 @@
   <h2>3. 利用者のブラウザに保存する情報</h2>
   <p>次回の入力を省くため、振込元の情報（依頼人コード、自社口座、依頼人名）、列の割り当て設定、ライセンスキーを利用者のブラウザ（localStorage）に保存します。これらは当社に送信されません。利用者はツール内の操作またはブラウザの設定からいつでも削除できます。</p>
 
-  <h2>4. 第三者提供</h2>
-  <p>法令に基づく場合を除き、取得した情報を第三者に提供しません。決済、メール送信、アクセス解析のために次の事業者に処理を委託します: Stripe, Inc.（決済）、Google LLC（アクセス解析、スプレッドシート連携）。</p>
+  <h2>4. 第三者提供と委託</h2>
+  <p>法令に基づく場合を除き、取得した情報を第三者に提供しません。有料プランの運営のために、次の事業者に個人データの取扱いを委託しています。</p>
+  <table>
+    <tr><th>委託先</th><th>委託する内容</th><th>取り扱う情報</th></tr>
+    <tr><td>Stripe（ストライプジャパン株式会社、Stripe, Inc.）</td><td>決済、領収書の送付、契約の管理</td><td>メールアドレス、氏名、カード情報（当社はカード番号を受け取りません）</td></tr>
+    <tr><td>Google（Google LLC、グーグル・クラウド・ジャパン合同会社）</td><td>契約状態の保管（Google Cloud）、ライセンスキーのメール送信（Gmail）</td><td>メールアドレス、Stripe上の顧客ID・契約ID、契約の状態と期限</td></tr>
+  </table>
+  <h3>外国にある第三者への提供について</h3>
+  <p>上記の委託先は、<strong>アメリカ合衆国</strong>などの日本国外にあるサーバーで情報を取り扱う場合があります。両社は、個人情報保護委員会が定める基準に適合する体制（データ処理に関する契約条項、国際的な認証の取得など）を整備しており、当社はその内容を確認したうえで委託しています。アメリカ合衆国の個人情報保護に関する制度については、個人情報保護委員会のウェブサイトで情報が公開されています。</p>
 
-  <h2>5. Cookie等について</h2>
-  <p>アクセス解析のためにCookieを使用します。ブラウザの設定でCookieを無効にしても本サービスの変換機能は利用できます。</p>
+  <h2 id="external">5. 外部送信について（Cookie等）</h2>
+  <p>当サイトを表示すると、部品の読み込みのために、お使いのブラウザから次の事業者のサーバーへ情報が送信されます。<strong>いずれの場合も、読み込んだファイルの内容（振込先・口座番号・金額）が送信されることはありません。</strong></p>
+  <div class="tablewrap"><table>
+    <thead><tr><th>送信先</th><th>送信される情報</th><th>利用目的</th><th>送信される場面</th></tr></thead>
+    <tbody>
+      <tr><td>Google Fonts（Google LLC）</td><td>IPアドレス、ブラウザの種類、閲覧中のページのURL（参照元）</td><td>文字（フォント）の表示</td><td>すべてのページ</td></tr>
+      <tr><td>cdnjs（Cloudflare, Inc.）</td><td>同上</td><td>ExcelとPDFを読み取るプログラム部品の配信</td><td>トップページ（変換ツール）</td></tr>
+      <tr><td>GitHub Pages（GitHub, Inc.）</td><td>同上</td><td>当サイトそのものの配信</td><td>すべてのページ</td></tr>
+      <tr><td>当社のライセンス確認用サーバー（Google Cloud 上）</td><td>ライセンスID（英数字12桁）、IPアドレス</td><td>Proプランの契約が続いているかの確認と、キーの更新</td><td>Proのキーを保存しているブラウザで、期限が近いとき・前回の確認から7日以上たったとき</td></tr>
+      <tr><td>Google（Google LLC）</td><td>Googleアカウントの認証情報、選んだファイルの識別子</td><td>Googleスプレッドシートの読み込み</td><td>「Googleスプレッドシートから選ぶ」を押したときだけ</td></tr>
+      <tr><td>Stripe</td><td>決済画面で入力された情報</td><td>有料プランの決済</td><td>「Proを申し込む」を押して Stripe の画面に移動したあと</td></tr>
+    </tbody>
+  </table></div>
+  <p>現在、アクセス解析（Google アナリティクスなど）や広告のためのCookieは使用していません。今後導入する場合は、事前にこの表を更新します。</p>
 
   <h2>6. 安全管理</h2>
-  <p>取得した情報への不正アクセス、漏えい等を防止するため、アクセス権限の管理、通信の暗号化その他の合理的な安全管理措置を講じます。</p>
+  <p>取得した情報への不正アクセス、漏えい等を防止するため、次の措置を講じています。</p>
+  <ul>
+    <li>取得する情報を、サービスの提供に必要な最小限にとどめる（振込データは取得しない設計）</li>
+    <li>情報にアクセスできる者を運営者に限定する</li>
+    <li>通信をすべて暗号化する（HTTPS）</li>
+    <li>決済情報は決済代行会社が管理し、当社ではカード番号を保持しない</li>
+    <li>漏えい等が発生した場合は、法令に従い個人情報保護委員会への報告とご本人への通知を行う</li>
+  </ul>
 
   <h2>7. 開示・訂正・削除</h2>
   <p>利用者は、当社が保有する自己の情報について開示、訂正、削除を求めることができます。<a href="tokushoho.html">お問い合わせ先</a>までご連絡ください。</p>
@@ -50,6 +103,43 @@
   <h2>8. 改定</h2>
   <p>本ポリシーを改定する場合は、サイト上に掲示します。</p>
 </article>
+<!-- site:footer -->
+<footer class="site-foot">
+  <div class="wrap in">
+    <div>
+      <h2 class="foot-h">全銀ポン</h2>
+      <p>給与振込・総合振込の Excel／CSV／PDF／Googleスプレッドシートを、ネットバンキングに取り込める全銀フォーマットへ。データはブラウザの中だけで処理します。</p>
+      <p class="made-by">企画・開発・運営：<a href="https://kokokikaku.com/" rel="noopener">ここ企画</a>（<a href="/about.html">運営者情報</a>）</p>
+      <p class="made-by">ここ企画のほかの道具：<a href="https://misefits.kokokikaku.com/" rel="noopener">MiseFits（店舗レイアウト）</a>・<a href="https://menufits.kokokikaku.com/" rel="noopener">MenuFits（メニュー表）</a></p>
+    </div>
+    <div>
+      <h2 class="foot-h">使う</h2>
+      <a href="/#tool">全銀フォーマットに変換する</a>
+      <a href="/guide.html">使い方・銀行別の取込方法</a>
+      <a href="/pricing.html">料金プラン</a>
+      <a href="/faq.html">よくある質問</a>
+    </div>
+    <div>
+      <h2 class="foot-h">調べる・無料ツール</h2>
+      <a href="/zengin-format.html">全銀フォーマットとは（仕様の解説）</a>
+      <a href="/banks/">銀行コード・支店コード検索</a>
+      <a href="/free-tools/yucho.html">ゆうちょ 記号番号の変換</a>
+      <a href="/free-tools/kana.html">口座名義のカナ変換・法人略語</a>
+    </div>
+    <div>
+      <h2 class="foot-h">安心・規約</h2>
+      <a href="/security.html">セキュリティとデータの扱い</a>
+      <a href="/legal.html">法令上の位置づけ</a>
+      <a href="/terms.html">利用規約</a>
+      <a href="/privacy.html">プライバシーポリシー</a>
+      <a href="/tokushoho.html">特定商取引法に基づく表記</a>
+      <a href="/accessibility.html">アクセシビリティ</a>
+      <a href="/about.html">運営者情報・お問い合わせ</a>
+    </div>
+  </div>
+  <div class="wrap copy">© ここ企画 — 本サービスは振込データ（ファイル）の作成のみを行い、送金は行いません。振込内容の最終確認はご自身のネットバンキングで行ってください。</div>
+</footer>
+<!-- /site:footer -->
 <script src="config.js"></script>
 <script src="src/site.js"></script>
 </body>

@@ -1,7 +1,7 @@
 /* dict.js — 金融機関辞書（data/ 配下。tools/build-dict.js で生成） */
 (function () {
   'use strict';
-  const base = 'data/';
+  const base = '/data/'; // ルート相対。/tools/ や /banks/ 配下のページからも同じ辞書を読めるようにする
   const cache = { banks: null, branches: new Map(), merged: null, version: '' };
 
   async function getJSON(path) {

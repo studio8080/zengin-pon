@@ -1,0 +1,24 @@
+# push のたびに、共通部品の埋め込み忘れとテストの失敗を検出する。
+name: check-site
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # sitemap の lastmod を git の履歴から出すため
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: 変換エンジンと自動整理のテスト
+        run: |
+          node test/zengin.test.js
+          node test/organize.test.js
+      - name: 共通部品（ヘッダー・フッター・構造化データ）が全ページに埋め込まれているか
+        run: node tools/build-site.js --check

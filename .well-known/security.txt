@@ -1,0 +1,7 @@
+# 全銀ポン（https://zenginpon.kokokikaku.com/）のセキュリティ上の問題の連絡先
+# 振込先の一覧やファイルそのものは送らないでください。
+Contact: mailto:studio@kokokikaku.com
+Expires: 2027-09-30T00:00:00.000Z
+Preferred-Languages: ja, en
+Canonical: https://zenginpon.kokokikaku.com/.well-known/security.txt
+Policy: https://zenginpon.kokokikaku.com/security.html

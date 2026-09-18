@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- site:head -->
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#14305c">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="format-detection" content="telephone=no">
+<meta property="og:site_name" content="全銀ポン">
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="法令上の位置づけ｜銀行法・資金決済法・特定商取引法・個人情報保護法との関係｜全銀ポン">
+<meta property="og:description" content="全銀ポンは振込データのファイルを作るだけで、送金の指図や口座情報の取得は行いません。銀行法の電子決済等代行業・資金決済法の資金移動業に当たらない理由と、特定商取引法・個人情報保護法・電気通信事業法・消費者契約法への対応をまとめています。">
+<meta property="og:url" content="https://zenginpon.kokokikaku.com/legal.html">
+<meta property="og:image" content="https://zenginpon.kokokikaku.com/assets/ogp.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<!-- /site:head -->
+<title>法令上の位置づけ｜銀行法・資金決済法・特定商取引法・個人情報保護法との関係｜全銀ポン</title>
+<meta name="description" content="全銀ポンは振込データのファイルを作るだけで、送金の指図や口座情報の取得は行いません。銀行法の電子決済等代行業・資金決済法の資金移動業に当たらない理由と、特定商取引法・個人情報保護法・電気通信事業法・消費者契約法への対応をまとめています。">
+<link rel="canonical" href="https://zenginpon.kokokikaku.com/legal.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<!-- site:ld -->
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://zenginpon.kokokikaku.com/"},{"@type":"ListItem","position":2,"name":"法令上の位置づけ","item":"https://zenginpon.kokokikaku.com/legal.html"}]}</script>
+<!-- /site:ld -->
+</head>
+<body>
+<!-- site:header -->
+<a class="skip-link" href="#main">本文へ移動</a>
+<header class="site-head">
+  <div class="wrap in">
+    <a class="brand" href="/"><svg class="logo" viewBox="0 0 40 40" aria-hidden="true" focusable="false"><rect x="4" y="6" width="32" height="28" rx="6" fill="#14305c"/><path d="M11 15h18M11 20h18M11 25h11" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/><circle cx="29" cy="27" r="6" fill="#ff7a1a"/><path d="M26.5 27l1.8 1.8L32 25.6" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg><span><b>全銀ポン</b><small>全銀フォーマット変換ツール</small></span></a>
+    <button class="nav-toggle" type="button" aria-label="メニューを開く" aria-expanded="false" aria-controls="site-nav">☰</button>
+    <nav class="nav" id="site-nav" aria-label="サイト内メニュー">
+      <a href="/guide.html">使い方</a>
+      <a href="/zengin-format.html">全銀フォーマットとは</a>
+      <a href="/free-tools/">無料ツール</a>
+      <a href="/pricing.html">料金</a>
+      <a href="/security.html">安心・安全</a>
+      <a href="/faq.html">よくある質問</a>
+      <a class="cta" href="/#tool">無料で変換する</a>
+    </nav>
+  </div>
+</header>
+<nav class="crumbs wrap" aria-label="現在位置"><ol><li><a href="/">ホーム</a></li><li aria-current="page">法令上の位置づけ</li></ol></nav>
+<span id="main" tabindex="-1"></span>
+<!-- /site:header -->
+<article class="article">
+  <h1>法令上の位置づけ</h1>
+  <p class="updated">最終更新: 2026年9月18日</p>
+
+  <div class="callout ok answer">
+    <p><strong>全銀ポンは、振込データの「ファイルを作る道具」です。</strong>銀行に指図を送ることも、お金を動かすことも、口座の情報を銀行から取得することもありません。作ったファイルをネットバンキングに取り込み、内容を確かめて承認するのは、お客様ご自身です。</p>
+    <p>このページでは、その前提のもとで当社が各法令との関係をどう整理しているかを、根拠とあわせて説明します。社内の稟議や、顧問の税理士・社労士の先生への説明にお使いください。</p>
+  </div>
+
+  <h2 id="flow">1. データとお金の流れ</h2>
+  <div class="tablewrap"><table>
+    <thead><tr><th>段階</th><th>だれが</th><th>どこで</th><th>全銀ポンの関与</th></tr></thead>
+    <tbody>
+      <tr><td>① 振込一覧（Excel等）を読み込む</td><td>お客様</td><td>お客様のブラウザの中</td><td>プログラムがブラウザ内で動く。当社のサーバーには送信されない</td></tr>
+      <tr><td>② 全銀フォーマットのファイルを作る</td><td>お客様</td><td>お客様のブラウザの中</td><td>同上。ファイルはお客様のパソコンに保存される</td></tr>
+      <tr><td>③ ネットバンキングにログインして取り込む</td><td>お客様</td><td>銀行のサイト</td><td><strong>関与しない。</strong>ログイン情報を当社が預かることも、銀行と通信することもない</td></tr>
+      <tr><td>④ 内容を確認して承認する（送金の実行）</td><td>お客様</td><td>銀行のサイト</td><td><strong>関与しない</strong></td></tr>
+    </tbody>
+  </table></div>
+
+  <h2 id="bank">2. 銀行法（電子決済等代行業）</h2>
+  <p>銀行法第2条第17項は、次のいずれかを営業として行うことを「電子決済等代行業」と定め、登録を求めています。</p>
+  <table>
+    <tr><th>類型</th><th>法律が定める行為</th><th>全銀ポン</th></tr>
+    <tr><td>第1号（更新系）</td><td>預金者の委託を受けて、為替取引（振込など）の<strong>指図を銀行に伝達する</strong>こと</td><td><strong>行わない。</strong>当社は銀行と一切通信しない。指図はお客様が銀行のサイトで自ら行う</td></tr>
+    <tr><td>第2号（参照系）</td><td>預金者の委託を受けて、<strong>口座に係る情報を銀行から取得</strong>し、預金者に提供すること</td><td><strong>行わない。</strong>残高や明細などの口座情報を銀行から取得しない</td></tr>
+  </table>
+  <p>全銀ポンが扱うのは、お客様がご自身で用意した振込先の一覧だけで、その処理もお客様のブラウザの中で完結します。このため当社は、本サービスは電子決済等代行業に当たらないと整理しています。</p>
+
+  <h2 id="fund">3. 資金決済法（資金移動業）・為替取引</h2>
+  <p>資金決済に関する法律は、銀行等以外の者が為替取引（離れた場所のあいだで、現金を運ばずに資金を移動させる仕組みを引き受けること）を業として行う場合に、資金移動業の登録を求めています。全銀ポンはお客様の資金を<strong>預からず、受け取らず、移動させません</strong>。送金はお客様と銀行のあいだで行われます。このため当社は、本サービスは資金移動業に当たらないと整理しています。</p>
+  <p class="hint">有料プランの代金は、決済代行会社（Stripe）を通じて当社が受け取る利用料であり、お客様の振込資金とは関係がありません。</p>
+
+  <h2 id="tokusho">4. 特定商取引法（通信販売）</h2>
+  <p>有料プラン（Pro）はインターネットでの申込みを受ける役務の提供で、通信販売に当たります。次のとおり対応しています。</p>
+  <table>
+    <tr><th>求められること</th><th>根拠</th><th>対応</th></tr>
+    <tr><td>事業者・価格・支払時期・解約条件などの表示</td><td>第11条</td><td><a href="/tokushoho.html">特定商取引法に基づく表記</a>に記載</td></tr>
+    <tr><td>申込みの最終段階での表示（分量、対価、支払時期と方法、提供時期、申込みの撤回・解除に関する事項など）</td><td>第12条の6</td><td><a href="/pricing.html#confirm">料金ページの「お申し込み前の確認事項」</a>に、自動更新であること・各回の支払額・解約の方法と効果をまとめて表示。決済画面（Stripe）でも金額と更新の周期を表示</td></tr>
+    <tr><td>人を誤認させる表示の禁止</td><td>第12条・第12条の6第2項</td><td>「無料」と表示する範囲（1回20件まで）と、有料になる条件を明記</td></tr>
+  </table>
+  <p class="hint">役務の提供には、商品の通信販売のような法定の返品制度（第15条の3）はありません。当社は独自に、初回決済から7日以内のお申し出に限り全額を返金しています。</p>
+
+  <h2 id="privacy">5. 個人情報保護法</h2>
+  <p><strong>振込先の氏名・口座番号・金額を、当社は取得しません。</strong>ブラウザの中だけで処理され、当社のサーバーに届かないためです。したがって、これらについて当社は個人情報取扱事業者としての取扱いを行っていません（お客様ご自身は、従業員や取引先の個人情報を取り扱う立場として、従来どおりの管理をお願いします）。</p>
+  <p>当社が取得するのは、有料プランのお申込みとお問い合わせに伴う次の情報に限られます。</p>
+  <table>
+    <tr><th>項目</th><th>根拠</th><th>対応</th></tr>
+    <tr><td>利用目的の特定と公表</td><td>第17条・第21条</td><td><a href="/privacy.html">プライバシーポリシー</a>に記載（ライセンスキーの送付、請求、サポート）</td></tr>
+    <tr><td>安全管理措置</td><td>第23条</td><td>取得する項目を最小限にする。アクセス権限を運営者に限定。通信の暗号化。決済情報（カード番号）は当社で保持しない</td></tr>
+    <tr><td>委託先の監督</td><td>第25条</td><td>決済は Stripe、データの保管とメール送信は Google のサービスを利用。各社の契約条項（データ処理に関する補足契約）に基づく</td></tr>
+    <tr><td>外国にある第三者への提供</td><td>第28条</td><td>上記の委託先は米国などにサーバーを置く場合がある。その旨と国名をプライバシーポリシーに記載</td></tr>
+    <tr><td>開示・訂正・利用停止などの請求</td><td>第33条〜第35条</td><td><a href="/about.html#contact">お問い合わせ</a>で受け付け</td></tr>
+  </table>
+
+  <h2 id="external">6. 電気通信事業法（外部送信の規律）</h2>
+  <p>ウェブサイトが、利用者の端末から第三者のサーバーへ情報を送らせる場合（アクセス解析や外部の部品の読み込みなど）、その内容を利用者が確認できるようにすることが求められています（第27条の12）。当サイトが読み込む外部のサービス、送信される情報、目的は、<a href="/privacy.html#external">プライバシーポリシーの「外部送信について」</a>に一覧で示しています。振込データの内容がこれらに含まれることはありません。</p>
+
+  <h2 id="consumer">7. 消費者契約法・民法（利用規約の免責）</h2>
+  <p><a href="/terms.html">利用規約</a>では、当社の責任の範囲を定めています。消費者契約法第8条は、事業者の損害賠償責任の全部を免除する条項や、故意・重過失による責任の一部を免除する条項を無効としています。当社の規約は、これに沿って次のように定めています。</p>
+  <ul>
+    <li>責任の上限（直近12か月の利用料金）は、当社に<strong>故意または重過失がある場合には適用しない</strong>。</li>
+    <li>「法令で許される限り」のような、範囲のはっきりしない免責の書き方はしない。</li>
+    <li>お客様が消費者である場合に法律上認められる権利は、規約によって制限されない。</li>
+  </ul>
+
+  <h2 id="ad">8. 景品表示法（表示の根拠）</h2>
+  <p>当サイトの機能説明や他の方法との比較は、実際に備えている機能と、公開されている情報に基づいて書いています。所要時間などの数字は当社での試用による目安であり、その旨を併記しています。銀行ごとの取込みの可否は、全銀協の標準フォーマットに沿って出力していることを根拠としており、すべての金融機関での動作を個別に保証するものではありません。広告やアフィリエイトの掲載はありません。</p>
+
+  <h2 id="a11y">9. 障害者差別解消法・ウェブアクセシビリティ</h2>
+  <p>2024年4月から、事業者にも障害のある方への合理的配慮の提供が義務づけられました。当サイトは JIS X 8341-3:2016 に配慮して制作し、お困りの点のご連絡を受け付けています。詳しくは<a href="/accessibility.html">アクセシビリティ</a>のページをご覧ください。</p>
+
+  <h2 id="notice">このページについて</h2>
+  <div class="callout warn">このページは、当社が自らのサービスについて法令との関係を整理した内容をお知らせするものです。個別の事情についての法的な助言ではありません。お客様の業務での利用にあたり法的な判断が必要な場合は、弁護士などの専門家にご相談ください。法令の改正や当局の解釈の変更があった場合は、内容を見直します。</div>
+</article>
+<!-- site:footer -->
+<footer class="site-foot">
+  <div class="wrap in">
+    <div>
+      <h2 class="foot-h">全銀ポン</h2>
+      <p>給与振込・総合振込の Excel／CSV／PDF／Googleスプレッドシートを、ネットバンキングに取り込める全銀フォーマットへ。データはブラウザの中だけで処理します。</p>
+      <p class="made-by">企画・開発・運営：<a href="https://kokokikaku.com/" rel="noopener">ここ企画</a>（<a href="/about.html">運営者情報</a>）</p>
+      <p class="made-by">ここ企画のほかの道具：<a href="https://misefits.kokokikaku.com/" rel="noopener">MiseFits（店舗レイアウト）</a>・<a href="https://menufits.kokokikaku.com/" rel="noopener">MenuFits（メニュー表）</a></p>
+    </div>
+    <div>
+      <h2 class="foot-h">使う</h2>
+      <a href="/#tool">全銀フォーマットに変換する</a>
+      <a href="/guide.html">使い方・銀行別の取込方法</a>
+      <a href="/pricing.html">料金プラン</a>
+      <a href="/faq.html">よくある質問</a>
+    </div>
+    <div>
+      <h2 class="foot-h">調べる・無料ツール</h2>
+      <a href="/zengin-format.html">全銀フォーマットとは（仕様の解説）</a>
+      <a href="/banks/">銀行コード・支店コード検索</a>
+      <a href="/free-tools/yucho.html">ゆうちょ 記号番号の変換</a>
+      <a href="/free-tools/kana.html">口座名義のカナ変換・法人略語</a>
+    </div>
+    <div>
+      <h2 class="foot-h">安心・規約</h2>
+      <a href="/security.html">セキュリティとデータの扱い</a>
+      <a href="/legal.html">法令上の位置づけ</a>
+      <a href="/terms.html">利用規約</a>
+      <a href="/privacy.html">プライバシーポリシー</a>
+      <a href="/tokushoho.html">特定商取引法に基づく表記</a>
+      <a href="/accessibility.html">アクセシビリティ</a>
+      <a href="/about.html">運営者情報・お問い合わせ</a>
+    </div>
+  </div>
+  <div class="wrap copy">© ここ企画 — 本サービスは振込データ（ファイル）の作成のみを行い、送金は行いません。振込内容の最終確認はご自身のネットバンキングで行ってください。</div>
+</footer>
+<!-- /site:footer -->
+<script src="/config.js"></script>
+<script src="/src/site.js"></script>
+</body>
+</html>

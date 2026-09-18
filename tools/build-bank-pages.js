@@ -14,8 +14,10 @@
 const fs = require('node:fs');
 const path = require('node:path');
 
+const T = require('./site-template');
+
 const ROOT = path.resolve(__dirname, '..');
-const SITE = 'https://zenginpon.kokokikaku.com';
+const SITE = T.SITE;
 const banksJson = JSON.parse(fs.readFileSync(path.join(ROOT, 'data', 'banks.json'), 'utf8'));
 const version = banksJson.version;
 const banks = banksJson.banks;
@@ -40,34 +42,37 @@ function fullName(code, name) {
   return name;
 }
 
-function page({ title, description, body, canonical, jsonld }) {
+function page({ title, description, body, canonical, jsonld, urlPath, trail }) {
+  const lds = [T.breadcrumbLd(trail)].concat(jsonld ? [jsonld] : []);
   return `<!DOCTYPE html>
 <html lang="ja">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="icon" href="/favicon.ico" sizes="32x32">
-<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
-<link rel="manifest" href="/site.webmanifest">
-<meta name="theme-color" content="#14305c">
+${T.headCommon({ title, description, path: urlPath })}
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(description)}">
 <link rel="canonical" href="${canonical}">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../style.css">
-${jsonld ? `<script type="application/ld+json">${JSON.stringify(jsonld)}</script>` : ''}
+<link rel="stylesheet" href="/style.css">
+${lds.map(T.ld).join(' ')}
 </head>
-<body data-depth="1">
+<body>
+${T.header('/banks/')}
+${T.breadcrumbHtml(trail)}
+<span id="main" tabindex="-1"></span>
 ${body}
-<script src="../config.js"></script>
-<script src="../src/banks.js"></script>
-<script src="../src/site.js"></script>
+${T.footer()}
+<script src="/config.js"></script>
+<script src="/src/banks.js"></script>
+<script src="/src/site.js"></script>
 </body>
 </html>
 `;
 }
 
-const cta = `<div class="callout ok" style="margin-top:28px"><strong>このコードで振込データを作る:</strong> Excelの支払リストや給与計算表を、銀行名・支店名のままでも読み込んで全銀フォーマットに変換できます。<a href="../index.html#tool">全銀ポン（無料）</a></div>`;
+const cta = `<div class="callout ok" style="margin-top:28px"><strong>このコードで振込データを作る:</strong> Excelの支払リストや給与計算表を、銀行名・支店名のままでも読み込んで全銀フォーマットに変換できます。<a href="/#tool">全銀ポンで変換する（無料）</a></div>`;
 
 // ---- 各銀行ページ ----
 const urls = [];
@@ -82,7 +87,6 @@ for (const code of Object.keys(banks).sort()) {
   branchTotal += list.length;
   const rows = list.map((bc) => `<tr><td class="mono">${bc}</td><td>${esc(branches[bc][0])}</td><td>${esc(branches[bc][1])}</td></tr>`).join('\n');
   const body = `<article class="article">
-  <p class="updated"><a href="index.html">銀行コード検索</a> › ${esc(fn)}</p>
   <h1>${esc(fn)}の銀行コード・支店コード一覧</h1>
   <p class="updated">金融機関コード <strong class="mono">${code}</strong> ／ カナ: ${esc(kana)} ／ ${list.length} 支店 ／ ${version} 版の全銀協公開データに基づく</p>
   <div class="callout">振込データ（全銀フォーマット）では、この <strong>金融機関コード ${code}</strong> と下の <strong>3桁の支店コード</strong> を使います。銀行名・支店名は任意項目で、コードから自動で判定されます。</div>
@@ -98,6 +102,8 @@ ${rows}
     title: `${fn}の銀行コード（${code}）と支店コード一覧｜全銀ポン`,
     description: `${fn}（金融機関コード ${code}）の支店コード・支店名の一覧。振込データ（全銀フォーマット）作成に必要な4桁の銀行コードと3桁の支店コードを確認できます。`,
     canonical: url,
+    urlPath: `/banks/${code}.html`,
+    trail: [['無料ツール', '/free-tools/'], ['銀行コード・支店コード検索', '/banks/'], [fn, `/banks/${code}.html`]],
     jsonld: { '@context': 'https://schema.org', '@type': 'Dataset', name: `${fn}の支店コード一覧`, description: `金融機関コード ${code} の支店コード一覧（${version}版）`, license: 'https://opensource.org/licenses/MIT', creator: { '@type': 'Organization', name: 'ここ企画' } },
     body,
   }));
@@ -122,17 +128,10 @@ fs.writeFileSync(path.join(outDir, 'index.html'), page({
   title: '銀行コード・支店コード検索（全国の金融機関一覧）｜全銀ポン',
   description: `全国${Object.keys(banks).length}金融機関の銀行コード（金融機関コード）と支店コードを検索。振込データ・全銀フォーマットの作成に。${version}版の全銀協公開データに基づき毎月更新。`,
   canonical: `${SITE}/banks/`,
+  urlPath: '/banks/',
+  trail: [['無料ツール', '/free-tools/'], ['銀行コード・支店コード検索', '/banks/']],
   body: indexBody,
 }));
 
-// ---- sitemap ----
-const statics = ['', 'guide.html', 'pricing.html', 'security.html', 'faq.html', 'banks/'];
-const today = new Date().toISOString().slice(0, 10);
-const sm = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${statics.map((p) => `  <url><loc>${SITE}/${p}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>${p === '' ? '1.0' : '0.8'}</priority></url>`).join('\n')}
-${urls.map((u) => `  <url><loc>${u}</loc><lastmod>${version}</lastmod><changefreq>monthly</changefreq><priority>0.4</priority></url>`).join('\n')}
-</urlset>
-`;
-fs.writeFileSync(path.join(ROOT, 'sitemap.xml'), sm);
-console.log(`built ${urls.length} bank pages, ${branchTotal} branches, sitemap with ${urls.length + statics.length} urls`);
+// sitemap.xml は tools/build-site.js が作る（手書きページと銀行ページをまとめて扱うため）
+console.log(`built ${urls.length} bank pages, ${branchTotal} branches`);

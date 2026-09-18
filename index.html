@@ -3,32 +3,59 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- site:head -->
 <link rel="icon" href="/favicon.ico" sizes="32x32">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#14305c">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="format-detection" content="telephone=no">
+<meta property="og:site_name" content="全銀ポン">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="全銀ポン｜全銀フォーマット変換ツール — Excel・CSV・PDFをFBデータに一発変換（給与振込・総合振込）">
+<meta property="og:description" content="給与計算表や支払リストのExcel・CSV・PDF・Googleスプレッドシートを、ネットバンキングにそのまま取り込める全銀フォーマット（FBデータ）に変換。列の並びがバラバラでも自動整理。データはブラウザの中だけで処理し、サーバーには送りません。">
+<meta property="og:url" content="https://zenginpon.kokokikaku.com/">
+<meta property="og:image" content="https://zenginpon.kokokikaku.com/assets/ogp.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<!-- /site:head -->
 <title>全銀ポン｜全銀フォーマット変換ツール — Excel・CSV・PDFをFBデータに一発変換（給与振込・総合振込）</title>
 <meta name="description" content="給与計算表や支払リストのExcel・CSV・PDF・Googleスプレッドシートを、ネットバンキングにそのまま取り込める全銀フォーマット（FBデータ）に変換。列の並びがバラバラでも自動整理。データはブラウザの中だけで処理し、サーバーには送りません。">
 <link rel="canonical" href="https://zenginpon.kokokikaku.com/">
-<meta property="og:type" content="website">
-<meta property="og:title" content="全銀ポン — Excelを、そのまま銀行へ。全銀フォーマット変換ツール">
-<meta property="og:description" content="給与振込・総合振込のExcelを全銀フォーマットに一発変換。並びがバラバラでも自動整理。サーバーに送らない安心設計。">
-<meta property="og:url" content="https://zenginpon.kokokikaku.com/">
-<meta property="og:image" content="https://zenginpon.kokokikaku.com/assets/ogp.png">
-<meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;800&display=swap" rel="stylesheet">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com https://accounts.google.com https://apis.google.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://accounts.google.com; font-src https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://cdnjs.cloudflare.com https://www.googleapis.com https://accounts.google.com https://apis.google.com https://content.googleapis.com https://www.google-analytics.com https://region1.google-analytics.com https://asia-northeast1-misefits.cloudfunctions.net; frame-src https://docs.google.com https://accounts.google.com https://content.googleapis.com; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
 <link rel="stylesheet" href="style.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" integrity="sha384-vtjasyidUo0kW94K5MXDXntzOJpQgBKXmE7e2Ga4LG0skTTLeBi97eFAXsqewJjw" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" integrity="sha384-/1qUCSGwTur9vjf/z9lmu/eCUYbpOTgSjmpbMQZ1/CtX2v/WcAIKqRv+U1DUCG6e" crossorigin="anonymous"></script>
-<script type="application/ld+json">
-{"@context":"https://schema.org","@type":"SoftwareApplication","name":"全銀ポン","applicationCategory":"BusinessApplication","operatingSystem":"Web","url":"https://zenginpon.kokokikaku.com/","description":"給与振込・総合振込のExcel/CSV/PDFを全銀フォーマット（FBデータ）に変換するブラウザ完結ツール","offers":[{"@type":"Offer","price":"0","priceCurrency":"JPY","name":"Free"},{"@type":"Offer","price":"480","priceCurrency":"JPY","name":"Pro（月払い）"},{"@type":"Offer","price":"4800","priceCurrency":"JPY","name":"Pro（年払い）"}]}
-</script>
+<!-- site:ld -->
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://kokokikaku.com/#organization","name":"ここ企画","alternateName":"kokokikaku","url":"https://kokokikaku.com/","email":"studio@kokokikaku.com","slogan":"店のしごと、少しだけ軽くする。","sameAs":["https://www.instagram.com/koko_kikaku/"]},{"@type":"WebSite","@id":"https://zenginpon.kokokikaku.com/#website","url":"https://zenginpon.kokokikaku.com/","name":"全銀ポン","alternateName":["全銀ポン 全銀フォーマット変換ツール","ぜんぎんポン"],"inLanguage":"ja","publisher":{"@id":"https://kokokikaku.com/#organization"}},{"@type":"WebApplication","@id":"https://zenginpon.kokokikaku.com/#app","name":"全銀ポン","url":"https://zenginpon.kokokikaku.com/","applicationCategory":"BusinessApplication","applicationSubCategory":"振込データ作成","operatingSystem":"Web（Chrome / Edge / Safari / Firefox の最新版）","inLanguage":"ja","isAccessibleForFree":true,"description":"給与振込・総合振込のExcel／CSV／PDF／Googleスプレッドシートを、ネットバンキングに取り込める全銀フォーマット（FBデータ）に変換するツール。変換はブラウザの中だけで行い、振込データをサーバーに送信しない。","featureList":["Excel・CSV・PDF・Googleスプレッドシートの読み込み","列の並びや見出しが違う表の自動整理","銀行名・支店名からの金融機関コードの補完","口座名義の半角カナ・法人略語への変換","ゆうちょ銀行の記号番号の変換","銀行休業日の確認","総合振込・給与振込・賞与振込に対応"],"offers":[{"@type":"Offer","name":"Free（1回20件まで）","price":"0","priceCurrency":"JPY"},{"@type":"Offer","name":"Pro（月払い）","price":"480","priceCurrency":"JPY"},{"@type":"Offer","name":"Pro（年払い）","price":"4800","priceCurrency":"JPY"}],"creator":{"@id":"https://kokokikaku.com/#organization"},"publisher":{"@id":"https://kokokikaku.com/#organization"}}]}</script>
+<!-- /site:ld -->
 </head>
 <body>
+<!-- site:header -->
+<a class="skip-link" href="#main">本文へ移動</a>
+<header class="site-head">
+  <div class="wrap in">
+    <a class="brand" href="/"><svg class="logo" viewBox="0 0 40 40" aria-hidden="true" focusable="false"><rect x="4" y="6" width="32" height="28" rx="6" fill="#14305c"/><path d="M11 15h18M11 20h18M11 25h11" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/><circle cx="29" cy="27" r="6" fill="#ff7a1a"/><path d="M26.5 27l1.8 1.8L32 25.6" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg><span><b>全銀ポン</b><small>全銀フォーマット変換ツール</small></span></a>
+    <button class="nav-toggle" type="button" aria-label="メニューを開く" aria-expanded="false" aria-controls="site-nav">☰</button>
+    <nav class="nav" id="site-nav" aria-label="サイト内メニュー">
+      <a href="/guide.html">使い方</a>
+      <a href="/zengin-format.html">全銀フォーマットとは</a>
+      <a href="/free-tools/">無料ツール</a>
+      <a href="/pricing.html">料金</a>
+      <a href="/security.html">安心・安全</a>
+      <a href="/faq.html">よくある質問</a>
+      <a class="cta" href="/#tool">無料で変換する</a>
+    </nav>
+  </div>
+</header>
 
+<span id="main" tabindex="-1"></span>
+<!-- /site:header -->
 <!-- ===== HERO ===== -->
 <section class="hero">
   <div class="wrap in">
@@ -40,7 +67,7 @@
         <a class="btn primary big" href="#tool">無料で試す（登録不要）</a>
         <a class="btn" href="guide.html">使い方を見る</a>
       </div>
-      <div class="trust"><span>サーバーに送信しない</span><span>登録・インストール不要</span><span>ほぼ全ての国内銀行に対応</span><span>最新の金融機関一覧と照合</span></div>
+      <div class="trust"><span>サーバーに送信しない</span><span>登録・インストール不要</span><span>全銀協の標準フォーマットで出力</span><span>最新の金融機関一覧と照合</span></div>
     </div>
     <svg class="hero-art" viewBox="0 0 520 380" aria-hidden="true">
       <defs><linearGradient id="g1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff3e8"/><stop offset="1" stop-color="#e8f0fb"/></linearGradient></defs>
@@ -136,7 +163,7 @@
     <label class="kind"><input type="radio" name="kindRadio" value="12"><span class="ic">🎁</span><b>賞与振込</b><small>ボーナス</small></label>
   </div>
 
-  <div id="drop" class="drop" tabindex="0">
+  <div id="drop" class="drop" tabindex="0" role="button" aria-label="振込一覧のファイルを選ぶ。Enterキーでファイルの選択画面を開きます">
     <svg viewBox="0 0 64 64" class="drop-ic" aria-hidden="true"><rect x="10" y="8" width="44" height="48" rx="6" fill="#fff1e6" stroke="#ffb26b" stroke-width="2"/><path d="M20 24h24M20 32h24M20 40h14" stroke="#14305c" stroke-width="3" stroke-linecap="round"/><path d="M46 44v12M40 50l6-6 6 6" stroke="#ff7a1a" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
     <p class="drop-main">ここにファイルをドラッグ＆ドロップ</p>
     <p>または <label class="btn-link">ファイルを選択<input id="file" type="file" accept=".xlsx,.xls,.xlsm,.csv,.txt,.pdf" hidden></label></p>
@@ -147,11 +174,17 @@
   </div>
   <div id="fileInfo" class="fileinfo" hidden></div>
 
+  <div class="try-row" role="group" aria-label="サンプルデータで試す">
+    <strong>はじめての方へ：</strong>
+    <button type="button" class="btn" data-sample="samples/sample_messy.csv" data-kind="21">▶ 並びがバラバラな表で試す</button>
+    <button type="button" class="btn" data-sample="samples/sample_kyuyo.csv" data-kind="11">▶ 給与計算表で試す</button>
+  </div>
+  <p class="try-note">ボタンを押すと、架空のサンプルデータでそのまま最後まで進めます。ご自分のファイルを用意しなくても、流れを確かめられます。</p>
   <div class="samples">
-    <span>サンプルで試す:</span>
+    <span>サンプルのファイルを保存する:</span>
     <a href="samples/sample_sogo.csv" download>総合振込のCSV</a>
     <a href="samples/sample_kyuyo.csv" download>給与振込のCSV</a>
-    <a href="samples/sample_messy.csv" download>並びがバラバラなCSV（自動整理のデモ）</a>
+    <a href="samples/sample_messy.csv" download>並びがバラバラなCSV</a>
   </div>
 </section>
 
@@ -173,6 +206,7 @@
 <section class="panel" id="panel3" hidden>
   <h2>振込元（自社）の情報</h2>
   <p class="desc">ネットバンキングの「振込依頼人コード（企業コード・委託者コード）」は銀行から通知された10桁の番号です。一度入力すればこのブラウザに保存されます。</p>
+  <div id="demoNote" class="notes" hidden><div>🧪 サンプルを試せるように、空欄だった項目に<strong>仮の値</strong>を入れています。この値は保存されません。ご自分のファイルを読み込むと消えます。</div></div>
   <div id="profileBar" class="profilebar" hidden>
     <span class="tag infer">Pro</span>
     <label>振込元プロファイル <select id="profileSel"><option value="">（現在の入力）</option></select></label>
@@ -181,7 +215,8 @@
     <button type="button" id="profileDelete" class="btn mini" hidden>削除</button>
   </div>
   <div class="grid">
-    <label>振込依頼人コード（10桁）<input id="clientCode" inputmode="numeric" maxlength="10" placeholder="1234567890"></label>
+    <label>振込依頼人コード（10桁）<input id="clientCode" inputmode="numeric" maxlength="10" placeholder="1234567890">
+      <details class="help"><summary>どこに書いてある？</summary><div>法人向けネットバンキングを契約したときに、銀行が割り当てる10桁の番号です。「委託者コード」「企業コード」「会社コード」とも呼ばれます。ネットバンキングの「企業情報」「契約者情報」「総合振込の設定」などの画面か、契約時の書類に載っています。見つからないときは、銀行のヘルプデスクに「総合振込（給与振込）の委託者コードを知りたい」と伝えると教えてもらえます。桁が足りない場合は先頭に0を足します。</div></details></label>
     <label class="span2">振込依頼人名<input id="clientName" placeholder="株式会社ココキカク（→ ｶ)ｺｺｷｶｸ に自動変換）"><small id="clientNamePreview" class="preview"></small></label>
     <label>振込指定日<input id="date" type="date"><small id="datePreview" class="preview"></small></label>
     <label>銀行コード（4桁）<input id="bankCode" inputmode="numeric" maxlength="4" placeholder="0005"><small id="bankCodeName" class="preview"></small></label>
@@ -252,6 +287,30 @@
 <!-- ===== FEATURES ===== -->
 <section class="section alt" id="features">
   <div class="wrap">
+    <h2>こんな表が、銀行に渡せるファイルになります</h2>
+    <p class="sub">左は、よくある支払一覧です。銀行コードは無く、銀行名と支店名が1つのセルに入り、最後に合計の行があります。全銀ポンはこれをそのまま読み込みます。</p>
+    <div class="ba">
+      <figure>
+        <figcaption>変換前：いつものExcel</figcaption>
+        <div class="tablewrap"><table>
+          <thead><tr><th>支払先</th><th>振込先</th><th>口座</th><th class="r">支払額</th></tr></thead>
+          <tbody>
+            <tr><td>株式会社山田商店（ヤマダショウテン）</td><td>三菱UFJ銀行 本店</td><td>普通 1234567</td><td class="r">330,000</td></tr>
+            <tr><td>佐藤工務店（サトウコウムテン）</td><td>みずほ銀行 渋谷支店</td><td>当座 7654321</td><td class="r">125,400</td></tr>
+            <tr><td>合計</td><td></td><td></td><td class="r">455,400</td></tr>
+          </tbody>
+        </table></div>
+      </figure>
+      <div class="arrow" aria-hidden="true">→</div>
+      <figure>
+        <figcaption>変換後：全銀フォーマット（銀行に取り込むファイル）</figcaption>
+        <pre aria-label="全銀フォーマットの出力例">20005ﾐﾂﾋﾞｼﾕ-ｴﾌｼﾞｴｲ 001ﾎﾝﾃﾝ   11234567ﾔﾏﾀﾞｼﾖｳﾃﾝ  0000330000…
+20001ﾐｽﾞﾎ          210ｼﾌﾞﾔ   27654321ｻﾄｳｺｳﾑﾃﾝ   0000125400…
+8000002000000455400</pre>
+        <p class="hint" style="margin:8px 0 0">銀行名から銀行コード（0005・0001）と支店コード（001・210）を補い、名義を半角カナに直し、合計の行は除いています。表示は途中を省略しています。</p>
+      </figure>
+    </div>
+
     <h2>「Excelの形がバラバラ」でも、大丈夫。</h2>
     <p class="sub">給与ソフトの出力、税理士さんからもらった表、自分で作った支払リスト。形はみんな違います。だから、整えるところから自動でやります。</p>
     <div class="cards3">
@@ -302,6 +361,43 @@
   </div>
 </section>
 
+<!-- site:footer -->
+<footer class="site-foot">
+  <div class="wrap in">
+    <div>
+      <h2 class="foot-h">全銀ポン</h2>
+      <p>給与振込・総合振込の Excel／CSV／PDF／Googleスプレッドシートを、ネットバンキングに取り込める全銀フォーマットへ。データはブラウザの中だけで処理します。</p>
+      <p class="made-by">企画・開発・運営：<a href="https://kokokikaku.com/" rel="noopener">ここ企画</a>（<a href="/about.html">運営者情報</a>）</p>
+      <p class="made-by">ここ企画のほかの道具：<a href="https://misefits.kokokikaku.com/" rel="noopener">MiseFits（店舗レイアウト）</a>・<a href="https://menufits.kokokikaku.com/" rel="noopener">MenuFits（メニュー表）</a></p>
+    </div>
+    <div>
+      <h2 class="foot-h">使う</h2>
+      <a href="/#tool">全銀フォーマットに変換する</a>
+      <a href="/guide.html">使い方・銀行別の取込方法</a>
+      <a href="/pricing.html">料金プラン</a>
+      <a href="/faq.html">よくある質問</a>
+    </div>
+    <div>
+      <h2 class="foot-h">調べる・無料ツール</h2>
+      <a href="/zengin-format.html">全銀フォーマットとは（仕様の解説）</a>
+      <a href="/banks/">銀行コード・支店コード検索</a>
+      <a href="/free-tools/yucho.html">ゆうちょ 記号番号の変換</a>
+      <a href="/free-tools/kana.html">口座名義のカナ変換・法人略語</a>
+    </div>
+    <div>
+      <h2 class="foot-h">安心・規約</h2>
+      <a href="/security.html">セキュリティとデータの扱い</a>
+      <a href="/legal.html">法令上の位置づけ</a>
+      <a href="/terms.html">利用規約</a>
+      <a href="/privacy.html">プライバシーポリシー</a>
+      <a href="/tokushoho.html">特定商取引法に基づく表記</a>
+      <a href="/accessibility.html">アクセシビリティ</a>
+      <a href="/about.html">運営者情報・お問い合わせ</a>
+    </div>
+  </div>
+  <div class="wrap copy">© ここ企画 — 本サービスは振込データ（ファイル）の作成のみを行い、送金は行いません。振込内容の最終確認はご自身のネットバンキングで行ってください。</div>
+</footer>
+<!-- /site:footer -->
 <script src="config.js"></script>
 <script src="src/zengin.js"></script>
 <script src="src/organize.js"></script>

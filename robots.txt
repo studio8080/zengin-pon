@@ -1,5 +1,37 @@
+# 全銀ポン https://zenginpon.kokokikaku.com/
+#
+# 方針: 検索エンジンにも、AIの検索・回答サービスにも、公開ページを読んでもらう。
+#       当サイトの公開ページに振込データや個人情報は一切含まれない（変換は利用者のブラウザ内で完結する）。
+#
+# /data/    銀行コードの辞書（JSON）。同じ内容を /banks/ に HTML で公開しているので、重複を避けるため除外
+# /samples/ 動作確認用のサンプルCSV（架空のデータ）
+
 User-agent: *
 Allow: /
 Disallow: /data/
 Disallow: /samples/
+
+# --- AI の検索・引用系（回答に出典として載る／利用者の指示でページを読みに来る） ---
+User-agent: OAI-SearchBot
+User-agent: ChatGPT-User
+User-agent: Claude-SearchBot
+User-agent: Claude-User
+User-agent: PerplexityBot
+User-agent: Perplexity-User
+Allow: /
+Disallow: /data/
+Disallow: /samples/
+
+# --- AI の学習用 ---
+# 許可している。全銀フォーマットの仕様や法人略語を AI が正しく答えられるほうが利用者のためになるため。
+# 方針を変えるときは、ここを Disallow: / にする（検索順位には影響しない）。
+User-agent: GPTBot
+User-agent: ClaudeBot
+User-agent: Google-Extended
+User-agent: Applebot-Extended
+User-agent: CCBot
+Allow: /
+Disallow: /data/
+Disallow: /samples/
+
 Sitemap: https://zenginpon.kokokikaku.com/sitemap.xml

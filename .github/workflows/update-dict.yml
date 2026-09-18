@@ -28,6 +28,7 @@ jobs:
         run: |
           DICT_VERSION="${{ steps.src.outputs.date }}" node tools/build-dict.js /tmp/source-data
           node tools/build-bank-pages.js
+          node tools/build-site.js
       - name: Create pull request if changed
         uses: peter-evans/create-pull-request@v6
         with:
