@@ -3,6 +3,7 @@
   'use strict';
   const base = '/data/'; // ルート相対。/tools/ や /banks/ 配下のページからも同じ辞書を読めるようにする
   const cache = { banks: null, branches: new Map(), merged: null, version: '' };
+  const pending = new Map();
 
   async function getJSON(path) {
     const res = await fetch(base + path, { cache: 'no-cache' });
@@ -27,10 +28,15 @@
   async function branches(bankCode) {
     if (!cache.banks || !cache.banks[bankCode]) return null;
     if (cache.branches.has(bankCode)) return cache.branches.get(bankCode);
-    let data = null;
-    try { data = await getJSON(`branches/${bankCode}.json`); } catch (_) { data = null; }
-    cache.branches.set(bankCode, data);
-    return data;
+    // 同じ銀行を同時に何行も調べるので、読み込み中の分は使い回す（同じファイルを何度も取りに行かない）
+    if (!pending.has(bankCode)) {
+      pending.set(bankCode, getJSON(`branches/${bankCode}.json`).catch(() => null).then((data) => {
+        cache.branches.set(bankCode, data);
+        pending.delete(bankCode);
+        return data;
+      }));
+    }
+    return pending.get(bankCode);
   }
 
   /** @returns {[name, kana]|null|undefined} undefined = 支店一覧が未取得 */

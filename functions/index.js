@@ -51,7 +51,19 @@ const COLLECTION = 'zenginponLicenses';
 const GRACE_DAYS = 3;          // 契約期間の末日を過ぎても数日は使える（更新の行き違い対策）
 const MAX_OFFLINE_DAYS = 30;   // キーの最長寿命。これを超える期限は発行しない
 const ACTIVE = ['active', 'trialing', 'past_due'];  // past_due は Stripe が再請求中なので使わせる
-const ALLOWED_ORIGINS = [SITE, 'http://localhost:8765'];
+const ALLOWED_ORIGINS = [SITE, 'http://localhost:8877'];
+// Stripe アカウントは MiseFits / MenuFits と共用。全銀ポン Pro 以外の契約にはキーを出さない。
+const ZP_PRODUCT_ID = 'prod_VEa5100IEJu6JE';
+// Stripe カスタマーポータルのログインリンク（設定 → Billing → カスタマーポータル → 「リンクを有効化」で発行）。
+// 空のあいだは「メールへの返信で解約」と案内する。
+const PORTAL_URL = '';
+
+function cancelHow() {
+  return PORTAL_URL
+    ? `次のページから、ご登録のメールアドレスでいつでも解約できます（このメールへのご返信でも承ります）。
+${PORTAL_URL}`
+    : 'このメールにご返信いただければ、解約を承ります（いつでも可能です）。';
+}
 
 // ------------------------------------------------------------
 // メール
@@ -86,15 +98,15 @@ ${key}
 バックアップが使えるようになります。会社のPCと自宅のPCなど、2台までご利用いただけます。
 
 【キーの有効期限について】
-キーには短い有効期限が入っていますが、**ご契約が続いているかぎり、サイトを開いたときに
-自動で更新されます**（貼り直しの必要はありません）。ご契約は自動更新のため、
+キーには短い有効期限が入っていますが、ご契約が続いているかぎり、サイトを開いたときに
+自動で更新されます（貼り直しの必要はありません）。ご契約は自動更新のため、
 解約のお手続きをされない限り、そのままお使いいただけます。
 
 うまく更新されないときは「⭐ Pro」ボタンの「更新を確認」を押してください。
 このメールのキーを貼り直しても復帰できますので、保管をお願いします。
 
 【解約について】
-お申し込み時の領収書メールにある管理画面、またはこのメールへのご返信で解約できます。
+${cancelHow()}
 解約後は、お支払い済みの期間の末日までご利用いただけます。
 
 ご不明な点、取込エラーなどありましたら、このメールにご返信ください。
@@ -109,7 +121,7 @@ ${SITE}/
 function renewalMail(key, expiry, id) {
   return `全銀ポン Proプランのお支払いを確認しました。ありがとうございます。
 
-サイトを開いていればキーは自動で更新されますので、**通常この作業は不要です**。
+サイトを開いていればキーは自動で更新されますので、通常この作業は不要です。
 念のため、新しいキーの控えをお送りします。
 
 ────────────────────────────
@@ -152,6 +164,15 @@ function planLabelOf(subscription) {
   return interval === 'year' ? '年払い' : '月払い';
 }
 
+/** 全銀ポン Pro の契約か（同じ Stripe アカウントのほかの商品を誤って処理しない） */
+function isZenginPon(subscription) {
+  const items = (subscription.items && subscription.items.data) || [];
+  return items.some((it) => {
+    const p = it.price && it.price.product;
+    return (typeof p === 'string' ? p : p && p.id) === ZP_PRODUCT_ID;
+  });
+}
+
 async function emailOf(stripe, subscription, fallback) {
   if (fallback) return fallback;
   try {
@@ -165,8 +186,9 @@ async function saveState(subscription, email) {
   const id = licenseIdFor(subscription.id);
   const periodEnd = periodEndOf(subscription);
   if (!periodEnd) throw new Error(`current_period_end が取れません: ${subscription.id}`);
+  // email は分かったときだけ書く（subscription.updated では null なので、上書きして消さない）
   await db.collection(COLLECTION).doc(id).set({
-    email: email || null,
+    ...(email ? { email } : {}),
     customerId: subscription.customer || null,
     subscriptionId: subscription.id,
     status: subscription.status || 'active',
@@ -204,6 +226,7 @@ exports.zenginponStripeWebhook = onRequest(
         const session = event.data.object;
         if (session.mode !== 'subscription' || !session.subscription) { res.json({ received: true, skipped: 'not a subscription' }); return; }
         const sub = await stripe.subscriptions.retrieve(session.subscription);
+        if (!isZenginPon(sub)) { res.json({ received: true, skipped: 'other product' }); return; }
         const email = await emailOf(stripe, sub, session.customer_details && session.customer_details.email);
         const { id, periodEnd } = await saveState(sub, email);
         const { key, expiry } = makeKey(periodEnd, id);
@@ -216,6 +239,7 @@ exports.zenginponStripeWebhook = onRequest(
         if (!subId) { res.json({ received: true, skipped: 'no subscription' }); return; }
         if (invoice.billing_reason === 'subscription_create') { res.json({ received: true, skipped: 'initial invoice (handled by checkout)' }); return; }
         const sub = await stripe.subscriptions.retrieve(subId);
+        if (!isZenginPon(sub)) { res.json({ received: true, skipped: 'other product' }); return; }
         const email = await emailOf(stripe, sub, invoice.customer_email);
         const { id, periodEnd } = await saveState(sub, email);
         const { key, expiry } = makeKey(periodEnd, id);
@@ -225,6 +249,7 @@ exports.zenginponStripeWebhook = onRequest(
       } else if (event.type === 'customer.subscription.deleted') {
         // 即時解約なら ended_at が「今」。期間末解約なら ended_at は期間の末日。
         const sub = event.data.object;
+        if (!isZenginPon(sub)) { res.json({ received: true, skipped: 'other product' }); return; }
         const id = licenseIdFor(sub.id);
         const end = sub.ended_at || periodEndOf(sub);
         const entitledUntil = expiryFromUnix(end, GRACE_DAYS);
@@ -236,6 +261,7 @@ exports.zenginponStripeWebhook = onRequest(
 
       } else if (event.type === 'customer.subscription.updated') {
         const sub = event.data.object;
+        if (!isZenginPon(sub)) { res.json({ received: true, skipped: 'other product' }); return; }
         await saveState(sub, null);
         console.log('状態更新', licenseIdFor(sub.id), sub.status);
       }

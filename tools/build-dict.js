@@ -55,7 +55,12 @@ function main() {
     fs.writeFileSync(path.join(OUT, 'branches', `${code}.json`), JSON.stringify(br));
   }
   fs.writeFileSync(path.join(OUT, 'banks.json'), JSON.stringify({ version, banks }));
-  const meta = { version, banks: Object.keys(banks).length, branches: branchCount, source: 'zengin-code/source-data', builtAt: new Date().toISOString() };
+  // 中身が前回と同じなら builtAt を据え置く（毎月の自動実行で、日時だけ違う無意味な PR を作らないため）
+  const metaFile = path.join(OUT, 'version.json');
+  let prev = null;
+  try { prev = JSON.parse(fs.readFileSync(metaFile, 'utf8')); } catch (_) { /* 初回 */ }
+  const same = prev && prev.version === version && prev.banks === Object.keys(banks).length && prev.branches === branchCount;
+  const meta = { version, banks: Object.keys(banks).length, branches: branchCount, source: 'zengin-code/source-data', builtAt: same && prev.builtAt ? prev.builtAt : new Date().toISOString() };
   fs.writeFileSync(path.join(OUT, 'version.json'), JSON.stringify(meta, null, 2) + '\n');
   console.log('built', meta);
 }
