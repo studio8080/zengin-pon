@@ -16,7 +16,7 @@
 | # | やること | どこで | メモ |
 |---|---|---|---|
 | 1 | 新しいページのインデックス登録をリクエスト | Search Console → URL検査 | 1日10件ほどまで。優先順は `docs/seo-ai-audit.md` の 4 |
-| 2 | Bing Webmaster Tools に登録 | https://www.bing.com/webmasters | 「Search Console からインポート」が早い。ChatGPT や Copilot の検索は Bing の索引を使う |
+| 2 | Bing Webmaster Tools に登録 | https://www.bing.com/webmasters | **済（2026-10-02）**。studio@ のアカウントに手動で追加し、トップの msvalidate.01 タグで所有確認、sitemap.xml を送信。Search Console からの取り込みは、全サイトのデータを読む権限を渡すため使わなかった |
 | 3 | 会社サイトの制作実績に全銀ポンを載せる | studio8080/kokokikaku-web の PR #11 | **済（2026-10-02 公開）**。制作実績カード・お知らせ /news/zengin-pon・製品ごとの規約一覧 /policies |
 | 4 | GitHub リポジトリの説明・トピック・URL | 設定済み | 公開リポジトリ自体が「作れる会社」の証拠になる |
 | 5 | Stripe の決済画面に自動更新の1文を足す | `docs/compliance-check.md` の「やること 1」 | 法令対応でもあり、申込みの不安も減る |
