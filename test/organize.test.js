@@ -89,4 +89,10 @@ t('見出し「銀行」に銀行名が入っている場合は銀行コード�
   assert.equal(a.mapping.name, 0);
 });
 
+t('漢字の法人の種類をカナに引き継ぐ（ｶ) が消えない）', () => {
+  assert.equal(require('../src/zengin.js').toZenginChars(O.splitCell('株式会社山田商店（ヤマダショウテン）').kana), 'ｶ)ﾔﾏﾀﾞｼﾖｳﾃﾝ');
+  assert.equal(require('../src/zengin.js').toZenginChars(O.splitCell('山田商店株式会社(ヤマダショウテン)').kana), 'ﾔﾏﾀﾞｼﾖｳﾃﾝ(ｶ');
+  assert.equal(O.splitCell('山田太郎（ヤマダ タロウ）').kana, 'ヤマダ タロウ');
+});
+
 console.log(`\n${passed} tests passed`);

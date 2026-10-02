@@ -27,7 +27,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;800&display=swap" rel="stylesheet">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
 <link rel="stylesheet" href="/style.css">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"WebApplication","name":"口座名義 半角カナ変換ツール","url":"https://zenginpon.kokokikaku.com/free-tools/kana.html","applicationCategory":"FinanceApplication","operatingSystem":"Web","inLanguage":"ja","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"JPY"},"description":"口座名義を銀行振込用の半角カナと法人略語に変換し、使えない文字を検出する。","publisher":{"@type":"Organization","name":"ここ企画","url":"https://kokokikaku.com/"}}
@@ -79,7 +79,7 @@
   <h2>使える文字・使えない文字</h2>
   <table>
     <tr><th>使える</th><td>半角カナ、英大文字 <code>A-Z</code>、数字 <code>0-9</code>、空白、記号 <code>( ) - . / ¥ ｢ ｣</code></td></tr>
-    <tr><th>自動で直すもの</th><td>ひらがな・全角カナ → 半角カナ ／ 全角英数 → 半角 ／ 英小文字 → 大文字 ／ 中点「・」→ <code>.</code> ／ 全角のハイフン類 → <code>-</code> ／ 全角空白 → 半角空白</td></tr>
+    <tr><th>自動で直すもの</th><td>ひらがな・全角カナ → 半角カナ ／ 全角英数 → 半角 ／ 英小文字 → 大文字 ／ 中点「・」→ <code>.</code> ／ 長音「ー」「ｰ」・全角のハイフン類 → <code>-</code> ／ 小さいカナ → 大きいカナ ／ 全角空白 → 半角空白</td></tr>
     <tr><th>使えない</th><td>漢字。残っている場合は赤で知らせます</td></tr>
   </table>
   <ul>
@@ -129,7 +129,7 @@
   <div class="wrap in">
     <div>
       <h2 class="foot-h">全銀ポン</h2>
-      <p>給与振込・総合振込の Excel／CSV／PDF／Googleスプレッドシートを、ネットバンキングに取り込める全銀フォーマットへ。データはブラウザの中だけで処理します。</p>
+      <p>給与振込・総合振込の Excel／CSV／PDF を、ネットバンキングに取り込める全銀フォーマットへ。データはブラウザの中だけで処理します。</p>
       <p class="made-by">企画・開発・運営：<a href="https://kokokikaku.com/" rel="noopener">ここ企画</a>（<a href="/about.html">運営者情報</a>）</p>
       <p class="made-by">ここ企画のほかの道具：<a href="https://misefits.kokokikaku.com/" rel="noopener">MiseFits（店舗レイアウト）</a>・<a href="https://menufits.kokokikaku.com/" rel="noopener">MenuFits（メニュー表）</a></p>
     </div>

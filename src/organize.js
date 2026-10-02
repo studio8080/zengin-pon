@@ -68,6 +68,7 @@
    * 1セルに複数項目が入っているパターンを分解する。
    * @returns {object|null} { bankCode, branchCode, depositType, accountNo, bankName, branchName, name, kana } のうち判明した項目
    */
+  const CORP_WORDS = /株式会社|有限会社|合同会社|合名会社|合資会社|一般社団法人|一般財団法人|公益社団法人|公益財団法人|医療法人社団|医療法人財団|医療法人|社会福祉法人|学校法人|特定非営利活動法人|宗教法人|管理組合法人/;
   function splitCell(v) {
     const s = toHalf(v).trim();
     if (!s) return null;
@@ -82,7 +83,17 @@
     // 三菱UFJ銀行 渋谷支店 / みずほ銀行渋谷支店 / 京都信用金庫 本店営業部
     if ((m = s.match(/^(.+?(?:銀行|信用金庫|信金|信用組合|信組|労働金庫|労金|農協|ＪＡ|JA))[\s　]*(.*?(?:支店|本店営業部|営業部|出張所|支所|本店))$/))) return { bankName: m[1], branchName: m[2].trim() };
     // 山田太郎（ヤマダタロウ） / 山田 太郎(ヤマダ タロウ)
-    if ((m = s.match(/^(.+?)[\s　]*[（(]([^()（）]+)[)）]$/)) && kanaRatio(m[2]) > 0.6) return { name: m[1], kana: m[2] };
+    if ((m = s.match(/^(.+?)[\s　]*[（(]([^()（）]+)[)）]$/)) && kanaRatio(m[2]) > 0.6) {
+      // 「株式会社山田商店（ヤマダショウテン）」のようにカナ側に法人の種類が無いときは、漢字側から引き継ぐ。
+      // そうしないと ｶ) が付かず、口座名義と合わなくなる（先頭・末尾にあるときだけ。途中は位置が決められない）
+      let kana = m[2];
+      const corp = m[1].match(CORP_WORDS);
+      if (corp && !/[()（）]|カブシキ|ユウゲン|ゴウドウ|ｶﾌﾞｼｷ/.test(kana)) {
+        if (m[1].startsWith(corp[0])) kana = corp[0] + kana;
+        else if (m[1].endsWith(corp[0])) kana = kana + corp[0];
+      }
+      return { name: m[1], kana };
+    }
     return null;
   }
 

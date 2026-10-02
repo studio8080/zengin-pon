@@ -90,7 +90,7 @@
     <tr><th>変換エンジン</th><td>自社開発。全銀協の規定フォーマット（固定長120バイト、JIS X 0201）への変換、半角カナと法人略語の変換、ゆうちょ銀行の記号番号の変換。自動テストで仕様を固定</td></tr>
     <tr><th>表の自動整理</th><td>自社開発。見出し行の推定、1セルに入った複数項目の分解、値の形からの列の推定、合計行の除外</td></tr>
     <tr><th>金融機関データ</th><td>全銀協の公開情報をもとにしたオープンデータ（zengin-code、MITライセンス）を毎月自動で取り込み、1,100以上の金融機関・約29,000支店のページを生成</td></tr>
-    <tr><th>ライセンス</th><td>電子署名（Ed25519）つきのライセンスキーをブラウザ内で検証。契約の確認に送るのは英数字のIDだけ</td></tr>
+    <tr><th>ライセンス</th><td>電子署名（Ed25519）つきのライセンスキーをブラウザ内で検証。契約の確認に送るのは12文字のライセンスIDだけ</td></tr>
     <tr><th>配信・決済</th><td>GitHub Pages で静的に配信。決済は Stripe、契約状態の管理は Google Cloud（Cloud Functions）</td></tr>
     <tr><th>ソースコード</th><td><a href="https://github.com/studio8080/zengin-pon" rel="noopener">GitHub で公開</a>。「送信していない」ことをどなたでも確かめられます</td></tr>
   </table>
@@ -111,7 +111,7 @@
 
   <h2 id="contact">お問い合わせ</h2>
   <table>
-    <tr><th style="width:30%">メール</th><td><a href="mailto:studio@kokokikaku.com">studio@kokokikaku.com</a>（2営業日以内にお返事します）</td></tr>
+    <tr><th style="width:30%">メール</th><td><a href="mailto:studio@kokokikaku.com">studio@kokokikaku.com</a>（2営業日以内にお返事します。Pro の方は1営業日以内）</td></tr>
     <tr><th>フォーム</th><td><a href="https://kokokikaku.com/" rel="noopener">ここ企画のサイト</a>のお問い合わせフォーム</td></tr>
   </table>
   <div class="callout warn">取込エラーのご相談には、<strong>銀行名・画面に出たメッセージ・出力オプション（区切りと拡張子）</strong>を添えてください。<strong>振込先の一覧やファイルそのものは送らないでください。</strong>必要な場合は、こちらから確認の方法をご案内します。</div>
@@ -126,7 +126,7 @@
   <div class="wrap in">
     <div>
       <h2 class="foot-h">全銀ポン</h2>
-      <p>給与振込・総合振込の Excel／CSV／PDF／Googleスプレッドシートを、ネットバンキングに取り込める全銀フォーマットへ。データはブラウザの中だけで処理します。</p>
+      <p>給与振込・総合振込の Excel／CSV／PDF を、ネットバンキングに取り込める全銀フォーマットへ。データはブラウザの中だけで処理します。</p>
       <p class="made-by">企画・開発・運営：<a href="https://kokokikaku.com/" rel="noopener">ここ企画</a>（<a href="/about.html">運営者情報</a>）</p>
       <p class="made-by">ここ企画のほかの道具：<a href="https://misefits.kokokikaku.com/" rel="noopener">MiseFits（店舗レイアウト）</a>・<a href="https://menufits.kokokikaku.com/" rel="noopener">MenuFits（メニュー表）</a></p>
     </div>

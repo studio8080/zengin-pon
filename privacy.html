@@ -42,7 +42,7 @@
 <!-- /site:header -->
 <article class="article">
   <h1>プライバシーポリシー</h1>
-  <p class="updated">制定: 2026年9月3日</p>
+  <p class="updated">制定: 2026年9月3日 ／ 最終改定: 2026年10月2日</p>
   <p>ここ企画（以下「当社」）は、「全銀ポン」（以下「本サービス」）における利用者の情報の取扱いについて、次のとおり定めます。</p>
 
   <h2>1. 変換対象データについて</h2>
@@ -53,8 +53,7 @@
     <tr><th>情報</th><th>取得の場面</th><th>利用目的</th></tr>
     <tr><td>メールアドレス、氏名または事業者名</td><td>有料プランの申し込み、お問い合わせ</td><td>ライセンスキーの送付、請求、サポート、重要なお知らせ</td></tr>
     <tr><td>決済情報</td><td>有料プランの申し込み</td><td>決済代行事業者（Stripe, Inc.）が処理します。当社はカード番号を保持しません</td></tr>
-    <tr><td>アクセス情報（閲覧ページ、滞在時間、ブラウザの種類、おおまかな地域）</td><td>サイトの閲覧</td><td>Google アナリティクスによる利用状況の把握と改善。入力内容やファイルの内容は送信しません</td></tr>
-    <tr><td>ライセンスID（英数字12桁）</td><td>Proプランのライセンス自動更新</td><td>有効期限が近づいたときのみ当社のAPIに送信し、新しいキーを返します。振込データは送信されません</td></tr>
+        <tr><td>ライセンスID（英数字と記号の12文字）</td><td>Proプランのライセンス自動更新</td><td>キーの期限が近いとき、または前回の確認から7日以上たったときに当社のAPIに送信し、新しいキーを返します。振込データは送信されません</td></tr>
     <tr><td>ライセンス情報（メールアドレス、Stripeの顧客ID・サブスクリプションID、有効期限）</td><td>有料プランの申し込み・更新</td><td>キーの発行と更新、契約状態の管理。Google Cloud（Firestore）に保管します</td></tr>
     <tr><td>Googleアカウントのアクセストークン</td><td>Googleスプレッドシート連携</td><td>利用者が選んだファイルの読み取りのみ。ブラウザ内で一時的に保持し、当社は取得しません</td></tr>
   </table>
@@ -80,7 +79,7 @@
       <tr><td>Google Fonts（Google LLC）</td><td>IPアドレス、ブラウザの種類、閲覧中のページのURL（参照元）</td><td>文字（フォント）の表示</td><td>すべてのページ</td></tr>
       <tr><td>cdnjs（Cloudflare, Inc.）</td><td>同上</td><td>ExcelとPDFを読み取るプログラム部品の配信</td><td>トップページ（変換ツール）</td></tr>
       <tr><td>GitHub Pages（GitHub, Inc.）</td><td>同上</td><td>当サイトそのものの配信</td><td>すべてのページ</td></tr>
-      <tr><td>当社のライセンス確認用サーバー（Google Cloud 上）</td><td>ライセンスID（英数字12桁）、IPアドレス</td><td>Proプランの契約が続いているかの確認と、キーの更新</td><td>Proのキーを保存しているブラウザで、期限が近いとき・前回の確認から7日以上たったとき</td></tr>
+      <tr><td>当社のライセンス確認用サーバー（Google Cloud 上）</td><td>ライセンスID（英数字と記号の12文字）、IPアドレス</td><td>Proプランの契約が続いているかの確認と、キーの更新</td><td>Proのキーを保存しているブラウザで、期限が近いとき・前回の確認から7日以上たったとき</td></tr>
       <tr><td>Google（Google LLC）</td><td>Googleアカウントの認証情報、選んだファイルの識別子</td><td>Googleスプレッドシートの読み込み</td><td>「Googleスプレッドシートから選ぶ」を押したときだけ</td></tr>
       <tr><td>Stripe</td><td>決済画面で入力された情報</td><td>有料プランの決済</td><td>「Proを申し込む」を押して Stripe の画面に移動したあと</td></tr>
     </tbody>
@@ -108,7 +107,7 @@
   <div class="wrap in">
     <div>
       <h2 class="foot-h">全銀ポン</h2>
-      <p>給与振込・総合振込の Excel／CSV／PDF／Googleスプレッドシートを、ネットバンキングに取り込める全銀フォーマットへ。データはブラウザの中だけで処理します。</p>
+      <p>給与振込・総合振込の Excel／CSV／PDF を、ネットバンキングに取り込める全銀フォーマットへ。データはブラウザの中だけで処理します。</p>
       <p class="made-by">企画・開発・運営：<a href="https://kokokikaku.com/" rel="noopener">ここ企画</a>（<a href="/about.html">運営者情報</a>）</p>
       <p class="made-by">ここ企画のほかの道具：<a href="https://misefits.kokokikaku.com/" rel="noopener">MiseFits（店舗レイアウト）</a>・<a href="https://menufits.kokokikaku.com/" rel="noopener">MenuFits（メニュー表）</a></p>
     </div>

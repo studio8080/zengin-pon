@@ -69,17 +69,28 @@
   function stripSuffix(name) {
     return toHalf(name).trim().replace(/(銀行|信用金庫|信金|信用組合|信組|労働金庫|労金|農業協同組合|農協|漁業協同組合|漁協)$/u, '').replace(/^(株式会社|\(株\)|（株）)/u, '').trim();
   }
+  // 改称した銀行の旧名（社内の表には旧名のまま残っていることが多い）。コードは変わっていない。
+  const FORMER_NAMES = {
+    '住信SBIネット': '0038', 'ジャパンネット': '0033', 'じぶん': '0039', 'auじぶん': '0039', '新生': '0397',
+  };
   /** @returns {{code, name, kana, exact:boolean}[]} 候補（先頭が最有力） */
   function findBank(input) {
     if (!cache.banks || !input) return [];
     const inCat = categoryOf(String(input));
     const q = normName(stripSuffix(input));
     if (!q) return [];
+    for (const [former, code] of Object.entries(FORMER_NAMES)) {
+      const b = cache.banks[code];
+      if (b && normName(former) === q) return [{ code, name: b[0], kana: b[1], exact: true, formerName: true }];
+    }
     const exact = [], partial = [];
     for (const [code, [name, kana]] of Object.entries(cache.banks)) {
       if (!inCat(code)) continue;
       const n = normName(name), k = normName(kana);
-      if (n === q || k === q) exact.push({ code, name, kana, exact: true });
+      // 辞書の名前は「京都信金」のように略称つき。入力と同じく末尾の種別を外して比べないと、
+      // 「京都信用金庫」が京都信金・京都中央信金・京都北都信金の3候補になってしまう
+      const ns = normName(stripSuffix(name)), ks = normName(String(kana).replace(/(ギンコウ|シンキン|シンクミ|ロウキン|ノウキヨウ)$/u, ''));
+      if (n === q || k === q || ns === q || ks === q) exact.push({ code, name, kana, exact: true });
       else if (q.length >= 2 && (n.startsWith(q) || k.startsWith(q) || q.startsWith(n))) partial.push({ code, name, kana, exact: false });
     }
     return exact.concat(partial);

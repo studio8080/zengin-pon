@@ -136,11 +136,35 @@ ${SITE}/
 （ライセンスID: ${id}）`;
 }
 
-function canceledMail(endDate) {
+/** Unix秒 → 日本時間の「2026年11月2日」 */
+function jstDate(unix) {
+  const d = new Date((Number(unix) + 9 * 3600) * 1000);
+  return `${d.getUTCFullYear()}年${d.getUTCMonth() + 1}月${d.getUTCDate()}日`;
+}
+
+/** 解約の手続きを受け付けたとき（期間の末日で終わる予約） */
+function cancelScheduledMail(endDate) {
   return `全銀ポン Proプランの解約を承りました。
 
-${endDate} までは引き続きProの機能をご利用いただけます。
+${endDate} までは、これまでどおり Pro の機能をご利用いただけます。
 その後は自動的に無料プラン（1回20件まで）に戻ります。お手続きは不要です。
+期間中であれば、契約の管理ページから解約を取り消すこともできます。
+${PORTAL_URL}
+
+またのご利用をお待ちしています。ご不便な点がありましたら、
+このメールにご返信いただけると今後の改善に役立ちます。
+
+--
+全銀ポン（ここ企画）
+${SITE}/`;
+}
+
+/** 契約が終わったとき（期間の末日、または即時の解約） */
+function canceledMail() {
+  return `全銀ポン Proプランのご契約が終了しました。これまでのご利用ありがとうございました。
+
+無料プラン（1回20件まで）は、これまでどおりお使いいただけます。
+作成済みの設定やデータは、このブラウザに残っています。
 
 またのご利用をお待ちしています。ご不便な点がありましたら、
 このメールにご返信いただけると今後の改善に役立ちます。
@@ -256,14 +280,25 @@ exports.zenginponStripeWebhook = onRequest(
         await db.collection(COLLECTION).doc(id).set({ status: sub.status || 'canceled', entitledUntil, updatedAt: new Date().toISOString() }, { merge: true });
         const snap = await db.collection(COLLECTION).doc(id).get();
         const email = snap.exists && snap.data().email;
-        if (email) await sendMail(email, '【全銀ポン】Proプランの解約を承りました', canceledMail(entitledUntil));
+        if (email) await sendMail(email, '【全銀ポン】Proプランのご契約が終了しました', canceledMail());
         console.log('解約', id, entitledUntil);
 
       } else if (event.type === 'customer.subscription.updated') {
         const sub = event.data.object;
         if (!isZenginPon(sub)) { res.json({ received: true, skipped: 'other product' }); return; }
         await saveState(sub, null);
-        console.log('状態更新', licenseIdFor(sub.id), sub.status);
+        // 解約の予約（期間の末日で終わる）を受け付けた瞬間に、いつまで使えるかを知らせる。
+        // subscription.deleted は期間の末日に届くので、そこで「承りました」と送ると遅すぎる。
+        const prev = (event.data && event.data.previous_attributes) || {};
+        const nowScheduled = !!(sub.cancel_at_period_end || sub.cancel_at);
+        const wasScheduled = ('cancel_at_period_end' in prev || 'cancel_at' in prev) ? !!(prev.cancel_at_period_end || prev.cancel_at) : nowScheduled;
+        if (nowScheduled && !wasScheduled) {
+          const snap = await db.collection(COLLECTION).doc(licenseIdFor(sub.id)).get();
+          const email = snap.exists && snap.data().email;
+          const end = sub.cancel_at || periodEndOf(sub);
+          if (email && end) await sendMail(email, '【全銀ポン】Proプランの解約を承りました', cancelScheduledMail(jstDate(end)));
+        }
+        console.log('状態更新', licenseIdFor(sub.id), sub.status, nowScheduled ? '解約予約あり' : '');
       }
       res.json({ received: true });
     } catch (e) {

@@ -574,7 +574,8 @@
   async function extractPdfTable(buf) {
     if (!window.pdfjsLib) throw new Error('PDF ライブラリが読み込めませんでした');
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-    const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
+    // 日本語の CID フォント（埋め込みなし）を読むには CMap が要る。cdnjs に無いので自サイトに置いている（vendor/pdfjs/README.md）
+    const pdf = await pdfjsLib.getDocument({ data: buf, cMapUrl: '/vendor/pdfjs/cmaps/', cMapPacked: true }).promise;
     const rows = [];
     for (let p = 1; p <= pdf.numPages; p++) {
       const page = await pdf.getPage(p);
@@ -602,7 +603,11 @@
   // ------------------------------------------------------------
   loadSettings();
   refreshPro({ tryRefresh: true });
-  if (!G.configured()) $('gsheetHint').textContent = 'Googleスプレッドシート連携は準備中です。いまは「ファイル→ダウンロード→Microsoft Excel」で保存して読み込んでください。';
-  D.load().then(() => { $('dictInfo').textContent = `金融機関一覧: ${D.version} 版（全銀協公開データ）。統廃合があった場合は一覧を更新すると自動で反映されます。`; })
+  if (!G.configured()) {
+    $('gsheetHint').textContent = 'Googleスプレッドシートの直接連携は準備中です。いまは「ファイル → ダウンロード → Microsoft Excel」で保存して、上から読み込んでください。';
+    $('gsheetBtn').disabled = true;
+    $('gsheetBtn').lastChild.textContent = ' Googleスプレッドシート連携（準備中）';
+  }
+  D.load().then(() => { $('dictInfo').textContent = `金融機関一覧: ${D.version} 版（全銀協の公開情報をもとにしたオープンデータ）。毎月、更新の有無を確認して反映しています。`; })
     .catch(() => { $('dictInfo').textContent = '金融機関一覧を読み込めませんでした（銀行名の表示とコードの照合は行われません）'; });
 })();

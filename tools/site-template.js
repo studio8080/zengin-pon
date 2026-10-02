@@ -54,7 +54,7 @@ function footer() {
   <div class="wrap in">
     <div>
       <h2 class="foot-h">${SITE_NAME}</h2>
-      <p>給与振込・総合振込の Excel／CSV／PDF／Googleスプレッドシートを、ネットバンキングに取り込める全銀フォーマットへ。データはブラウザの中だけで処理します。</p>
+      <p>給与振込・総合振込の Excel／CSV／PDF を、ネットバンキングに取り込める全銀フォーマットへ。データはブラウザの中だけで処理します。</p>
       <p class="made-by">企画・開発・運営：<a href="${ORG.url}" rel="noopener">${ORG.name}</a>（<a href="/about.html">運営者情報</a>）</p>
       <p class="made-by">${ORG.name}のほかの道具：<a href="https://misefits.kokokikaku.com/" rel="noopener">MiseFits（店舗レイアウト）</a>・<a href="https://menufits.kokokikaku.com/" rel="noopener">MenuFits（メニュー表）</a></p>
     </div>

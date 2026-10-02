@@ -71,13 +71,27 @@ async function post(event) {
     assert.equal(store[id].email, 'a@example.com');
   });
 
-  await t('解約で解約メールが届く', async () => {
+  await t('解約の手続きをした時点で「解約を承りました」といつまで使えるかが届く', async () => {
+    mails.length = 0;
+    const r = await post({ type: 'customer.subscription.updated', data: { object: { ...subs.sub_A, cancel_at_period_end: true }, previous_attributes: { cancel_at_period_end: false } } });
+    assert.equal(r.status, 200);
+    assert.equal(mails.length, 1);
+    assert.match(mails[0].subject, /解約を承りました/);
+    assert.match(mails[0].text, /\d{4}年\d{1,2}月\d{1,2}日 までは/);
+    assert.match(mails[0].text, /billing\.stripe\.com/);
+    // 同じ状態のまま別の項目が変わっただけなら、もう一度は送らない
+    mails.length = 0;
+    await post({ type: 'customer.subscription.updated', data: { object: { ...subs.sub_A, cancel_at_period_end: true }, previous_attributes: { metadata: {} } } });
+    assert.equal(mails.length, 0);
+  });
+
+  await t('期間が終わったら「契約が終了しました」が届く', async () => {
     mails.length = 0;
     const r = await post({ type: 'customer.subscription.deleted', data: { object: { ...subs.sub_A, status: 'canceled', ended_at: now } } });
     assert.equal(r.status, 200);
     assert.equal(mails.length, 1);
     assert.equal(mails[0].to, 'a@example.com');
-    assert.match(mails[0].subject, /解約/);
+    assert.match(mails[0].subject, /終了しました/);
   });
 
   await t('更新（2回目以降の請求）でキーの控えを送る', async () => {

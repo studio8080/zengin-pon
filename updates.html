@@ -67,12 +67,24 @@
       <p><strong>10月2日より前に作ったファイルで、受取人名や振込依頼人名に長音が入っている場合は、お手数ですが作り直してください。</strong>長音を含まない名義のファイルには影響ありません。</p>
     </div>
 
+    <div class="callout warn">
+      <p><span class="up-tag fix">修正</span> <strong>「株式会社山田商店（ヤマダショウテン）」のように、1つのセルに漢字とカッコ書きのカナがある表で、法人略語（<code>ｶ)</code> など）が付かない不具合を直しました。</strong></p>
+      <p>カッコの中のカナだけを名義に使っていたため、<code>ｶ)ﾔﾏﾀﾞｼﾖｳﾃﾝ</code> となるべきところが <code>ﾔﾏﾀﾞｼﾖｳﾃﾝ</code> になっていました。いまは漢字側の「株式会社」などを引き継ぎます。<strong>この形の表から10月2日より前に作ったファイルは、作り直してください。</strong>カナが別の列にある表は影響ありません。</p>
+    </div>
+
     <div class="callout">
       <p><span class="up-tag fix">修正</span> <strong>Pro のお申し込み後に、ライセンスキーのメールが届かない不具合がありました。</strong></p>
       <p>10月2日のお申し込みで、キーを自動でお送りする仕組みが止まっていました。同日に修正し、該当のお客さまにはキーをお送りしています。ご迷惑をおかけし、申し訳ございませんでした。お申し込み後にキーが届かない場合は、<a href="mailto:studio@kokokikaku.com">studio@kokokikaku.com</a> までご連絡ください。</p>
     </div>
 
     <ul class="up-list">
+      <li><span class="up-tag fix">修正</span> 銀行名「<strong>京都信用金庫</strong>」が、京都信金・京都中央信金・京都北都信金の3つの候補になってエラーになっていたのを直しました。正式名称と一致する金融機関を優先します。</li>
+      <li><span class="up-tag new">新機能</span> <strong>改称した銀行の旧名でも、銀行コードを補う</strong>ようにしました（例: 住信SBIネット銀行 → ドコモSMTBネット銀行、ジャパンネット銀行 → PayPay銀行、じぶん銀行 → auじぶん銀行、新生銀行 → SBI新生銀行）。銀行コードは変わっていないため、作ったファイルはそのまま使えます。</li>
+      <li><span class="up-tag fix">修正</span> 日本語のフォントを埋め込んでいない PDF（給与ソフトの出力などに多い形式）で、「テキストを取り出せません」と表示されて読み込めなかったのを直しました。</li>
+      <li><span class="up-tag fix">修正</span> 「ヶ」「ヵ」を半角の <code>ｹ</code>・<code>ｶ</code> に変換するようにしました。読点「、」から変換したカンマ <code>,</code> がエラー扱いになっていたのを直しました（カンマは銀行の入力基準で使える文字です）。</li>
+      <li><span class="up-tag imp">改善</span> 解約の手続きをした時点で「いつまで使えるか」をメールでお知らせし、期間が終わったときに「契約が終了しました」とお知らせするようにしました（これまでは期間の末日に1通だけ届いていました）。</li>
+      <li><span class="up-tag info">案内</span> Googleスプレッドシートの直接連携は準備中です。サイトの説明を実態に合わせ、「ファイル → ダウンロード → Microsoft Excel」で保存して読み込む方法をご案内するよう改めました。</li>
+      <li><span class="up-tag info">案内</span> 決済完了の画面で「キーは1営業日以内にお送りします」と表示していたのを、実際のとおり「数分以内に自動でお送りします」に改めました。料金・規約・プライバシーポリシーなどの記載を、実際の仕組みと照らし合わせて直しました（サポートの返信時間、支払い方法、列の割り当ての保存は Pro の機能であること など）。</li>
       <li><span class="up-tag new">新機能</span> <strong>契約の管理ページを用意しました。</strong>解約、月払いから年払いへの切り替え、領収書の確認とダウンロード、カードの変更が、ご自身でできます。ツールの「⭐ Pro」ボタン →「契約の管理・解約」、または<a href="/pricing.html#confirm">料金ページ</a>から開けます。</li>
       <li><span class="up-tag new">新機能</span> お支払いのたびに、<strong>「ここ企画」名義の領収書メール</strong>をお送りするようにしました。当社は適格請求書発行事業者の登録をしていないため、適格請求書（インボイス）ではない旨を領収書に記載しています。</li>
       <li><span class="up-tag new">新機能</span> カードの有効期限が近いとき、お支払いに失敗したとき、次の更新が近いときに、お知らせメールをお送りするようにしました。</li>
@@ -114,7 +126,7 @@
   <div class="wrap in">
     <div>
       <h2 class="foot-h">全銀ポン</h2>
-      <p>給与振込・総合振込の Excel／CSV／PDF／Googleスプレッドシートを、ネットバンキングに取り込める全銀フォーマットへ。データはブラウザの中だけで処理します。</p>
+      <p>給与振込・総合振込の Excel／CSV／PDF を、ネットバンキングに取り込める全銀フォーマットへ。データはブラウザの中だけで処理します。</p>
       <p class="made-by">企画・開発・運営：<a href="https://kokokikaku.com/" rel="noopener">ここ企画</a>（<a href="/about.html">運営者情報</a>）</p>
       <p class="made-by">ここ企画のほかの道具：<a href="https://misefits.kokokikaku.com/" rel="noopener">MiseFits（店舗レイアウト）</a>・<a href="https://menufits.kokokikaku.com/" rel="noopener">MenuFits（メニュー表）</a></p>
     </div>

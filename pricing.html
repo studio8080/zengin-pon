@@ -68,20 +68,20 @@
     </span></p>
     <div class="plans two">
       <div class="plan"><h3>Free</h3><div class="price">¥0</div><p class="hint" style="margin:0">登録不要・期限なし</p>
-        <ul><li>1回の変換で20件まで</li><li>総合振込・給与振込・賞与振込</li><li>Excel・CSV・PDF・Googleスプレッドシート</li><li>自動整理・カナ変換・金融機関辞書との照合</li><li>銀行休業日チェック</li><li class="no">列の割り当てテンプレート保存</li><li class="no">変換履歴・設定のバックアップ</li><li class="no">メールサポート</li></ul>
+        <ul><li>1回の変換で20件まで</li><li>総合振込・給与振込・賞与振込</li><li>Excel・CSV・PDF</li><li>自動整理・カナ変換・金融機関辞書との照合</li><li>銀行休業日チェック</li><li class="no">列の割り当てテンプレート保存</li><li class="no">変換履歴・設定のバックアップ</li><li>メールでのお問い合わせ（2営業日以内に返信）</li></ul>
         <a class="btn" href="index.html#tool">今すぐ使う</a></div>
       <div class="plan hot"><span class="ribbon">Pro</span><h3>Pro</h3>
         <div class="price" data-month="¥480" data-year="¥4,800">¥480<small id="unit">/月</small></div>
         <p class="hint" id="cycleNote" style="margin:0">月払い。いつでも解約可</p>
-        <ul><li>件数無制限</li><li>Freeの全機能</li><li>列の割り当てテンプレートを保存・再利用</li><li>変換履歴（このブラウザ内に保存）</li><li>設定のバックアップ・復元</li><li>振込元プロファイルを複数保存（顧問先ごとの切替に）</li><li>メールサポート（2営業日以内）</li><li>新機能を優先利用</li></ul>
-        <a class="btn primary" id="proCta" href="#buy">Proを申し込む（準備中）</a></div>
+        <ul><li>件数無制限</li><li>Freeでできることすべて</li><li>列の割り当てテンプレートを保存・再利用</li><li>変換履歴（このブラウザ内に保存）</li><li>設定のバックアップ・復元</li><li>振込元プロファイルを複数保存（顧問先ごとの切替に）</li><li>優先メールサポート（1営業日以内に返信）</li></ul>
+        <a class="btn primary" id="proCta" href="#buy">Proを申し込む</a></div>
     </div>
     <div class="confirm-box" id="confirm">
       <h3>お申し込み前の確認事項</h3>
       <table>
         <tr><th>提供するもの</th><td>全銀ポン Pro の利用権（1契約につき1名、ブラウザ2台まで）。お支払いの確認後、ライセンスキーをメールでお送りします</td></tr>
         <tr><th>料金</th><td>月払い 480円（税込）／年払い 4,800円（税込）。ほかに費用はかかりません</td></tr>
-        <tr><th>支払いの時期と方法</th><td>クレジットカード（Stripe）。お申し込み時に初回分を決済し、以後は<strong>毎月（年払いは毎年）同じ日に、同じ金額を自動で決済</strong>します</td></tr>
+        <tr><th>支払いの時期と方法</th><td>クレジットカード（Apple Pay・Link を含む。決済は Stripe）。お申し込み時に初回分を決済し、以後は<strong>毎月（年払いは毎年）同じ日に、同じ金額を自動で決済</strong>します</td></tr>
         <tr><th>契約期間</th><td><strong>期間の定めのない自動更新</strong>です。解約のお手続きをされるまで継続します</td></tr>
         <tr><th>解約の方法</th><td><a href="https://billing.stripe.com/p/login/cNi7sEb0eg2g7HtcOv9R600" rel="noopener">契約の管理ページ（Stripe）</a>で、お申し込み時のメールアドレスを入力すると届くリンクからいつでも解約できます。<a href="mailto:studio@kokokikaku.com">studio@kokokikaku.com</a> へのメールでも承ります。次回の決済日の前日までのお手続きで、次回分は請求されません</td></tr>
         <tr><th>解約後</th><td>お支払い済みの期間の末日まで使えます。その後は自動的に無料プランに戻ります。年払いの途中解約による日割りの返金はありません</td></tr>
@@ -103,8 +103,8 @@
         <tr><th>費用</th><td>無料〜月額480円</td><td>無料</td><td>月額2,000〜6,000円（他機能込み）</td><td>無料（時間はかかる）</td></tr>
         <tr class="hl"><th>Excelの形が違っても読める</th><td class="y">自動整理（並び・結合セル・見出しなし）</td><td class="n">決まった雛形に貼り直す</td><td class="n">そのソフトの形式のみ</td><td class="n">—</td></tr>
         <tr class="hl"><th>銀行名しかない表</th><td class="y">辞書でコードを補う</td><td class="n">自分で調べる</td><td>マスタ登録が必要</td><td class="n">自分で調べる</td></tr>
-        <tr><th>統廃合・存在しないコードの警告</th><td class="y">あり（毎月更新）</td><td class="n">なし</td><td>ソフトによる</td><td>銀行側でエラー</td></tr>
-        <tr><th>PDF・Googleスプレッドシート</th><td class="y">対応</td><td class="n">Excelのみ</td><td class="n">CSV取込のみ</td><td class="n">—</td></tr>
+        <tr><th>存在しないコード・統廃合の警告</th><td class="y">あり（金融機関一覧は毎月確認して更新）</td><td class="n">なし</td><td>ソフトによる</td><td>銀行側でエラー</td></tr>
+        <tr><th>PDF（文字が選択できるもの）</th><td class="y">対応</td><td class="n">Excelのみ</td><td class="n">CSV取込のみ</td><td class="n">—</td></tr>
         <tr><th>データの保存先</th><td class="y">ブラウザ内のみ（送信しない）</td><td>PC内（マクロの警告あり）</td><td>クラウド</td><td>銀行</td></tr>
         <tr><th>複数の会社（顧問先）</th><td class="y">Proでプロファイル切替</td><td class="n">ファイルを分けて管理</td><td>会社ごとに契約</td><td class="n">—</td></tr>
         <tr><th>Mac・スマホ</th><td class="y">ブラウザがあれば</td><td class="n">Windows Excelのみが多い</td><td class="y">対応</td><td class="y">対応</td></tr>
@@ -122,7 +122,7 @@
   <div class="wrap article" style="padding-top:0">
     <h2>お支払いについて</h2>
     <ul>
-      <li>クレジットカード（Stripe）で決済します。カード情報は当サイトでは保持しません。</li>
+      <li>クレジットカード（Apple Pay・Link を含む）で、Stripe を通じて決済します。カード情報は当サイトでは保持しません。</li>
       <li>決済後にメールでライセンスキーが届きます。ツールの「Pro」ボタンから入力すると、そのブラウザで有効になります。同じキーを2台まで（例: 会社のPCと自宅のPC）で使えます。</li>
       <li>月払いはいつでも解約できます。解約後もお支払い済みの期間の末日まで利用できます。年払いは期間末まで利用でき、途中解約の日割り返金はありません。</li>
       <li><strong>月払い・年払いとも自動更新です。</strong>解約のお手続きをされない限り、期間ごとに自動で継続課金されます。</li>
@@ -140,7 +140,7 @@
   <div class="wrap in">
     <div>
       <h2 class="foot-h">全銀ポン</h2>
-      <p>給与振込・総合振込の Excel／CSV／PDF／Googleスプレッドシートを、ネットバンキングに取り込める全銀フォーマットへ。データはブラウザの中だけで処理します。</p>
+      <p>給与振込・総合振込の Excel／CSV／PDF を、ネットバンキングに取り込める全銀フォーマットへ。データはブラウザの中だけで処理します。</p>
       <p class="made-by">企画・開発・運営：<a href="https://kokokikaku.com/" rel="noopener">ここ企画</a>（<a href="/about.html">運営者情報</a>）</p>
       <p class="made-by">ここ企画のほかの道具：<a href="https://misefits.kokokikaku.com/" rel="noopener">MiseFits（店舗レイアウト）</a>・<a href="https://menufits.kokokikaku.com/" rel="noopener">MenuFits（メニュー表）</a></p>
     </div>

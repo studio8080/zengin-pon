@@ -53,7 +53,7 @@
 <!-- /site:header -->
 <article class="article">
   <h1>セキュリティとデータの扱い</h1>
-  <p class="updated">最終更新: 2026年9月3日</p>
+  <p class="updated">最終更新: 2026年10月2日</p>
 
   <div class="callout ok"><strong>結論:</strong> 振込先の口座番号・名義・金額は、当サイトのサーバーに一切送信されません。変換はあなたのブラウザの中だけで完結します。</div>
 
@@ -94,10 +94,10 @@
   <ul>
     <li>サイトはHTTPSで配信します。</li>
     <li>Excel読み取りとPDF読み取りのライブラリはCDN（cdnjs）から取得しますが、バージョンを固定し、改ざん検知（Subresource Integrity）を設定しています。</li>
-    <li>Content Security Policy により、指定外のサーバーへの通信をブラウザ側で禁止しています（許可先は cdnjs、Googleフォント、Googleスプレッドシート連携のみ）。</li>
+    <li>Content Security Policy により、指定外のサーバーへの通信をブラウザ側で禁止しています（変換ツールと無料ツールのページに設定。許可先は cdnjs のライブラリ、Googleフォント、当社のライセンス確認サーバー、Googleのログイン・スプレッドシート連携〈連携を有効にした場合〉のみ）。</li>
     <li>ソースコードは <a href="https://github.com/studio8080/zengin-pon" target="_blank" rel="noopener">GitHub で公開</a>しており、誰でも処理内容を確認できます。</li>
     <li>Proのライセンスキーは、ページに埋め込まれた公開鍵で署名を検証します。キーを入力する操作自体では通信は発生しません。</li>
-    <li>Proプランをご利用中は、おおむね1週間に1回、当社のライセンス更新APIに<strong>ライセンスID（英数字12桁）のみ</strong>を送って契約状態を確認し、新しいキーを受け取ります。振込先のデータ、ファイル名、金額などは一切送信されません。オフラインの場合は何もせず、手元のキーの期限まで（最長30日）そのまま使えます。</li>
+    <li>Proプランをご利用中は、おおむね1週間に1回、当社のライセンス更新APIに<strong>ライセンスID（英数字と記号の12文字）のみ</strong>を送って契約状態を確認し、新しいキーを受け取ります。振込先のデータ、ファイル名、金額などは一切送信されません。オフラインの場合は何もせず、手元のキーの期限まで（最長30日）そのまま使えます。</li>
   </ul>
 
   <h2>6. 法令上の位置づけ</h2>
@@ -123,7 +123,7 @@
   <div class="wrap in">
     <div>
       <h2 class="foot-h">全銀ポン</h2>
-      <p>給与振込・総合振込の Excel／CSV／PDF／Googleスプレッドシートを、ネットバンキングに取り込める全銀フォーマットへ。データはブラウザの中だけで処理します。</p>
+      <p>給与振込・総合振込の Excel／CSV／PDF を、ネットバンキングに取り込める全銀フォーマットへ。データはブラウザの中だけで処理します。</p>
       <p class="made-by">企画・開発・運営：<a href="https://kokokikaku.com/" rel="noopener">ここ企画</a>（<a href="/about.html">運営者情報</a>）</p>
       <p class="made-by">ここ企画のほかの道具：<a href="https://misefits.kokokikaku.com/" rel="noopener">MiseFits（店舗レイアウト）</a>・<a href="https://menufits.kokokikaku.com/" rel="noopener">MenuFits（メニュー表）</a></p>
     </div>
