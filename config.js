@@ -39,6 +39,6 @@ window.ZENGIN_CONFIG = {
 
   // Googleスプレッドシート連携
   GOOGLE_CLIENT_ID: '',
-  GOOGLE_API_KEY: '',
+  GOOGLE_API_KEY: 'AIzaSyCe2vphwbZ3zWyIBUx7_D5u6Ey9NZuAqDw',   // リファラー制限（本番と localhost:8877）・Picker API のみ
   GOOGLE_APP_ID: '711586006523',
 };
