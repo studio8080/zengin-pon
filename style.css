@@ -69,6 +69,8 @@ h3 { font-size: 17px; margin: 0 0 6px; }
 @media (max-width: 860px) { .hero .in { grid-template-columns: 1fr; } .hero h1 { font-size: 30px; } .hero-art { max-width: 420px; margin: 0 auto; display: block; } }
 
 /* ---------- buttons ---------- */
+/* hidden 属性を必ず効かせる（.btn などの display 指定が上書きして、隠したはずの部品が見えていた） */
+[hidden] { display: none !important; }
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 11px 20px; border-radius: 12px; border: 1px solid var(--line); background: #fff; cursor: pointer; font-weight: 700; text-decoration: none; color: var(--ink); font: inherit; font-weight: 700; }
 .btn:hover { background: #f6f4ef; }
 .btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); }

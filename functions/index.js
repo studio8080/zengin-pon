@@ -56,7 +56,7 @@ const ALLOWED_ORIGINS = [SITE, 'http://localhost:8877'];
 const ZP_PRODUCT_ID = 'prod_VEa5100IEJu6JE';
 // Stripe カスタマーポータルのログインリンク（設定 → Billing → カスタマーポータル → 「リンクを有効化」で発行）。
 // 空のあいだは「メールへの返信で解約」と案内する。
-const PORTAL_URL = '';
+const PORTAL_URL = 'https://billing.stripe.com/p/login/cNi7sEb0eg2g7HtcOv9R600';
 
 function cancelHow() {
   return PORTAL_URL

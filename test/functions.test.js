@@ -62,6 +62,7 @@ async function post(event) {
     assert.match(mails[0].text, /ZP1-/);
     assert.doesNotMatch(mails[0].text, /\*\*/);
     assert.doesNotMatch(mails[0].text, /領収書メール/);
+    assert.match(mails[0].text, /https:\/\/billing\.stripe\.com\/p\/login\//);
   });
 
   await t('subscription.updated でメールアドレスが消えない', async () => {

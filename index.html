@@ -116,12 +116,12 @@
   <form method="dialog">
     <h3>⭐ Pro プラン</h3>
     <div id="proStatus" class="pro-status"></div>
-    <p class="hint">ライセンスキー（メールで届いた「ZP1-」で始まる文字列）を貼り付けてください。通信は発生せず、このブラウザの中で検証します。</p>
+    <p class="hint">ライセンスキー（メールで届いた「ZP1-」で始まる文字列）を貼り付けてください。キーの検証はこのブラウザの中で行います（契約の確認ではライセンスIDだけを送ります）。</p>
     <textarea id="proKey" rows="3" placeholder="ZP1-…" spellcheck="false"></textarea>
     <div id="proMsg" class="hint"></div>
     <div class="nav-btns">
       <span><button type="button" id="proActivate" class="btn primary">有効にする</button> <button type="button" id="proRefresh" class="btn" hidden>更新を確認</button> <button type="button" id="proDeactivate" class="btn" hidden>このブラウザで無効にする</button></span>
-      <span><a class="btn" href="pricing.html">プランを見る</a> <button class="btn" value="close">閉じる</button></span>
+      <span><a class="btn" href="https://billing.stripe.com/p/login/cNi7sEb0eg2g7HtcOv9R600" rel="noopener" target="_blank">契約の管理・解約</a> <a class="btn" href="pricing.html">プランを見る</a> <button class="btn" value="close">閉じる</button></span>
     </div>
   </form>
 </dialog>
