@@ -44,6 +44,7 @@ const PAGES = [
   { file: 'security.html', url: '/security.html', trail: [['セキュリティとデータの扱い', '/security.html']], sitemap: '0.8' },
   { file: 'legal.html', url: '/legal.html', trail: [['法令上の位置づけ', '/legal.html']], sitemap: '0.6' },
   { file: 'faq.html', url: '/faq.html', trail: [['よくある質問', '/faq.html']], sitemap: '0.8' },
+  { file: 'updates.html', url: '/updates.html', trail: [['更新情報・お知らせ', '/updates.html']], sitemap: '0.6' },
   { file: 'about.html', url: '/about.html', trail: [['運営者情報', '/about.html']], sitemap: '0.7' },
   { file: 'accessibility.html', url: '/accessibility.html', trail: [['アクセシビリティ', '/accessibility.html']], sitemap: '0.3' },
   { file: 'free-tools/index.html', url: '/free-tools/', trail: [['無料ツール', '/free-tools/']], sitemap: '0.8' },

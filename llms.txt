@@ -38,6 +38,7 @@
 - [セキュリティとデータの扱い](https://zenginpon.kokokikaku.com/security.html)
 - [法令上の位置づけ](https://zenginpon.kokokikaku.com/legal.html)
 - [よくある質問](https://zenginpon.kokokikaku.com/faq.html)
+- [更新情報・お知らせ（修正・新機能の履歴）](https://zenginpon.kokokikaku.com/updates.html)
 - [運営者情報・お問い合わせ](https://zenginpon.kokokikaku.com/about.html)
 
 ## 無料ツール（登録不要）

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- site:head -->
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#14305c">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="format-detection" content="telephone=no">
+<meta property="og:site_name" content="全銀ポン">
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="更新情報・お知らせ｜全銀ポン">
+<meta property="og:description" content="全銀ポンの更新情報とお知らせ。変換の修正、新しい機能、料金・契約まわりの変更を日付順に掲載しています。">
+<meta property="og:url" content="https://zenginpon.kokokikaku.com/updates.html">
+<meta property="og:image" content="https://zenginpon.kokokikaku.com/assets/ogp.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<!-- /site:head -->
+<title>更新情報・お知らせ｜全銀ポン</title>
+<meta name="description" content="全銀ポンの更新情報とお知らせ。変換の修正、新しい機能、料金・契約まわりの変更を日付順に掲載しています。">
+<link rel="canonical" href="https://zenginpon.kokokikaku.com/updates.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/style.css">
+<!-- site:ld -->
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://zenginpon.kokokikaku.com/"},{"@type":"ListItem","position":2,"name":"更新情報・お知らせ","item":"https://zenginpon.kokokikaku.com/updates.html"}]}</script>
+<!-- /site:ld -->
+</head>
+<body>
+<!-- site:header -->
+<a class="skip-link" href="#main">本文へ移動</a>
+<header class="site-head">
+  <div class="wrap in">
+    <a class="brand" href="/"><svg class="logo" viewBox="0 0 40 40" aria-hidden="true" focusable="false"><rect x="4" y="6" width="32" height="28" rx="6" fill="#14305c"/><path d="M11 15h18M11 20h18M11 25h11" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/><circle cx="29" cy="27" r="6" fill="#ff7a1a"/><path d="M26.5 27l1.8 1.8L32 25.6" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg><span><b>全銀ポン</b><small>全銀フォーマット変換ツール</small></span></a>
+    <button class="nav-toggle" type="button" aria-label="メニューを開く" aria-expanded="false" aria-controls="site-nav">☰</button>
+    <nav class="nav" id="site-nav" aria-label="サイト内メニュー">
+      <a href="/guide.html">使い方</a>
+      <a href="/zengin-format.html">全銀フォーマットとは</a>
+      <a href="/free-tools/">無料ツール</a>
+      <a href="/pricing.html">料金</a>
+      <a href="/security.html">安心・安全</a>
+      <a href="/faq.html">よくある質問</a>
+      <a class="cta" href="/#tool">無料で変換する</a>
+    </nav>
+  </div>
+</header>
+<nav class="crumbs wrap" aria-label="現在位置"><ol><li><a href="/">ホーム</a></li><li aria-current="page">更新情報・お知らせ</li></ol></nav>
+<span id="main" tabindex="-1"></span>
+<!-- /site:header -->
+<article class="article">
+  <h1>更新情報・お知らせ</h1>
+  <p class="updated">最終更新: 2026年10月2日</p>
+  <p>全銀ポンの修正・新しい機能・料金や契約まわりの変更を、新しい順に載せています。変換結果に関わる修正には「<span class="up-tag fix">修正</span>」を付けています。</p>
+
+  <section class="up-day" id="2026-10-02">
+    <h2><time datetime="2026-10-02">2026年10月2日</time></h2>
+
+    <div class="callout warn">
+      <p><span class="up-tag fix">修正</span> <strong>口座名義の長音「ー」を、ハイフン「-」に自動で置き換えるようにしました。</strong></p>
+      <p>銀行の入力基準では、名義に長音「ｰ」は使えず、ハイフン「-」で書く決まりです（例: センター → <code>ｾﾝﾀ-</code>、エービーシー → <code>ｴ-ﾋﾞ-ｼ-</code>）。これまでの全銀ポンは「ｰ」のまま出力していたため、銀行によっては取込エラーになるおそれがありました。</p>
+      <p><strong>10月2日より前に作ったファイルで、受取人名や振込依頼人名に長音が入っている場合は、お手数ですが作り直してください。</strong>長音を含まない名義のファイルには影響ありません。</p>
+    </div>
+
+    <div class="callout">
+      <p><span class="up-tag fix">修正</span> <strong>Pro のお申し込み後に、ライセンスキーのメールが届かない不具合がありました。</strong></p>
+      <p>10月2日のお申し込みで、キーを自動でお送りする仕組みが止まっていました。同日に修正し、該当のお客さまにはキーをお送りしています。ご迷惑をおかけし、申し訳ございませんでした。お申し込み後にキーが届かない場合は、<a href="mailto:studio@kokokikaku.com">studio@kokokikaku.com</a> までご連絡ください。</p>
+    </div>
+
+    <ul class="up-list">
+      <li><span class="up-tag new">新機能</span> <strong>契約の管理ページを用意しました。</strong>解約、月払いから年払いへの切り替え、領収書の確認とダウンロード、カードの変更が、ご自身でできます。ツールの「⭐ Pro」ボタン →「契約の管理・解約」、または<a href="/pricing.html#confirm">料金ページ</a>から開けます。</li>
+      <li><span class="up-tag new">新機能</span> お支払いのたびに、<strong>「ここ企画」名義の領収書メール</strong>をお送りするようにしました。当社は適格請求書発行事業者の登録をしていないため、適格請求書（インボイス）ではない旨を領収書に記載しています。</li>
+      <li><span class="up-tag new">新機能</span> カードの有効期限が近いとき、お支払いに失敗したとき、次の更新が近いときに、お知らせメールをお送りするようにしました。</li>
+      <li><span class="up-tag fix">修正</span> Free の状態でも、Pro の画面に「更新を確認」「このブラウザで無効にする」のボタンが見えていた表示を直しました。</li>
+      <li><span class="up-tag imp">改善</span> 銀行名・支店名からコードを探すときの読み込みを減らし、表示を速くしました。</li>
+      <li><span class="up-tag imp">改善</span> 出力したファイルを、全銀協のレイアウト（1件120バイト）と使える文字に照らして1バイトずつ確かめる検査を追加しました。更新のたびに自動で実行しています。</li>
+      <li><span class="up-tag info">案内</span> <a href="/faq.html">よくある質問</a>に「月払いから年払いに切り替えたい」「領収書の宛名を会社名にしたい」を追加しました。</li>
+    </ul>
+  </section>
+
+  <section class="up-day" id="2026-09-18">
+    <h2><time datetime="2026-09-18">2026年9月18日</time></h2>
+    <ul class="up-list">
+      <li><span class="up-tag new">新機能</span> <strong>手元にファイルがなくても試せる「サンプルで試す」</strong>ボタンを追加しました。並びがバラバラな表と給与の表の2種類で、ダウンロードまで体験できます。</li>
+      <li><span class="up-tag new">新機能</span> 無料ツール「<a href="/free-tools/yucho.html">ゆうちょ 記号番号の変換</a>」「<a href="/free-tools/kana.html">口座名義のカナ変換</a>」を公開しました。</li>
+      <li><span class="up-tag info">案内</span> <a href="/zengin-format.html">全銀フォーマットとは（仕様の解説）</a>、<a href="/legal.html">法令上の位置づけ</a>、<a href="/accessibility.html">アクセシビリティ</a>、<a href="/about.html">運営者情報</a>のページを公開しました。</li>
+      <li><span class="up-tag imp">改善</span> 法人略語「管理組合法人（<code>ｶﾝﾘ</code>）」に対応しました。キーボードだけで操作できるようにし、選択中の部品が分かる表示を加えました。</li>
+    </ul>
+  </section>
+
+  <section class="up-day" id="2026-09-11">
+    <h2><time datetime="2026-09-11">2026年9月11日</time></h2>
+    <ul class="up-list">
+      <li><span class="up-tag new">新機能</span> Pro のお申し込み後に、ライセンスキーを自動でメールでお送りするようにしました。ご契約中は、サイトを開いたときにキーが自動で更新されます。</li>
+    </ul>
+  </section>
+
+  <section class="up-day" id="2026-09-10">
+    <h2><time datetime="2026-09-10">2026年9月10日</time></h2>
+    <ul class="up-list">
+      <li><span class="up-tag new">公開</span> 全銀ポンを公開しました。1回20件までは登録なしで無料、件数無制限の Pro は月払い480円・年払い4,800円（税込）です。</li>
+    </ul>
+  </section>
+
+  <p class="hint">取込エラーや表示の不具合を見つけたら、<a href="mailto:studio@kokokikaku.com">studio@kokokikaku.com</a> までお知らせください。銀行名・エラーメッセージ・出力オプション（改行・拡張子）を添えていただけると早く調べられます。<strong>振込先の一覧やファイルそのものは送らないでください。</strong></p>
+</article>
+<!-- site:footer -->
+<footer class="site-foot">
+  <div class="wrap in">
+    <div>
+      <h2 class="foot-h">全銀ポン</h2>
+      <p>給与振込・総合振込の Excel／CSV／PDF／Googleスプレッドシートを、ネットバンキングに取り込める全銀フォーマットへ。データはブラウザの中だけで処理します。</p>
+      <p class="made-by">企画・開発・運営：<a href="https://kokokikaku.com/" rel="noopener">ここ企画</a>（<a href="/about.html">運営者情報</a>）</p>
+      <p class="made-by">ここ企画のほかの道具：<a href="https://misefits.kokokikaku.com/" rel="noopener">MiseFits（店舗レイアウト）</a>・<a href="https://menufits.kokokikaku.com/" rel="noopener">MenuFits（メニュー表）</a></p>
+    </div>
+    <div>
+      <h2 class="foot-h">使う</h2>
+      <a href="/#tool">全銀フォーマットに変換する</a>
+      <a href="/guide.html">使い方・銀行別の取込方法</a>
+      <a href="/pricing.html">料金プラン</a>
+      <a href="/faq.html">よくある質問</a>
+      <a href="/updates.html">更新情報・お知らせ</a>
+    </div>
+    <div>
+      <h2 class="foot-h">調べる・無料ツール</h2>
+      <a href="/zengin-format.html">全銀フォーマットとは（仕様の解説）</a>
+      <a href="/banks/">銀行コード・支店コード検索</a>
+      <a href="/free-tools/yucho.html">ゆうちょ 記号番号の変換</a>
+      <a href="/free-tools/kana.html">口座名義のカナ変換・法人略語</a>
+    </div>
+    <div>
+      <h2 class="foot-h">安心・規約</h2>
+      <a href="/security.html">セキュリティとデータの扱い</a>
+      <a href="/legal.html">法令上の位置づけ</a>
+      <a href="/terms.html">利用規約</a>
+      <a href="/privacy.html">プライバシーポリシー</a>
+      <a href="/tokushoho.html">特定商取引法に基づく表記</a>
+      <a href="/accessibility.html">アクセシビリティ</a>
+      <a href="/about.html">運営者情報・お問い合わせ</a>
+    </div>
+  </div>
+  <div class="wrap copy">© ここ企画 — 本サービスは振込データ（ファイル）の作成のみを行い、送金は行いません。振込内容の最終確認はご自身のネットバンキングで行ってください。</div>
+</footer>
+<!-- /site:footer -->
+<script src="/config.js"></script>
+<script src="/src/site.js"></script>
+</body>
+</html>

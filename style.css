@@ -69,6 +69,22 @@ h3 { font-size: 17px; margin: 0 0 6px; }
 @media (max-width: 860px) { .hero .in { grid-template-columns: 1fr; } .hero h1 { font-size: 30px; } .hero-art { max-width: 420px; margin: 0 auto; display: block; } }
 
 /* ---------- buttons ---------- */
+/* お知らせの帯（トップ）と更新情報ページ */
+.notice-bar { background: #fff8e6; border-bottom: 1px solid #f1d48a; font-size: 14px; }
+.notice-bar .in { display: flex; align-items: center; gap: 12px; padding-top: 10px; padding-bottom: 10px; flex-wrap: wrap; }
+.notice-bar p { margin: 0; flex: 1 1 420px; line-height: 1.6; }
+.notice-tag { background: var(--navy); color: #fff; font-weight: 800; font-size: 12.5px; padding: 3px 10px; border-radius: 999px; white-space: nowrap; }
+.notice-link { font-weight: 700; white-space: nowrap; color: var(--navy); }
+.up-day { margin-top: 28px; }
+.up-day h2 { border-bottom: 2px solid var(--line); padding-bottom: 6px; }
+.up-list { padding-left: 0; list-style: none; }
+.up-list li { padding: 10px 0; border-bottom: 1px dashed var(--line); line-height: 1.75; }
+.up-tag { display: inline-block; font-size: 12px; font-weight: 800; padding: 1px 8px; border-radius: 6px; margin-right: 4px; vertical-align: 1px; }
+.up-tag.fix { background: #fde8e8; color: #a12020; }
+.up-tag.new { background: #e6f4ea; color: #1e6b34; }
+.up-tag.imp { background: #e8f0fb; color: #14305c; }
+.up-tag.info { background: #f1f1ee; color: #555; }
+@media (max-width: 600px) { .notice-bar .in { gap: 8px; } .notice-bar p { flex-basis: 100%; } }
 /* hidden 属性を必ず効かせる（.btn などの display 指定が上書きして、隠したはずの部品が見えていた） */
 [hidden] { display: none !important; }
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 11px 20px; border-radius: 12px; border: 1px solid var(--line); background: #fff; cursor: pointer; font-weight: 700; text-decoration: none; color: var(--ink); font: inherit; font-weight: 700; }
