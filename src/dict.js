@@ -58,7 +58,8 @@
   }
   // 金融機関の種別 → コード帯（全銀協の割り当て）
   function categoryOf(name) {
-    if (/信用金庫|信金/.test(name)) return (c) => c >= '1000' && c <= '1999';
+    name = hira2kata(String(name));
+    if (/信用金庫|信金|シンキン|シンヨウキンコ/.test(name)) return (c) => c >= '1000' && c <= '1999';
     if (/信用組合|信組/.test(name)) return (c) => c >= '2000' && c <= '2950';
     if (/労働金庫|労金/.test(name)) return (c) => c >= '2951' && c <= '2999';
     if (/農業協同組合|農協|JA|漁協|漁業協同組合/.test(toHalf(name)) ) return (c) => c >= '3000' && c <= '9899';
@@ -67,11 +68,12 @@
     return () => true;
   }
   function stripSuffix(name) {
-    return toHalf(name).trim().replace(/(銀行|信用金庫|信金|信用組合|信組|労働金庫|労金|農業協同組合|農協|漁業協同組合|漁協)$/u, '').replace(/^(株式会社|\(株\)|（株）)/u, '').trim();
+    return hira2kata(toHalf(name).normalize('NFKC')).trim().replace(/[\s　]+/g, '').replace(/(銀行|ギンコウ|信用金庫|信金|シンヨウキンコ|シンキン|信用組合|信組|シンクミ|労働金庫|労金|ロウキン|農業協同組合|農協|漁業協同組合|漁協)$/u, '').replace(/^(株式会社|\(株\)|（株）)/u, '').trim();
   }
   // 改称した銀行の旧名（社内の表には旧名のまま残っていることが多い）。コードは変わっていない。
   const FORMER_NAMES = {
     '住信SBIネット': '0038', 'ジャパンネット': '0033', 'じぶん': '0039', 'auじぶん': '0039', '新生': '0397',
+    '三菱東京UFJ': '0005', '東京三菱': '0005', '三菱UFJ': '0005', 'UFJ': '0005', '郵便局': '9900', 'ゆうちょ': '9900',
   };
   /** @returns {{code, name, kana, exact:boolean}[]} 候補（先頭が最有力） */
   function findBank(input) {

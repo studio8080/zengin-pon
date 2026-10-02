@@ -95,4 +95,10 @@ t('漢字の法人の種類をカナに引き継ぐ（ｶ) が消えない）', 
   assert.equal(O.splitCell('山田太郎（ヤマダ タロウ）').kana, 'ヤマダ タロウ');
 });
 
+t('表の途中に繰り返された見出しの行を見分ける', () => {
+  const head = ['No.', '受取人', 'フリガナ', '金融機関', '支店', '口座番号', '金額'];
+  assert.equal(O.isRepeatedHeader(head.slice(), head), true);
+  assert.equal(O.isRepeatedHeader(['1', '山田', 'ヤマダ', 'みずほ', '本店', '1234567', '1000'], head), false);
+});
+
 console.log(`\n${passed} tests passed`);

@@ -69,8 +69,17 @@
    * 法人種別を略語に置換する。
    * 先頭 → 「ｶ)」、末尾 → 「(ｶ」、中間 → 「(ｶ)」
    */
+  // 「(株)」「㈱」「カブシキガイシャ」などを正式名に戻してから略語にする（NFKC で ㈱ は (株) になる）
+  const CORP_SHORT = [
+    [/[(（]株[)）]/g, '株式会社'], [/[(（]有[)）]/g, '有限会社'], [/[(（]資[)）]/g, '合資会社'], [/[(（]名[)）]/g, '合名会社'],
+    [/[(（]同[)）]/g, '合同会社'], [/[(（]医[)）]/g, '医療法人'], [/[(（]財[)）]/g, '財団法人'], [/[(（]社[)）]/g, '社団法人'],
+    [/[(（]福[)）]/g, '社会福祉法人'], [/[(（]学[)）]/g, '学校法人'], [/[(（](?:特非|NPO)[)）]/g, '特定非営利活動法人'],
+    [/カブシキ[ガカ]イシャ/g, '株式会社'], [/ユウゲン[ガカ]イシャ/g, '有限会社'], [/ゴウドウ[ガカ]イシャ/g, '合同会社'],
+    [/ゴウメイ[ガカ]イシャ/g, '合名会社'], [/ゴウシ[ガカ]イシャ/g, '合資会社'],
+  ];
   function abbreviateCorp(name) {
     let s = String(name || '').trim();
+    for (const [re, word] of CORP_SHORT) s = s.replace(re, word);
     for (const [word, abbr] of CORP_ABBR) {
       if (s.startsWith(word)) s = abbr + ')' + s.slice(word.length);
       else if (s.endsWith(word)) s = s.slice(0, -word.length) + '(' + abbr;
@@ -79,6 +88,8 @@
     for (const [word, abbr] of UNIT_ABBR) {
       if (s.endsWith(word)) s = s.slice(0, -word.length) + '(' + abbr;
     }
+    // 先頭の「ｶ) 」・末尾の「 (ｶ」の空白は詰める（「株式会社 ココキカク」→ ｶ)ｺｺｷｶｸ）
+    s = s.replace(/^([^\s()]+\))[\s　]+/u, '$1').replace(/[\s　]+(\([^\s()]+)$/u, '$1');
     return s;
   }
 
@@ -89,7 +100,8 @@
   function toZenginChars(input, opts) {
     opts = opts || {};
     let s = String(input == null ? '' : input);
-    s = s.normalize('NFC');
+    s = s.normalize('NFKC').replace(/[​-‍﻿]/g, '');
+    s = s.replace(/[ぁ-ゖ]/g, (c) => String.fromCodePoint(c.codePointAt(0) + 0x60));
     if (opts.abbreviateCorp !== false) s = abbreviateCorp(s);
     let out = '';
     for (const ch of s) {
@@ -133,24 +145,41 @@
     if (s.length > len) throw new Error(`数値が桁数(${len})を超えています: ${s}`);
     return '0'.repeat(len - s.length) + s;
   }
-  function digits(v) { return String(v == null ? '' : v).replace(/[^0-9]/g, ''); }
+  const halfDigits = (v) => String(v == null ? '' : v).replace(/[０-９]/g, (d) => String.fromCharCode(d.charCodeAt(0) - 0xFEE0));
+  function digits(v) { return halfDigits(v).replace(/[^0-9]/g, ''); }
+  /**
+   * コード・口座番号用。Excel が数値にした値（1234567.0 / 1.234567E+06 / 数値型）も元の整数に戻す。
+   * 区切りの「-」や空白は取り除く。
+   */
+  function codeDigits(v) {
+    if (typeof v === 'number') return Number.isFinite(v) ? String(Math.round(v)) : '';
+    let s = halfDigits(v).trim();
+    if (/^\d+\.0+$/.test(s)) s = s.replace(/\.0+$/, '');
+    else if (/^\d+(\.\d+)?[eE]\+?\d+$/.test(s)) s = String(Math.round(Number(s)));
+    return s.replace(/[^0-9]/g, '');
+  }
 
+  /** 金額。マイナス（-, △, ▲, (1,000)）は黙って正にせず NaN（＝エラー）にする */
   function parseAmount(v) {
     if (typeof v === 'number') return Math.round(v);
-    const s = String(v == null ? '' : v).replace(/[,，¥￥\s円]/g, '').replace(/[０-９]/g, (d) => String.fromCharCode(d.charCodeAt(0) - 0xFEE0));
+    let s = halfDigits(v).normalize('NFKC').trim();
     if (s === '') return NaN;
+    if (/^[-−△▲]|^\(.*\)$/.test(s)) return NaN;
+    s = s.replace(/[,，¥￥\\$\s円也]/g, '');
+    if (!/^\d+(\.\d+)?$/.test(s)) return NaN;
     return Math.round(Number(s));
   }
 
   /** 預金種目: 普通=1 当座=2 貯蓄=4 その他=9 */
   function parseDepositType(v) {
-    const s = String(v == null ? '' : v).trim();
-    if (/^[1249]$/.test(s)) return s;
-    if (/普|ﾌﾂｳ|フツウ|ordinary|saving/i.test(s)) return '1';
-    if (/当|ﾄｳｻﾞ|トウザ|current|checking/i.test(s)) return '2';
-    if (/貯蓄|ﾁｮﾁｸ|チョチク/i.test(s)) return '4';
-    if (s === '') return '1';
-    return '9';
+    const s = halfDigits(v).normalize('NFKC').trim();
+    if (s === '') return '1';                       // 列が無い・空欄は普通（銀行の慣行）
+    if (/^[1249]$/.test(s) || /^[1249][\s:：.]/.test(s)) return s[0];
+    if (/貯蓄|チョチク/i.test(s)) return '4';
+    if (/普|フツウ|総合|ソウゴウ|ordinary|saving/i.test(s)) return '1';   // ゆうちょ等の「総合口座」は普通
+    if (/当|トウザ|current|checking/i.test(s)) return '2';
+    if (/その他|ソノタ|other/i.test(s)) return '9';
+    return '';                                       // 読めない語は「その他」にせず、エラーで知らせる
   }
 
   /**
@@ -334,19 +363,20 @@
 
   function normalizeRow(raw, opts) {
     opts = opts || {};
-    const bc = digits(raw.bankCode), brc = digits(raw.branchCode);
+    const bc = codeDigits(raw.bankCode), brc = codeDigits(raw.branchCode);
     const r = {
       bankCode: bc ? bc.padStart(4, '0').slice(-4) : '',
       bankName: optionalName(raw.bankName, opts),
       branchCode: brc ? brc.padStart(3, '0').slice(-3) : '',
       branchName: optionalName(raw.branchName, opts),
       depositType: parseDepositType(raw.depositType),
-      accountNo: digits(raw.accountNo),
-      name: toZenginChars(raw.name, opts),
+      accountNo: codeDigits(raw.accountNo),
+      // 「ヤマダ タロウ 様」「○○株式会社 御中」の敬称は口座名義に含まれないので外す
+      name: toZenginChars(String(raw.name == null ? '' : raw.name).trim().replace(/(?:[\s　]*(?:様|殿|御中)|[\s　]+さま)$/u, ''), opts),
       amount: parseAmount(raw.amount),
       newCode: /^[012]$/.test(String(raw.newCode || '').trim()) ? String(raw.newCode).trim() : '0',
-      customerCode1: digits(raw.customerCode1), customerCode2: digits(raw.customerCode2),
-      employeeNo: digits(raw.employeeNo), deptCode: digits(raw.deptCode),
+      customerCode1: codeDigits(raw.customerCode1), customerCode2: codeDigits(raw.customerCode2),
+      employeeNo: codeDigits(raw.employeeNo), deptCode: codeDigits(raw.deptCode),
       transferType: /^[78]$/.test(String(raw.transferType || '').trim()) ? String(raw.transferType).trim() : (opts.defaultTransferType || '7'),
       ediFlag: /^y$/i.test(String(raw.ediFlag || '').trim()) ? 'Y' : '',
     };

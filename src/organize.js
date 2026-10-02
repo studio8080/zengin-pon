@@ -28,8 +28,8 @@
     { key: 'name', label: '受取人名（カナ）', required: true, aliases: ['受取人名カナ', '受取人カナ', '口座名義カナ', '名義カナ', '氏名カナ', '振込先名カナ', 'フリガナ', 'ふりがな', 'カナ', '受取人名', '受取人', '振込先名', '口座名義', '名義人', '名義', '振込先', '氏名', '名前', '社員名', '従業員名', '取引先名', '支払先', 'name', 'recipient'] },
     { key: 'amount', label: '振込金額', required: true, aliases: ['振込金額', '差引支給額', '振込額', '支給額', '手取額', '手取り', '支払金額', '支払額', '請求金額', '金額', 'amount', 'salary'] },
     { key: 'depositType', label: '預金種目', aliases: ['預金種目', '預金種別', '口座種別', '口座種目', '科目', '種目', '種別', 'account_type'] },
-    { key: 'bankName', label: '銀行名', aliases: ['銀行名', '金融機関名', 'bankname'] },
-    { key: 'branchName', label: '支店名', aliases: ['支店名', 'branchname'] },
+    { key: 'bankName', label: '銀行名', aliases: ['銀行名', '金融機関名', '金融機関名称', '銀行名称', '振込先銀行', '振込先金融機関', '金融機関', '銀行', 'bankname', 'bank'] },
+    { key: 'branchName', label: '支店名', aliases: ['支店名', '支店名称', '振込先支店', '取扱店', '店名', '支店', 'branchname', 'branch'] },
     { key: 'customerCode1', label: '顧客コード1', kinds: ['21'], aliases: ['顧客コード1', '顧客コード', '取引先コード', '得意先コード', '仕入先コード', '顧客cd'] },
     { key: 'customerCode2', label: '顧客コード2', kinds: ['21'], aliases: ['顧客コード2'] },
     { key: 'transferType', label: '振込指定区分（7/8）', kinds: ['21'], aliases: ['振込指定区分', '電信文書'] },
@@ -201,6 +201,12 @@
    * @param {string} kind       '21'|'11'|'12'
    * @returns {{ mapping: {key:number}, info: {key:{method:'header'|'inferred', reason:string, confidence:number}}, columns:[{index, header, profile}] }}
    */
+  /** 空でない値のうち、1〜4桁の数字（全角含む）だけのものの割合 */
+  function numRatio(vals) {
+    const v = vals.map((x) => String(x == null ? '' : x).trim()).filter(Boolean);
+    if (!v.length) return 0;
+    return v.filter((x) => /^[0-9０-９]{1,4}(\.0+)?$/.test(x)).length / v.length;
+  }
   function suggestMapping(table, headerIdx, kind, opts) {
     opts = opts || {};
     const headers = headerIdx >= 0 ? (table[headerIdx] || []) : [];
@@ -227,6 +233,10 @@
       if (mapping[c.key] != null || used.has(c.ci)) continue;
       // 見出しが合っていても中身が明らかに違う列は採らない（例: 「銀行」列に銀行名が入っている → bankCode ではなく bankName）
       const p = columns[c.ci].profile;
+      // 「銀行」「支店」「金融機関」のように、コードにも名前にも取れる見出しは中身の数字の割合で決める
+      const nr = numRatio(rows.map((r) => r[c.ci]));
+      if ((c.key === 'bankCode' || c.key === 'branchCode') && nr < 0.6) continue;
+      if ((c.key === 'bankName' || c.key === 'branchName') && nr >= 0.6) continue;
       if (c.key === 'bankCode' && ['bankText', 'kanjiName', 'kana'].includes(p.type)) continue;
       if (c.key === 'branchCode' && ['branchText', 'kanjiName', 'kana'].includes(p.type)) continue;
       if (c.key === 'name' && ['amount', 'code4', 'code3', 'account', 'bankText', 'branchText', 'deposit'].includes(p.type)) continue;
@@ -262,6 +272,21 @@
   }
 
   // ---- 合計行など ----------------------------------------------------------
+  /**
+   * 表の途中にもう一度出てくる見出しの行（PDF の改ページ、Excel の印刷用の繰り返し見出しなど）。
+   * 見出し行と同じ文字の列が半分以上あれば見出しとみなす。
+   */
+  function isRepeatedHeader(row, headerRow) {
+    if (!headerRow || !headerRow.length) return false;
+    let same = 0, filled = 0;
+    headerRow.forEach((h, i) => {
+      const hv = normHeader(String(h || '')); if (!hv) return;
+      filled++;
+      if (normHeader(String(row[i] || '')) === hv) same++;
+    });
+    return filled >= 2 && same / filled >= 0.5;
+  }
+
   function isTotalRow(row, mapping) {
     const nameCell = mapping.name != null ? String(row[mapping.name] || '').trim() : '';
     const anyTotalWord = row.some((c) => TOTAL_RE.test(toHalf(String(c || '')).trim()));
@@ -289,5 +314,5 @@
     return { table, headerIdx: hIdx, hasHeader: headerIdx >= 0, mapping: sug.mapping, info: sug.info, columns: sug.columns, notes };
   }
 
-  return { FIELDS, normHeader, splitCell, expandTable, profileColumn, detectHeaderRow, suggestMapping, isTotalRow, analyze, toHalf };
+  return { FIELDS, normHeader, splitCell, expandTable, profileColumn, detectHeaderRow, suggestMapping, isTotalRow, isRepeatedHeader, analyze, toHalf };
 });

@@ -76,3 +76,38 @@ def main(out):
 
 if __name__ == '__main__':
     main(sys.argv[1] if len(sys.argv) > 1 else '.')
+
+
+# ---- 書き方の揺れ・書き間違いを詰め込んだ表（全部で7件、合計 ¥777,777） ----
+MESSY_HEAD = ['No.', '受取人', 'フリガナ', '金融機関', '支店', '種目', '口座番号', '支給額', '備考']
+MESSY_ROWS = [
+    ['1', '山田太郎', 'ヤマダ　タロウ 様', '三菱東京UFJ銀行', '本店', '普通預金', '０１２３４５６', '１２０，０００円', ''],
+    ['2', '㈱ココキカク', 'カブシキガイシャ ココキカク', 'みずほ', '東京営業部', '当座', '1.234567E+06', '￥98,765', '指数表記'],
+    ['', '', '', '', '', '', '', '', ''],                       # 空行
+    ['3', '鈴木花子', 'すずき はなこ', '郵便局', '〇一八', '総合', '1234567', '100000', 'ひらがな'],
+    ['No.', '受取人', 'フリガナ', '金融機関', '支店', '種目', '口座番号', '支給額', '備考'],  # 途中の見出し（PDF の改ページ）
+    ['4', '佐藤一郎', 'サトウ イチロウ', '京都しんきん', '001', '1', '7654321', '150,000', '支店欄にコード'],
+    ['5', '田中センター', 'タナカ センター', '京都中央信用金庫', '本店', '普', '12345', '133,333', '先頭0落ち'],
+    ['6', 'ジャパン有限', '(有)ジャパン', 'ジャパンネット銀行', 'すずめ', 'ﾌﾂｳ', '1112223', '75,679', '旧名'],
+    ['7', '伊藤', 'イトウ ケン', '住信ＳＢＩネット銀行', '法人第一', '普通', '2223334', '100,000', '旧名'],
+    ['', '小計', '', '', '', '', '', '777,777', ''],                 # 小計行
+]
+
+
+def messy(out):
+    for name, enc in (('messy_sjis.csv', 'cp932'), ('messy_utf16.csv', 'utf-16')):
+        with open(os.path.join(out, name), 'w', encoding=enc, newline='') as f:
+            # Shift_JIS にはノーブレークスペースが無いので、そのファイルだけ普通の空白にする
+            rows = MESSY_ROWS if enc == 'utf-16' else [[c.replace(' ', ' ') for c in r] for r in MESSY_ROWS]
+            w = csv.writer(f, delimiter='\t' if enc == 'utf-16' else ','); w.writerow(MESSY_HEAD); w.writerows(rows)
+    import openpyxl
+    wb = openpyxl.Workbook(); ws = wb.active
+    ws.append(['支払一覧（10月）']); ws.append(MESSY_HEAD)
+    for r in MESSY_ROWS: ws.append(r)
+    ws['G4'].number_format = '@'
+    wb.save(os.path.join(out, 'messy.xlsx'))
+    print('messy written')
+
+
+if __name__ == '__main__' and len(sys.argv) > 2 and sys.argv[2] == 'messy':
+    messy(sys.argv[1])

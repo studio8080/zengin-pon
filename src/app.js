@@ -253,6 +253,9 @@
 
   function decodeText(buf) {
     const u8 = new Uint8Array(buf);
+    // Excel の「Unicode テキスト」保存は UTF-16（BOM つき）。BOM で判定し、無ければ UTF-8 → Shift_JIS の順に試す
+    if (u8[0] === 0xFF && u8[1] === 0xFE) return new TextDecoder('utf-16le').decode(u8);
+    if (u8[0] === 0xFE && u8[1] === 0xFF) return new TextDecoder('utf-16be').decode(u8);
     try { return new TextDecoder('utf-8', { fatal: true }).decode(u8); } catch (_) { return new TextDecoder('shift_jis').decode(u8); }
   }
   function setWorkbook(wb) {
@@ -333,7 +336,9 @@
     notes.innerHTML = all.map((n) => `<div>🧹 ${esc(n)}</div>`).join('');
     const rows = dataRows();
     const totals = rows.filter((r) => O.isTotalRow(r, state.mapping)).length;
-    $('rowCount').textContent = `${rows.length - totals} 行を認識${totals ? `（合計行 ${totals} 行を除外）` : ''}`;
+    const heads = rows.filter((r) => !O.isTotalRow(r, state.mapping) && O.isRepeatedHeader(r, state.table[state.headerIdx])).length;
+    const skipped = [totals && `合計行 ${totals} 行`, heads && `途中の見出し ${heads} 行`].filter(Boolean).join('・');
+    $('rowCount').textContent = `${rows.length - totals - heads} 行を認識${skipped ? `（${skipped}を除外）` : ''}`;
     $('toStep3').disabled = !mappingComplete();
   }
 
@@ -381,6 +386,7 @@
     state.table.slice(state.headerIdx + 1).forEach((r, i) => {
       if (!r.some((c) => c !== '')) return;
       if (O.isTotalRow(r, m)) return;
+      if (O.isRepeatedHeader(r, state.table[state.headerIdx])) return;   // 改ページで繰り返された見出し
       const raw = {};
       for (const f of FIELDS) raw[f.key] = m[f.key] != null ? r[m[f.key]] : '';
       if (!raw.amount && !raw.accountNo && !raw.name) return;
@@ -397,6 +403,12 @@
     let dictOk = false;
     try { await D.load(); dictOk = true; } catch (_) { dictOk = false; }
     if (dictOk) {
+      // 銀行名・支店名の欄にコードだけが書かれている（「0005」「001」「店番123」）ときは、コードとして使う
+      for (const r of rows) {
+        const bn = String(r._rawBankName || '').normalize('NFKC').trim(), sn = String(r._rawBranchName || '').normalize('NFKC').replace(/^店番|^支店コード|^支店番号/, '').trim();
+        if (!r.bankCode && /^\d{1,4}$/.test(bn)) { r.bankCode = bn.padStart(4, '0'); r._rawBankName = ''; }
+        if (!r.branchCode && /^\d{1,3}$/.test(sn)) { r.branchCode = sn.padStart(3, '0'); r._rawBranchName = ''; }
+      }
       for (const r of rows) {
         if (r.bankCode || !r._rawBankName) continue;
         const c = D.findBank(r._rawBankName);
@@ -421,16 +433,19 @@
       }
       const fill = $('fillNames').value === '1';
       for (const r of rows) {
+        if (!fill) { r.bankName = ''; r.branchName = ''; }   // 「空欄で出力する」を選んだら表の値も使わない
         const b = D.bank(r.bankCode);
         const merged = D.mergedInfo(r.bankCode);
         if (merged) r._warn.push(`銀行コード ${r.bankCode} は ${merged.name}（${merged.date}）で新コード ${merged.new} に変わっています。${merged.branchNote || ''}`);
         else if (!b) { if (r.bankCode) r._warn.push(`銀行コード ${r.bankCode} は金融機関一覧（${D.version}版）にありません。統廃合か入力ミスの可能性があります`); }
         else {
           r._dictBank = b[0];
-          if (fill && !r.bankName) r.bankName = Z.toZenginChars(b[1], { abbreviateCorp: false }).slice(0, 15);
+          // 辞書にある銀行は、表に書かれた名前（旧名・略称・コードなど）より辞書の正式なカナを使う
+          if (fill) r.bankName = Z.toZenginChars(b[1], { abbreviateCorp: false }).slice(0, 15);
           const br = D.branch(r.bankCode, r.branchCode);
-          if (br) { r._dictBranch = br[0]; if (fill && !r.branchName) r.branchName = Z.toZenginChars(br[1], { abbreviateCorp: false }).slice(0, 15); }
-          else if (br === null && r.branchCode) r._warn.push(`支店コード ${r.branchCode} は ${b[0]}銀行の支店一覧にありません`);
+          if (br) { r._dictBranch = br[0]; if (fill) r.branchName = Z.toZenginChars(br[1], { abbreviateCorp: false }).slice(0, 15); }
+          else if (/^\d+$/.test(r.branchName || '')) r.branchName = '';   // 支店名の欄にコードが書かれていた場合
+          else if (br === null && r.branchCode) r._warn.push(`支店コード ${r.branchCode} は ${b[0]}の支店一覧にありません`);
         }
       }
     }
