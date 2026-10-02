@@ -282,7 +282,7 @@ C:\Users\chaha\.zengin-pon\license-private.pem
 
 ---
 
-## 7. Googleスプレッドシート連携を有効にする（所要 30分。後回しで可）— **要・あなたの操作**
+## 7. Googleスプレッドシート連携を有効にする — **完了（2026-10-02）。本番でのログイン確認だけ残り**
 
 > Google Cloud コンソールは `studio@kokokikaku.com` の**パスワード再認証**を求めてくるため、ここから先は
 > あなたが操作する必要がある（Claude はパスワードを入力しない）。
@@ -299,11 +299,12 @@ Drive API と Picker API を有効化し、OAuth クライアントIDとAPIキ�
 |---|---|
 | GCP プロジェクト `zenginpon-sheets`（番号 711586006523、組織 kokokikaku.com の下） | 作成済み |
 | Drive API・Picker API の有効化 | 済み |
-| API キー「zenginpon-picker」（リファラー: 本番と localhost:8877、API: Picker のみ） | 作成済み。値はコンソールの「認証情報」でコピーする |
-| OAuth 同意画面（外部・アプリ名「全銀ポン」・サポート studio@・スコープ drive.file・本番公開） | 未 |
-| OAuth クライアントID（ウェブ。生成元: 本番と http://localhost:8877） | 未 |
-| `config.js` の `GOOGLE_APP_ID` | 設定済み。`GOOGLE_CLIENT_ID` と `GOOGLE_API_KEY` が入ると連携が有効になる |
-| サイトの「準備中」の表記を外す（faq・guide・llms・index・privacy・構造化データ） | 書き換えは用意済み。値が入ってから反映する |
+| API キー「zenginpon-picker」（リファラー: 本番と localhost:8877、API: Picker のみ） | 作成・設定済み。ほかのサイトと Picker 以外の API を拒否することを確認 |
+| OAuth 同意画面（外部・アプリ名「全銀ポン」・サポート studio@・承認済みドメイン kokokikaku.com・スコープ drive.file のみ・本番公開） | 済み（Google API サービスのユーザーデータに関するポリシーへの同意は運営者の了承を得て実施） |
+| OAuth クライアントID「zenginpon-web」（ウェブ。生成元: 本番と http://localhost:8877。シークレットは使わない） | 作成・設定済み |
+| `config.js` の3つの値 | 設定済み（2841684） |
+| サイトの「準備中」の表記を外す（faq・guide・llms・index・privacy・構造化データ・更新情報） | 済み |
+| 本番で実際にログインしてシートを読み込む | **未**（アプリ内ブラウザはポップアップを開けないため、運営者が確認する） |
 
 ---
 
