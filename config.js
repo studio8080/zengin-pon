@@ -12,13 +12,13 @@
  *   → 空のままなら料金ページのボタンは「準備中」と表示され、押しても何も起きない
  *
  * ── Googleスプレッドシート連携 ────────────────────────────
- *   1. GCP（studio@ のアカウント）でプロジェクトを作る（Firebase の kininarumono / misefits とは別でよい）
+ *   1. GCP プロジェクト zenginpon-sheets（番号 711586006523、studio@、2026-10-02 作成。Drive API・Picker API 有効化済み）
  *   2. 「APIとサービス」→ ライブラリ で Google Drive API と Google Picker API を有効化
  *   3. OAuth 同意画面: 外部 / アプリ名・サポートメール・プライバシーポリシーURL / スコープに .../auth/drive.file
  *      （drive.file は「非機密」スコープなので Google の審査は不要。公開状態を「本番」にする）
  *   4. 認証情報 → OAuth クライアントID（ウェブアプリ）。承認済み JavaScript 生成元に
- *        https://zenginpon.kokokikaku.com  と  http://localhost:8765  を登録
- *   5. 認証情報 → APIキー。アプリケーションの制限を「HTTPリファラー」にして同じURLを登録、API制限で Picker API のみ
+ *        https://zenginpon.kokokikaku.com  と  http://localhost:8877  を登録
+ *   5. 認証情報 → APIキー「zenginpon-picker」（作成済み。リファラー制限: 本番と localhost:8877、API制限: Picker API のみ）
  *   6. 下の3つを埋める（GOOGLE_APP_ID はプロジェクト番号）
  */
 window.ZENGIN_CONFIG = {
@@ -40,5 +40,5 @@ window.ZENGIN_CONFIG = {
   // Googleスプレッドシート連携
   GOOGLE_CLIENT_ID: '',
   GOOGLE_API_KEY: '',
-  GOOGLE_APP_ID: '',
+  GOOGLE_APP_ID: '711586006523',
 };
