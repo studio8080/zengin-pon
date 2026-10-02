@@ -17,7 +17,7 @@
 3. **事実でないことをページに書かない。** 料金・制限・対応形式を変えたら、`pricing.html` `faq.html`
    `llms.txt` `tokushoho.html` `privacy.html` と、`tools/build-site.js` の構造化データ（offers）を必ず同時に直す。
    AIが「全銀ポンは完全無料」と答える状態がいちばん困る。
-4. **`googleb736d92e1fe0566c.html` と `<32桁>.txt` を消さない。** 前者は Search Console の所有権確認、後者は IndexNow のキー。
+4. **`googleb736d92e1fe0566c.html` と `<32桁>.txt`、`index.html` の `msvalidate.01` を消さない。** 順に Search Console の所有権確認、IndexNow のキー、Bing Webmaster Tools の所有確認。
 5. **秘密鍵はリポジトリに入れない。** `C:\Users\chaha\.zengin-pon\license-private.pem`。失うと再発行できない。
 
 ## 2. ページの作り方（必ずこの手順）
