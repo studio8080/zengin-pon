@@ -89,6 +89,19 @@ async function post(event) {
     assert.match(mails[0].subject, /更新/);
   });
 
+  await t('月払い→年払いの切り替えで、同じライセンスIDのまま期限が延びる', async () => {
+    mails.length = 0;
+    const id = Object.keys(store)[0];
+    const yearEnd = now + 365 * 86400;
+    subs.sub_A = { ...mkSub('sub_A', ZP), items: { data: [{ current_period_end: yearEnd, price: { product: ZP, recurring: { interval: 'year' } } }] } };
+    await post({ type: 'customer.subscription.updated', data: { object: subs.sub_A } });
+    const r = await post({ type: 'invoice.paid', data: { object: { billing_reason: 'subscription_update', customer_email: 'a@example.com', parent: { subscription_details: { subscription: 'sub_A' } } } } });
+    assert.equal(r.status, 200);
+    assert.equal(Object.keys(store).length, 1);
+    assert.equal(store[id].entitledUntil > new Date(Date.now() + 300 * 86400e3).toISOString().slice(0, 10), true);
+    assert.equal(mails.length, 1);
+  });
+
   await t('初回の invoice.paid は二重に送らない', async () => {
     mails.length = 0;
     const r = await post({ type: 'invoice.paid', data: { object: { billing_reason: 'subscription_create', subscription: 'sub_A' } } });
