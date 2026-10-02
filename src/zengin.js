@@ -104,12 +104,15 @@
     }
     out = out.toUpperCase();
     if (opts.smallToLarge !== false) out = out.replace(/[ｧｨｩｪｫｯｬｭｮ]/g, (m) => SMALL_TO_LARGE[m]);
+    // 長音「ｰ」は多くの銀行で使えず、ハイフン「-」に置き換える決まり（例: ｴｰﾋﾞｰｼｰ → ｴ-ﾋﾞ-ｼ-）
+    out = out.replace(/[ｰ‐‑‒–—―−]/g, '-');
     out = out.replace(/\s+/g, ' ').trim();
     return out;
   }
 
   // 全銀で使える文字（JIS X 0201 のうち銀行が受け付ける範囲）
-  const ALLOWED_RE = /^[0-9A-Z ()\-./¥｢｣ｦ-ﾟ]*$/;
+  // 長音「ｰ」(U+FF70) は含めない（ハイフンに置き換える）
+  const ALLOWED_RE = /^[0-9A-Z ()\-./¥｢｣ｦ-ｯｱ-ﾟ]*$/;
 
   function invalidChars(s) {
     const bad = [];

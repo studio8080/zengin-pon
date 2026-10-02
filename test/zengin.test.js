@@ -9,7 +9,7 @@ t('全角カナ→半角カナ（濁点分離）', () => {
   assert.equal(Z.toZenginChars('ヤマダ　タロウ'), 'ﾔﾏﾀﾞ ﾀﾛｳ');
   assert.equal(Z.toZenginChars('やまだ たろう'), 'ﾔﾏﾀﾞ ﾀﾛｳ');
   assert.equal(Z.toZenginChars('パピプペポ'), 'ﾊﾟﾋﾟﾌﾟﾍﾟﾎﾟ');
-  assert.equal(Z.toZenginChars('ヴィクター'), 'ｳﾞｲｸﾀｰ');
+  assert.equal(Z.toZenginChars('ヴィクター'), 'ｳﾞｲｸﾀ-');
 });
 
 t('小書きカナ→大文字、英字→大文字、全角英数→半角', () => {
@@ -30,7 +30,9 @@ t('法人略語', () => {
 });
 
 t('記号', () => {
-  assert.equal(Z.toZenginChars('エー・ビー'), 'ｴｰ.ﾋﾞｰ');
+  assert.equal(Z.toZenginChars('エー・ビー'), 'ｴ-.ﾋﾞ-');
+  assert.equal(Z.toZenginChars('ｾﾝﾀｰ'), 'ｾﾝﾀ-');
+  assert.deepEqual(Z.invalidChars('ｾﾝﾀｰ'), ['ｰ']);
   assert.equal(Z.toZenginChars('ＡＢＣ－１'), 'ABC-1');
   assert.equal(Z.toZenginChars('（ヤマダ）'), '(ﾔﾏﾀﾞ)');
 });

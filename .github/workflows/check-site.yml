@@ -21,5 +21,6 @@ jobs:
           node test/zengin.test.js
           node test/organize.test.js
           node test/functions.test.js
+          mkdir -p /tmp/fb && node test/make-fb.js /tmp/fb && python3 tools/verify_zengin.py /tmp/fb/*.txt
       - name: 共通部品（ヘッダー・フッター・構造化データ）が全ページに埋め込まれているか
         run: node tools/build-site.js --check

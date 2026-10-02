@@ -171,10 +171,11 @@
   <h2 id="chars">6. 使える文字・使えない文字</h2>
   <table>
     <tr><th>使える</th><td>数字 <code>0-9</code>、英大文字 <code>A-Z</code>、半角カナ（<code>ｱ</code>〜<code>ﾝ</code>、濁点 <code>ﾞ</code>、半濁点 <code>ﾟ</code>）、空白、記号 <code>( ) - . / ¥ ｢ ｣</code></td></tr>
-    <tr><th>使えない</th><td>漢字、ひらがな、全角カナ、全角英数、英小文字、中点「・」、長音の全角「ー」</td></tr>
+    <tr><th>使えない</th><td>漢字、ひらがな、全角カナ、全角英数、英小文字、中点「・」（→ <code>.</code>）、長音「ー」「<code>ｰ</code>」（→ ハイフン <code>-</code>）、小さいカナ（→ 大きいカナ）</td></tr>
   </table>
   <ul>
     <li><strong>濁点は1文字として数えます。</strong>「ダ」は <code>ﾀ</code> と <code>ﾞ</code> の2文字です。受取人名の30桁はこの数え方での30文字です。</li>
+    <li><strong>長音はハイフンに置き換えます。</strong>半角の長音 <code>ｰ</code> も多くの銀行で使えません（例: センター → <code>ｾﾝﾀ-</code>、エービーシー → <code>ｴ-ﾋﾞ-ｼ-</code>）。全銀ポンは自動で置き換えます。</li>
     <li><strong>小さい「ャュョッ」は大きい文字で書く</strong>のが銀行の慣例です（例: キャノン → <code>ｷﾔﾉﾝ</code>）。口座名義もこの形で登録されていることが多くあります。</li>
     <li><strong>法人名は略語にします。</strong>先頭の「株式会社」は <code>ｶ)</code>、末尾なら <code>(ｶ</code>、途中なら <code>(ｶ)</code> です。ほかの略語は<a href="/free-tools/kana.html#abbr">法人略語の一覧</a>にまとめています。</li>
     <li>文字コードは JIS X 0201（Shift_JIS の1バイト部分）です。UTF-8 で保存すると半角カナが3バイトになり、120バイトに収まらなくなります。</li>
