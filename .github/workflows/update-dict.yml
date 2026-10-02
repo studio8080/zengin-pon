@@ -24,11 +24,12 @@ jobs:
       - name: Fetch source and read its last update date
         id: src
         run: |
-          git clone --depth 1 https://github.com/zengin-code/source-data.git /tmp/source-data
+          git clone https://github.com/zengin-code/source-data.git /tmp/source-data   # 統廃合の履歴を作るので全履歴を取る（約11MB）
           echo "date=$(git -C /tmp/source-data log -1 --format=%cs)" >> "$GITHUB_OUTPUT"
       - name: Build dictionary and bank pages
         run: |
           DICT_VERSION="${{ steps.src.outputs.date }}" node tools/build-dict.js /tmp/source-data
+          node tools/build-history.js /tmp/source-data
           node tools/build-bank-pages.js
           node tools/build-site.js
       - name: Create pull request if changed

@@ -41,6 +41,11 @@ zengin-pon/
   data/banks.json     金融機関辞書（tools/build-dict.js で生成、元は zengin-code）
   data/branches/      銀行ごとの支店一覧（必要な分だけ取得）
   data/merged.json    統廃合の旧→新コード表（手で管理）
+  data/history/       金融機関・支店の統廃合・改称・番号の振り直しの履歴（tools/build-history.js で生成。2015年〜）
+  tools/build-history.js  zengin-code/source-data の git 履歴を比べて data/history/ を作る（全履歴の clone が必要）
+  tools/verify_zengin.py  全銀ファイルを1バイトずつ検査する独立した検査器
+  tools/make_input_samples.py  入力形式ごとの検証用ファイル（samples/formats/）を作る
+  test/robust.test.js / test/dict.test.js  書き方の揺れ・銀行名と支店名の照合のテスト
   tools/build-dict.js 辞書ビルド。DICT_VERSION=YYYY-MM-DD node tools/build-dict.js [source-data dir]
   .github/workflows/update-dict.yml  毎月の辞書自動更新PR
   test/zengin.test.js node test/zengin.test.js で実行（12件）

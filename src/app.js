@@ -361,7 +361,7 @@
     const b = D.bank(bc);
     const bp = $('bankCodeName');
     if (!$('bankCode').value) { bp.textContent = ''; bp.className = 'preview'; }
-    else if (b) { bp.textContent = b[0] + '銀行'; bp.className = 'preview'; }
+    else if (b) { bp.textContent = fullBankName(b[0]); bp.className = 'preview'; }
     else { bp.textContent = '金融機関一覧にないコードです'; bp.className = 'preview ng'; }
     const brp = $('branchCodeName');
     const brc = $('branchCode').value.replace(/\D/g, '').padStart(3, '0').slice(-3);
@@ -371,6 +371,15 @@
       if (br) { brp.textContent = /[店部所]$/.test(br[0]) ? br[0] : br[0] + '支店'; brp.className = 'preview'; }
       else { brp.textContent = 'この銀行の支店一覧にないコードです'; brp.className = 'preview ng'; }
     } else { brp.textContent = ''; brp.className = 'preview'; }
+  }
+  /** 辞書の略称（京都信金・ゆうちょ）を表示用の正式な呼び方にする */
+  function fullBankName(n) {
+    if (/信金$/.test(n)) return n.replace(/信金$/, '信用金庫');
+    if (/信組$/.test(n)) return n.replace(/信組$/, '信用組合');
+    if (/労金$/.test(n)) return n.replace(/労金$/, '労働金庫');
+    if (/農協$|^ＪＡ|漁協$|信連$|信漁連$|中金$/.test(n)) return n;
+    if (n === 'ゆうちょ') return 'ゆうちょ銀行';
+    return /銀行$/.test(n) ? n : n + '銀行';
   }
   for (const id of SETTING_IDS) {
     $(id).addEventListener('input', () => { delete $(id).dataset.demo; saveSettings(); if (state.step === 3) updateHeaderPreviews(); });
@@ -403,50 +412,19 @@
     let dictOk = false;
     try { await D.load(); dictOk = true; } catch (_) { dictOk = false; }
     if (dictOk) {
-      // 銀行名・支店名の欄にコードだけが書かれている（「0005」「001」「店番123」）ときは、コードとして使う
-      for (const r of rows) {
-        const bn = String(r._rawBankName || '').normalize('NFKC').trim(), sn = String(r._rawBranchName || '').normalize('NFKC').replace(/^店番|^支店コード|^支店番号/, '').trim();
-        if (!r.bankCode && /^\d{1,4}$/.test(bn)) { r.bankCode = bn.padStart(4, '0'); r._rawBankName = ''; }
-        if (!r.branchCode && /^\d{1,3}$/.test(sn)) { r.branchCode = sn.padStart(3, '0'); r._rawBranchName = ''; }
-      }
-      for (const r of rows) {
-        if (r.bankCode || !r._rawBankName) continue;
-        const c = D.findBank(r._rawBankName);
-        const exact = c.filter((x) => x.exact);
-        if (exact.length === 1 || (exact.length === 0 && c.length === 1)) {
-          const hit = exact[0] || c[0]; r.bankCode = hit.code;
-          r._info.push(`銀行名「${r._rawBankName}」から銀行コード ${hit.code}（${hit.name}）を補いました`);
-        } else if (c.length > 1) r._warn.push(`銀行名「${r._rawBankName}」に候補が複数あります: ${c.slice(0, 4).map((x) => `${x.code} ${x.name}`).join(' / ')}`);
-        else r._warn.push(`銀行名「${r._rawBankName}」が金融機関一覧に見つかりません`);
-      }
-      const codes = [...new Set(rows.map((r) => r.bankCode).filter(Boolean))];
-      await Promise.all(codes.map((c) => D.branches(c)));
-      for (const r of rows) {
-        if (r.branchCode || !r._rawBranchName || !r.bankCode) continue;
-        const c = D.findBranch(r.bankCode, r._rawBranchName);
-        const exact = c.filter((x) => x.exact);
-        if (exact.length === 1 || (exact.length === 0 && c.length === 1)) {
-          const hit = exact[0] || c[0]; r.branchCode = hit.code;
-          r._info.push(`支店名「${r._rawBranchName}」から支店コード ${hit.code}（${hit.name}）を補いました`);
-        } else if (c.length > 1) r._warn.push(`支店名「${r._rawBranchName}」に候補が複数あります: ${c.slice(0, 4).map((x) => `${x.code} ${x.name}`).join(' / ')}`);
-        else r._warn.push(`支店名「${r._rawBranchName}」がこの銀行の支店一覧に見つかりません`);
-      }
+      // 銀行・支店の照合（名前からコードを補う、コードと名前の食い違い、統廃合・改称の履歴）は dict.js にまとめてある
+      await D.resolveRows(rows);
       const fill = $('fillNames').value === '1';
       for (const r of rows) {
         if (!fill) { r.bankName = ''; r.branchName = ''; }   // 「空欄で出力する」を選んだら表の値も使わない
         const b = D.bank(r.bankCode);
-        const merged = D.mergedInfo(r.bankCode);
-        if (merged) r._warn.push(`銀行コード ${r.bankCode} は ${merged.name}（${merged.date}）で新コード ${merged.new} に変わっています。${merged.branchNote || ''}`);
-        else if (!b) { if (r.bankCode) r._warn.push(`銀行コード ${r.bankCode} は金融機関一覧（${D.version}版）にありません。統廃合か入力ミスの可能性があります`); }
-        else {
-          r._dictBank = b[0];
-          // 辞書にある銀行は、表に書かれた名前（旧名・略称・コードなど）より辞書の正式なカナを使う
-          if (fill) r.bankName = Z.toZenginChars(b[1], { abbreviateCorp: false }).slice(0, 15);
-          const br = D.branch(r.bankCode, r.branchCode);
-          if (br) { r._dictBranch = br[0]; if (fill) r.branchName = Z.toZenginChars(br[1], { abbreviateCorp: false }).slice(0, 15); }
-          else if (/^\d+$/.test(r.branchName || '')) r.branchName = '';   // 支店名の欄にコードが書かれていた場合
-          else if (br === null && r.branchCode) r._warn.push(`支店コード ${r.branchCode} は ${b[0]}の支店一覧にありません`);
-        }
+        if (!b) continue;
+        r._dictBank = b[0];
+        // 辞書にある銀行は、表に書かれた名前（旧名・略称・コードなど）より辞書の正式なカナを使う
+        if (fill) r.bankName = Z.toZenginChars(b[1], { abbreviateCorp: false }).slice(0, 15);
+        const br = D.branch(r.bankCode, r.branchCode);
+        if (br) { r._dictBranch = br[0]; if (fill) r.branchName = Z.toZenginChars(br[1], { abbreviateCorp: false }).slice(0, 15); }
+        else if (/^\d+$/.test(r.branchName || '')) r.branchName = '';   // 支店名の欄にコードが書かれていた場合
       }
     }
     renderPreview();

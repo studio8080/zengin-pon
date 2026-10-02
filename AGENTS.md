@@ -29,6 +29,7 @@ JavaScript を実行しないクローラー（AIクローラーの多く）に�
 tools/site-template.js   共通部品の定義（メニュー、フッター、OGP、Organization）。ここを直すと全ページが変わる
 tools/build-site.js      手書きページに部品を埋め込む + sitemap.xml を作る。PAGES にページ一覧がある
 tools/build-bank-pages.js 銀行コードのページ 1,146枚を生成（同じ部品を使う）
+tools/build-history.js    金融機関・支店の統廃合・改称・番号の振り直しの履歴（data/history/）。zengin-code/source-data の git 履歴を比べて作る
 ```
 
 - ページを足すとき: HTML を書く → `tools/build-site.js` の `PAGES` に1行足す → `node tools/build-site.js`
@@ -49,6 +50,14 @@ tools/build-bank-pages.js 銀行コードのページ 1,146枚を生成（同じ
 
 冒頭の緑の枠（`.callout.ok.answer`）で**最初の2文で答えを言い切る** → 目次 → 表で具体的に → つまずく点 → 用語 → 変換ツールへの案内。
 形容詞ではなく、確かめられる事実と数字を書く。1ページに h1 は1つ。
+
+### 銀行・支店の照合の方針（src/dict.js の resolveRows）
+
+- **自動で補うのは確実なものだけ**: 正式名・カナ・ローマ字の完全一致、英語名・通称の別名表、履歴にある改称前の名前。
+- **要確認にして候補を示す**: 部分一致（推定として補う）、1〜2文字違い（補わずに「もしかして」）、コードと名前の食い違い、
+  一覧から消えたコード（番号の振り直しは新コードに置き換えて知らせる。廃止は時期と旧名を示す）。
+- 似た名前の支店（金沢／金沢駅前）を黙って選ばない。振込先の取り違えにつながる。
+- 英語名・通称の別名は `EN_ALIASES`（辞書の名前に向ける。コードを直書きしない）。改称の旧名は履歴から自動で入る。
 
 ## 3. SEO・AI検索の方針
 
@@ -81,6 +90,8 @@ tools/build-bank-pages.js 銀行コードのページ 1,146枚を生成（同じ
 node test/zengin.test.js      # 変換エンジン
 node test/organize.test.js    # 表の自動整理
 node test/license.test.js     # ライセンスの発行と検証（秘密鍵が必要。CI では回さない）
+node test/robust.test.js      # 書き方の揺れ・書き間違い
+node test/dict.test.js        # 銀行名・支店名・コードの照合（実際の辞書と履歴を使う）
 node tools/build-site.js --check
 python -m http.server 8877    # ローカル確認（8765 と 8790 は別プロジェクトが使っている）
 ```
