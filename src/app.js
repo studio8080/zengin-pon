@@ -69,7 +69,7 @@
     }
     const st = await L.status();
     state.pro = !!st.active; state.proExpiry = st.expiry || '';
-    $('proBtn').textContent = state.pro ? `⭐ Pro 有効（〜${st.expiry}）` : '⭐ Pro';
+    $('proBtn').textContent = state.pro ? `⭐ Pro 有効（〜${st.expiry}）` : '⭐ Pro のキーを入力';
     $('proBtn').classList.toggle('on', state.pro);
     $('profileBar').hidden = !state.pro;
     $('historyBox').hidden = !state.pro;
@@ -86,7 +86,29 @@
     if (state.step === 4) renderPreview();
     if (state.step === 2 && state.fileLoaded) renderMapping();
   }
-  $('proBtn').addEventListener('click', () => { $('proKey').value = ''; $('proMsg').textContent = ''; $('proDialog').showModal(); });
+  function openPro(key) {
+    $('proKey').value = key || ''; $('proMsg').textContent = '';
+    if (!$('proDialog').open) $('proDialog').showModal();
+    $('proKey').focus();
+  }
+  $('proBtn').addEventListener('click', () => openPro(''));
+  // メールのリンク（/#pro）から来たら、キーの入力画面をすぐ開く
+  function openProFromHash() {
+    if (location.hash !== '#pro') return;
+    $('tool').scrollIntoView({ block: 'start' });
+    openPro('');
+    history.replaceState(null, '', location.pathname + location.search);
+  }
+  window.addEventListener('hashchange', openProFromHash);
+  // 入力欄の外で「ZP1-」で始まるキーを貼り付けたら、入力画面を開いてキーを入れておく（有効化は利用者が押す）
+  document.addEventListener('paste', (e) => {
+    const t = e.target;
+    if (t && (t.closest('input, textarea, select, [contenteditable]') )) return;
+    const text = ((e.clipboardData && e.clipboardData.getData('text')) || '').trim();
+    if (!/^ZP1-[A-Za-z0-9_.-]+$/.test(text)) return;
+    e.preventDefault();
+    openPro(text);
+  });
   $('proActivate').addEventListener('click', async () => {
     const r = await L.activate($('proKey').value);
     $('proMsg').textContent = r.ok ? `✔ 有効になりました（〜${r.expiry}）` : `✖ ${r.reason}`;
@@ -596,6 +618,7 @@
   // ------------------------------------------------------------
   loadSettings();
   refreshPro({ tryRefresh: true });
+  openProFromHash();
   if (!G.configured()) {
     $('gsheetHint').textContent = 'Googleスプレッドシートの直接連携は準備中です。いまは「ファイル → ダウンロード → Microsoft Excel」で保存して、上から読み込んでください。';
     $('gsheetBtn').disabled = true;

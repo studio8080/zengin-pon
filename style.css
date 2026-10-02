@@ -280,6 +280,7 @@ td .msg.ng { color: var(--ng); } td .msg.warn { color: var(--warn); } td .msg.in
 /* Pro・設定・プロファイル・履歴 */
 .btn.mini { padding: 5px 12px; font-size: 13px; border-radius: 8px; }
 .btn.on { background: var(--ok-bg); color: var(--ok); border-color: #b9e3c6; }
+.btn.pro-key:not(.on) { background: var(--accent-soft); border-color: var(--accent-2); color: #9a4300; }
 .btn.danger { color: var(--ng); border-color: #e8b7b0; }
 .btn.danger:hover { background: var(--ng-bg); }
 .tool-head .btn.mini { margin-left: 6px; vertical-align: middle; }

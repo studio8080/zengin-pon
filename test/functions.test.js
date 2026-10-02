@@ -63,6 +63,7 @@ async function post(event) {
     assert.doesNotMatch(mails[0].text, /\*\*/);
     assert.doesNotMatch(mails[0].text, /領収書メール/);
     assert.match(mails[0].text, /https:\/\/billing\.stripe\.com\/p\/login\//);
+    assert.match(mails[0].text, /https:\/\/zenginpon\.kokokikaku\.com\/#pro/);   // キーの入力画面が直接開くリンク
     // MAIL_FROM は MiseFits と共用。差出人名は全銀ポンにし、アドレスはそのまま使う
     assert.deepEqual(mails[0].from, { name: '全銀ポン（ここ企画）', address: 'studio@kokokikaku.com' });
   });
