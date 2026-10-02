@@ -63,7 +63,7 @@ ${T.header('/banks/')}
 ${T.breadcrumbHtml(trail)}
 <span id="main" tabindex="-1"></span>
 ${body}
-${T.footer()}
+${T.footer({ path: urlPath, title, share: true })}
 <script src="/config.js"></script>
 <script src="/src/banks.js"></script>
 <script src="/src/site.js"></script>

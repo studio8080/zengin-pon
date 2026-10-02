@@ -49,8 +49,27 @@ function header(current) {
 </header>`;
 }
 
-function footer() {
-  return `<footer class="site-foot">
+/**
+ * ページの共有欄（MiseFits・MenuFits と同じ形）。外部のスクリプト（SDK）は使わず、各サービスの共有用 URL を開くだけ。
+ * 共有するのは公開 URL（クエリ・# を除く）とページのタイトルだけ。noindex のページには出さない。
+ */
+function shareBox(path, title) {
+  const url = SITE + path;
+  const u = encodeURIComponent(url), t = encodeURIComponent(title || SITE_NAME);
+  return `<section class="site-sns-share wrap" id="site-sns-share" aria-label="このページを共有" data-url="${esc(url)}" data-title="${esc(title || SITE_NAME)}">
+  <span class="site-sns-share__label">このページを共有</span>
+  <a href="https://twitter.com/intent/tweet?text=${t}&amp;url=${u}" target="_blank" rel="noopener noreferrer">X</a>
+  <a href="https://social-plugins.line.me/lineit/share?url=${u}" target="_blank" rel="noopener noreferrer">LINE</a>
+  <a href="https://www.threads.com/intent/post?url=${u}&amp;text=${t}" target="_blank" rel="noopener noreferrer">Threads</a>
+  <button type="button" data-share-copy>リンクをコピー</button>
+  <button type="button" data-share-native hidden>その他の共有…</button>
+  <span class="site-sns-share__status" data-share-status role="status" aria-live="polite"></span>
+</section>
+`;
+}
+
+function footer(opts = {}) {
+  return `${opts.share && opts.path ? shareBox(opts.path, opts.title) : ''}<footer class="site-foot">
   <div class="wrap in">
     <div>
       <h2 class="foot-h">${SITE_NAME}</h2>
@@ -114,7 +133,11 @@ function headCommon({ title, description, path, type, noindex }) {
       `<meta property="og:image" content="${SITE}/assets/ogp.png">`,
       '<meta property="og:image:width" content="1200">',
       '<meta property="og:image:height" content="630">',
+      '<meta property="og:image:alt" content="全銀ポン — Excelの振込一覧を、全銀フォーマットに変換">',
       '<meta name="twitter:card" content="summary_large_image">',
+      `<meta name="twitter:title" content="${esc(title)}">`,
+      `<meta name="twitter:description" content="${esc(description)}">`,
+      `<meta name="twitter:image" content="${SITE}/assets/ogp.png">`,
     );
   }
   return lines.join('\n');

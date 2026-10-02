@@ -19,7 +19,11 @@
 <meta property="og:image" content="https://zenginpon.kokokikaku.com/assets/ogp.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="全銀ポン — Excelの振込一覧を、全銀フォーマットに変換">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="更新情報・お知らせ｜全銀ポン">
+<meta name="twitter:description" content="全銀ポンの更新情報とお知らせ。変換の修正、新しい機能、料金・契約まわりの変更を日付順に掲載しています。">
+<meta name="twitter:image" content="https://zenginpon.kokokikaku.com/assets/ogp.png">
 <!-- /site:head -->
 <title>更新情報・お知らせ｜全銀ポン</title>
 <meta name="description" content="全銀ポンの更新情報とお知らせ。変換の修正、新しい機能、料金・契約まわりの変更を日付順に掲載しています。">
@@ -78,6 +82,9 @@
     </div>
 
     <ul class="up-list">
+      <li><span class="up-tag imp">改善</span> <strong>表の書き方の揺れや書き間違いに、より強くなりました。</strong>全角数字の口座番号、Excel が変えてしまった数値（1234567.0・1.234567E+06）、「様」「御中」付きの名義、「(株)」「㈱」「カブシキガイシャ」、「総合口座」、ひらがなの「しんきん」、「三菱東京UFJ銀行」「郵便局」などの旧名・通称、「金融機関」「支店」といった見出し、表の途中に繰り返された見出し行（PDF の改ページ）、Excel の「Unicode テキスト」で保存した CSV を正しく読み込みます。マイナスの金額や読めない預金種目は、黙って変換せずエラーでお知らせします。</li>
+      <li><span class="up-tag fix">修正</span> 出力オプション「銀行名・支店名」で「空欄で出力する」を選んでも、表に書かれた名前が出力されていたのを直しました。「辞書から補完する」では、旧名や略称ではなく金融機関一覧の正式なカナを使います。</li>
+      <li><span class="up-tag new">新機能</span> 各ページの下に「このページを共有」（X・LINE・Threads・リンクのコピー）を付けました。共有用のプログラムは読み込まず、ボタンを押したときだけ、そのページの URL とタイトルを各サービスに渡します。</li>
       <li><span class="up-tag fix">修正</span> 銀行名「<strong>京都信用金庫</strong>」が、京都信金・京都中央信金・京都北都信金の3つの候補になってエラーになっていたのを直しました。正式名称と一致する金融機関を優先します。</li>
       <li><span class="up-tag new">新機能</span> <strong>改称した銀行の旧名でも、銀行コードを補う</strong>ようにしました（例: 住信SBIネット銀行 → ドコモSMTBネット銀行、ジャパンネット銀行 → PayPay銀行、じぶん銀行 → auじぶん銀行、新生銀行 → SBI新生銀行）。銀行コードは変わっていないため、作ったファイルはそのまま使えます。</li>
       <li><span class="up-tag fix">修正</span> 日本語のフォントを埋め込んでいない PDF（給与ソフトの出力などに多い形式）で、「テキストを取り出せません」と表示されて読み込めなかったのを直しました。</li>
@@ -122,6 +129,15 @@
   <p class="hint">取込エラーや表示の不具合を見つけたら、<a href="mailto:studio@kokokikaku.com">studio@kokokikaku.com</a> までお知らせください。銀行名・エラーメッセージ・出力オプション（改行・拡張子）を添えていただけると早く調べられます。<strong>振込先の一覧やファイルそのものは送らないでください。</strong></p>
 </article>
 <!-- site:footer -->
+<section class="site-sns-share wrap" id="site-sns-share" aria-label="このページを共有" data-url="https://zenginpon.kokokikaku.com/updates.html" data-title="更新情報・お知らせ｜全銀ポン">
+  <span class="site-sns-share__label">このページを共有</span>
+  <a href="https://twitter.com/intent/tweet?text=%E6%9B%B4%E6%96%B0%E6%83%85%E5%A0%B1%E3%83%BB%E3%81%8A%E7%9F%A5%E3%82%89%E3%81%9B%EF%BD%9C%E5%85%A8%E9%8A%80%E3%83%9D%E3%83%B3&amp;url=https%3A%2F%2Fzenginpon.kokokikaku.com%2Fupdates.html" target="_blank" rel="noopener noreferrer">X</a>
+  <a href="https://social-plugins.line.me/lineit/share?url=https%3A%2F%2Fzenginpon.kokokikaku.com%2Fupdates.html" target="_blank" rel="noopener noreferrer">LINE</a>
+  <a href="https://www.threads.com/intent/post?url=https%3A%2F%2Fzenginpon.kokokikaku.com%2Fupdates.html&amp;text=%E6%9B%B4%E6%96%B0%E6%83%85%E5%A0%B1%E3%83%BB%E3%81%8A%E7%9F%A5%E3%82%89%E3%81%9B%EF%BD%9C%E5%85%A8%E9%8A%80%E3%83%9D%E3%83%B3" target="_blank" rel="noopener noreferrer">Threads</a>
+  <button type="button" data-share-copy>リンクをコピー</button>
+  <button type="button" data-share-native hidden>その他の共有…</button>
+  <span class="site-sns-share__status" data-share-status role="status" aria-live="polite"></span>
+</section>
 <footer class="site-foot">
   <div class="wrap in">
     <div>

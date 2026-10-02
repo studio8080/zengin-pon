@@ -87,7 +87,7 @@ function stamp(html, page) {
   html = html.replace(blockRe('head'), block('head', T.headCommon({ title, description, path: page.url, type: page.type, noindex: page.noindex })));
   html = html.replace(blockRe('ld'), block('ld', lds.map(T.ld).join('\n')));
   html = html.replace(blockRe('header'), block('header', `${T.header(page.url)}\n${T.breadcrumbHtml(page.trail)}\n<span id="main" tabindex="-1"></span>`));
-  html = html.replace(blockRe('footer'), block('footer', T.footer()));
+  html = html.replace(blockRe('footer'), block('footer', T.footer({ path: page.url, title, share: !page.noindex })));
   return html;
 }
 

@@ -85,6 +85,12 @@ h3 { font-size: 17px; margin: 0 0 6px; }
 .up-tag.imp { background: #e8f0fb; color: #14305c; }
 .up-tag.info { background: #f1f1ee; color: #555; }
 @media (max-width: 600px) { .notice-bar .in { gap: 8px; } .notice-bar p { flex-basis: 100%; } }
+/* ページの共有欄 */
+.site-sns-share { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding-top: 18px; padding-bottom: 18px; border-top: 1px solid var(--line); font-size: 14px; }
+.site-sns-share__label { font-weight: 700; color: var(--muted); margin-right: 4px; }
+.site-sns-share a, .site-sns-share button { display: inline-flex; align-items: center; min-height: 36px; padding: 6px 14px; border: 1px solid var(--line); border-radius: 999px; background: #fff; color: var(--ink); font: inherit; font-weight: 700; text-decoration: none; cursor: pointer; }
+.site-sns-share a:hover, .site-sns-share button:hover { border-color: var(--navy); }
+.site-sns-share__status { color: var(--ok); font-weight: 700; }
 /* hidden 属性を必ず効かせる（.btn などの display 指定が上書きして、隠したはずの部品が見えていた） */
 [hidden] { display: none !important; }
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 11px 20px; border-radius: 12px; border: 1px solid var(--line); background: #fff; cursor: pointer; font-weight: 700; text-decoration: none; color: var(--ink); font: inherit; font-weight: 700; }

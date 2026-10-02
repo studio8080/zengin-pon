@@ -30,4 +30,26 @@
       if (e.key === 'Escape' && nav.classList.contains('open')) { nav.classList.remove('open'); toggle.setAttribute('aria-expanded', 'false'); toggle.focus(); }
     });
   }
+
+  // ---- ページの共有欄（リンクのコピー・端末の共有）。共有するのは公開URLとタイトルだけ ----
+  var share = document.getElementById('site-sns-share');
+  if (share) {
+    var url = share.getAttribute('data-url'), title = share.getAttribute('data-title');
+    var status = share.querySelector('[data-share-status]');
+    var say = function (msg) { if (status) { status.textContent = msg; setTimeout(function () { status.textContent = ''; }, 4000); } };
+    var copyBtn = share.querySelector('[data-share-copy]');
+    if (copyBtn) copyBtn.addEventListener('click', function () {
+      var done = function () { say('リンクをコピーしました'); };
+      var fail = function () { window.prompt('このURLをコピーしてください', url); };
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(done, fail);
+      else fail();
+    });
+    var nativeBtn = share.querySelector('[data-share-native]');
+    if (nativeBtn && navigator.share) {
+      nativeBtn.hidden = false;
+      nativeBtn.addEventListener('click', function () {
+        navigator.share({ title: title, url: url }).catch(function () { /* 取り消しは何もしない */ });
+      });
+    }
+  }
 })();

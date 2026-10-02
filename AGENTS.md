@@ -101,5 +101,13 @@ Stripe のキーは MiseFits と共用の制限付きキー。**Subscriptions・
 
 - フッターの「企画・開発・運営：ここ企画」は会社サイトへの外部リンク。`about.html` に制作メモがある。
 - Organization の `@id` は会社サイトと同じ `https://kokokikaku.com/#organization`。
-- 会社サイト（`C:\Users\chaha\projects\kokokikaku-web`、GitHub は `mikan-koko`）の制作実績・`llms.txt`・ItemList に全銀ポンを載せる。
-  **そのリポジトリは main への push で本番に出る。** 変更はブランチで用意し、運営者が確認してから反映する。
+- 会社サイト（`C:\Users\chaha\repos\kokokikaku-web`、GitHub は `studio8080`。2026-09-30 に移設・譲渡）の制作実績・`llms.txt`・ItemList に全銀ポンを載せる。
+  **main への push では本番に出ない。** `firebase-hosting-merge.yml` を手動実行して `confirm_live_deploy` を選んだときだけ公開される（そのリポジトリの README が正本）。
+
+## 8. 姉妹サイトとそろえる部品
+
+- **共有欄**（このページを共有: X・LINE・Threads・リンクのコピー・端末の共有）は `tools/site-template.js` の `shareBox()`。
+  MiseFits・MenuFits と同じく外部の SDK は使わず、共有用の URL を開くだけ。共有するのは公開 URL とタイトルだけ。動きは `src/site.js`。
+  送信先を足したら `privacy.html#external` の表も直す。
+- **ChatGPT に質問するメニュー**（姉妹サイトの共通部品 `team-kokokikaku/site-tools/ask-chatgpt.js`）は、全銀ポンには入れていない（2026-10-02 時点）。
+  利用者が振込先の口座情報を質問欄に貼るおそれがあり、「振込データを外に出さない」と矛盾しやすいため。入れるなら運営者の判断を仰ぐ。
