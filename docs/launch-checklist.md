@@ -293,6 +293,18 @@ Drive API と Picker API を有効化し、OAuth クライアントIDとAPIキ�
 **未設定でも他の機能は全部動く**（ボタンを押すと「Excelで保存して読み込んでください」と案内が出る）。
 公開を急ぐなら後回しでよい。
 
+**進み具合（2026-10-02）**
+
+| 手順 | 状態 |
+|---|---|
+| GCP プロジェクト `zenginpon-sheets`（番号 711586006523、組織 kokokikaku.com の下） | 作成済み |
+| Drive API・Picker API の有効化 | 済み |
+| API キー「zenginpon-picker」（リファラー: 本番と localhost:8877、API: Picker のみ） | 作成済み。値はコンソールの「認証情報」でコピーする |
+| OAuth 同意画面（外部・アプリ名「全銀ポン」・サポート studio@・スコープ drive.file・本番公開） | 未 |
+| OAuth クライアントID（ウェブ。生成元: 本番と http://localhost:8877） | 未 |
+| `config.js` の `GOOGLE_APP_ID` | 設定済み。`GOOGLE_CLIENT_ID` と `GOOGLE_API_KEY` が入ると連携が有効になる |
+| サイトの「準備中」の表記を外す（faq・guide・llms・index・privacy・構造化データ） | 書き換えは用意済み。値が入ってから反映する |
+
 ---
 
 ## 8. 公開前の最終確認
