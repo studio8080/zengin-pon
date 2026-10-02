@@ -264,10 +264,19 @@
       if (ext === 'pdf') { state.sheetNames = ['PDF']; state.sheets = { PDF: await extractPdfTable(buf) }; }
       else if (ext === 'csv' || ext === 'txt') setWorkbook(XLSX.read(decodeText(buf), { type: 'string', raw: true }));
       else setWorkbook(XLSX.read(buf, { type: 'array', raw: true, cellDates: false }));
+      // 中身のあるシートを先に選ぶ。全部空なら次へ進まずに知らせる（空のシートで「見出しが無い」と出ると原因が分からない）
+      const hasData = (n) => (state.sheets[n] || []).some((r) => r.some((c) => String(c == null ? '' : c).trim() !== ''));
+      const filled = state.sheetNames.filter(hasData);
+      if (!filled.length) {
+        state.fileLoaded = false;
+        info.className = 'fileinfo err';
+        info.textContent = `${name} の中に表のデータが見つかりませんでした（シートが空です）。振込先の一覧が入っているファイル・シートを選んでください。`;
+        return;
+      }
       state.fileLoaded = true; state.excluded = new Set(); state.rows = []; state.forcedHeaderIdx = null;
-      info.textContent = `✔ ${name}（${(size / 1024).toFixed(1)} KB）を読み込みました`;
-      $('sheet').innerHTML = state.sheetNames.map((n) => `<option>${esc(n)}</option>`).join('');
-      state.sheetName = state.sheetNames[0];
+      info.textContent = `✔ ${name}（${(size / 1024).toFixed(1)} KB）を読み込みました` + (filled[0] !== state.sheetNames[0] ? `。空のシートを飛ばして「${filled[0]}」を開いています` : '');
+      $('sheet').innerHTML = state.sheetNames.map((n) => `<option value="${esc(n)}"${n === filled[0] ? ' selected' : ''}>${esc(n)}${hasData(n) ? '' : '（空）'}</option>`).join('');
+      state.sheetName = filled[0];
       analyzeSheet();
       goStep(2);
     } catch (e) { console.error(e); info.className = 'fileinfo err'; info.textContent = `読み込みに失敗しました: ${e.message}`; }
