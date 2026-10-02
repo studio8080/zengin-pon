@@ -168,6 +168,14 @@ Stripe（支払い成功）──webhook──▶ zenginponStripeWebhook
   ```
 - Firebase CLI が「Fatal process out of memory」で落ちたら、PC のメモリ枯渇が原因。再起動で直る。
 - リポジトリの外で実行すると「No currently active project」になる。`--project misefits` を付けるか、リポジトリで実行する。
+- **2026-10-02 の障害（初めての本番購入でキーが届かなかった）。** `STRIPE_SECRET_KEY` は MiseFits と共用の
+  制限付きキー（`misefits-functions`、`rk_live_…`）で、**Subscriptions と Customers の読み取り権限が無かった**。
+  Webhook は `stripe.subscriptions.retrieve` で StripePermissionError → 500 を返し続けた。
+  対応: 2つを「読み取り」に変更 → 失敗したイベントを Stripe の画面から再送 → 200・同じライセンスIDで発行を確認。
+  購入者には手動発行のキー（`node -e` で `functions/sign.js` を使い、同じ `licenseIdFor(sub_…)` で署名）を先にメールで送った。
+  **教訓**: 本番の新規購入の経路は一度も通していなかった。権限を変えたら、Stripe の「イベントの配信」で 200 を確認する。
+- ログは `firebase functions:log` だと古いものしか出ないことがある。Cloud Logging の画面か API で
+  `resource.labels.service_name="zenginponstripewebhook"` を見る。
 
 ---
 

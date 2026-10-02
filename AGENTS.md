@@ -87,6 +87,9 @@ Stripe のサブスク（月払い・年払い、自動更新）→ Webhook → 
 → キーを発行してメール。キーの寿命は最長30日で、ブラウザが定期的に取り直す。解約されると 410 が返り、ブラウザがキーを消す。
 デプロイは `firebase deploy --only functions:zenginpon --project misefits`。**`--only` を外さない**（Misefits の関数に触れないため）。
 `index.html` の CSP `connect-src` にある cloudfunctions のドメインを消さない（消すと更新が黙って失敗する）。
+Stripe のキーは MiseFits と共用の制限付きキー。**Subscriptions・Customers の読み取り権限が必須**（無いとキーが届かない。2026-10-02 に実際に起きた）。
+キーが届かないという問い合わせが来たら、Stripe の Webhook「zenginpon-license」→「イベントの配信」で失敗を探し、
+原因を直してから再送する。急ぐときは `functions/sign.js` で同じライセンスIDのキーを手動発行して先に送る（`docs/launch-checklist.md` 3-4 のメモ）。
 
 ## 7. ここ企画の制作実績として
 
