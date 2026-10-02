@@ -16,6 +16,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # sitemap の lastmod を git の履歴から決めるため（浅い取得だと全ページが今日になる）
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
