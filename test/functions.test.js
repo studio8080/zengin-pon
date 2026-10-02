@@ -19,7 +19,7 @@ const handlers = {};
 const fakes = {
   'firebase-functions/v2/https': { onRequest: (_opts, fn) => fn },
   'firebase-functions/params': {
-    defineSecret: (n) => ({ value: () => (n === 'ZP_LICENSE_PRIVATE_KEY' ? PEM : 'x') }),
+    defineSecret: (n) => ({ value: () => (n === 'ZP_LICENSE_PRIVATE_KEY' ? PEM : n === 'MAIL_FROM' ? 'MiseFits <studio@kokokikaku.com>' : 'x') }),
     defineString: (n, o) => ({ value: () => (n === 'SMTP_HOST' ? 'smtp.example' : (o && o.default) || '') }),
   },
   'firebase-admin/app': { initializeApp() {}, getApps: () => [1] },
@@ -63,6 +63,8 @@ async function post(event) {
     assert.doesNotMatch(mails[0].text, /\*\*/);
     assert.doesNotMatch(mails[0].text, /領収書メール/);
     assert.match(mails[0].text, /https:\/\/billing\.stripe\.com\/p\/login\//);
+    // MAIL_FROM は MiseFits と共用。差出人名は全銀ポンにし、アドレスはそのまま使う
+    assert.deepEqual(mails[0].from, { name: '全銀ポン（ここ企画）', address: 'studio@kokokikaku.com' });
   });
 
   await t('subscription.updated でメールアドレスが消えない', async () => {

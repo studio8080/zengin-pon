@@ -77,8 +77,18 @@ async function sendMail(to, subject, text) {
     host: smtpHost.value(), port: Number(smtpPort.value()), secure: Number(smtpPort.value()) === 465,
     auth: { user: smtpUser.value(), pass: smtpPass.value() },
   });
-  await transport.sendMail({ from: mailFrom.value(), to, subject, text });
+  await transport.sendMail({ from: fromHeader(mailFrom.value()), to, subject, text });
   return true;
+}
+
+// MAIL_FROM は MiseFits と共用（「MiseFits <studio@…>」）。アドレスだけ使い、表示名は全銀ポンにする。
+// 共用の値を書き換えると MiseFits のメールの差出人が変わるので、こちらで差し替える。
+const SENDER_NAME = '全銀ポン（ここ企画）';
+function fromHeader(raw) {
+  const s = String(raw || '').trim();
+  const m = s.match(/<([^<>\s]+@[^<>\s]+)>/);
+  const address = m ? m[1] : s;
+  return { name: SENDER_NAME, address };
 }
 
 function welcomeMail(key, id, planLabel) {
