@@ -162,7 +162,7 @@ function breadcrumbHtml(trail) {
 const ORG_LD = {
   // @id は会社サイト（kokokikaku.com）のトップにある Organization と同じ値にする。同じ組織だと機械に伝わる
   '@type': 'Organization', '@id': ORG.url + '#organization', name: ORG.name, alternateName: 'kokokikaku', url: ORG.url, email: ORG.email,
-  slogan: '店のしごと、少しだけ軽くする。', sameAs: ['https://www.instagram.com/koko_kikaku/'],
+  slogan: '店のしごと、少しだけ軽くする。', sameAs: ['https://www.instagram.com/koko_kikaku/', 'https://note.com/curryoden'],
 };
 
 const ld = (obj) => `<script type="application/ld+json">${JSON.stringify(obj)}</script>`;
