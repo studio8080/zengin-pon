@@ -104,7 +104,7 @@ ${rows}
     canonical: url,
     urlPath: `/banks/${code}.html`,
     trail: [['無料ツール', '/free-tools/'], ['銀行コード・支店コード検索', '/banks/'], [fn, `/banks/${code}.html`]],
-    jsonld: { '@context': 'https://schema.org', '@type': 'Dataset', name: `${fn}の支店コード一覧`, description: `金融機関コード ${code} の支店コード一覧（${version}版）`, license: 'https://opensource.org/licenses/MIT', creator: { '@type': 'Organization', name: 'ここ企画' } },
+    jsonld: { '@context': 'https://schema.org', '@type': 'Dataset', name: `${fn}の支店コード一覧`, description: `${fn}（金融機関コード ${code}）の支店コードと支店名の一覧です。${version}版の公開データをもとに、全銀フォーマットの振込データ作成に必要な4桁の金融機関コードと3桁の支店コードを確認できます。`, license: 'https://opensource.org/licenses/MIT', creator: { '@type': 'Organization', name: 'ここ企画' } },
     body,
   }));
   urls.push(url);
