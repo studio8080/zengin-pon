@@ -29,7 +29,7 @@ const PAGES = [
     T.ORG_LD,
     { '@type': 'WebSite', '@id': T.SITE + '/#website', url: T.SITE + '/', name: T.SITE_NAME, alternateName: ['全銀ポン 全銀フォーマット変換ツール', 'ぜんぎんポン'], inLanguage: 'ja', publisher: { '@id': T.ORG.url + '#organization' } },
     { '@type': 'WebApplication', '@id': T.SITE + '/#app', name: T.SITE_NAME, url: T.SITE + '/', applicationCategory: 'BusinessApplication', applicationSubCategory: '振込データ作成', operatingSystem: 'Web（Chrome / Edge / Safari / Firefox の最新版）', inLanguage: 'ja', isAccessibleForFree: true,
-      description: '給与振込・総合振込のExcel／CSV／PDFを、ネットバンキングに取り込める全銀フォーマット（FBデータ）に変換するツール。変換はブラウザの中だけで行い、振込データをサーバーに送信しない。',
+      description: '総合振込・給与振込のExcel／CSV／PDFを、ネットバンキングに取り込める全銀フォーマット（FBデータ）に変換するWebアプリ。変換はブラウザの中だけで行い、振込データをサーバーに送信しない。',
       featureList: ['Excel・CSV・テキストの入ったPDF・Googleスプレッドシートの読み込み', '列の並びや見出しが違う表の自動整理', '銀行名・支店名からの金融機関コードの補完', '口座名義の半角カナ・法人略語への変換', 'ゆうちょ銀行の記号番号の変換', '銀行休業日の確認', '総合振込・給与振込・賞与振込に対応'],
       offers: [
         { '@type': 'Offer', name: 'Free（1回20件まで）', price: '0', priceCurrency: 'JPY' },
