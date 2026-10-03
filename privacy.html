@@ -10,6 +10,7 @@
 <meta name="theme-color" content="#14305c">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="format-detection" content="telephone=no">
+<script defer src="/analytics.js"></script>
 <!-- /site:head -->
 <title>プライバシーポリシー｜全銀ポン</title>
 <meta name="robots" content="noindex">
@@ -76,6 +77,7 @@
   <div class="tablewrap"><table>
     <thead><tr><th>送信先</th><th>送信される情報</th><th>利用目的</th><th>送信される場面</th></tr></thead>
     <tbody>
+      <tr><td>Google アナリティクス 4（Google LLC）</td><td>公開ページのURL（クエリ・ハッシュを除く）、ページのタイトル、参照元のドメイン、ブラウザ・端末情報、Cookieによる識別子、接続時のIPアドレス</td><td>ページの閲覧状況を把握し、サイトを改善するため</td><td>ページ表示時。解析を無効にした場合、Do Not Track・Global Privacy Controlが有効な場合は送信しません</td></tr>
       <tr><td>Google Fonts（Google LLC）</td><td>IPアドレス、ブラウザの種類、閲覧中のページのURL（参照元）</td><td>文字（フォント）の表示</td><td>すべてのページ</td></tr>
       <tr><td>cdnjs（Cloudflare, Inc.）</td><td>同上</td><td>ExcelとPDFを読み取るプログラム部品の配信</td><td>トップページ（変換ツール）</td></tr>
       <tr><td>GitHub Pages（GitHub, Inc.）</td><td>同上</td><td>当サイトそのものの配信</td><td>すべてのページ</td></tr>
@@ -85,7 +87,8 @@
       <tr><td>X（X Corp.）、LINE（LINEヤフー株式会社）、Threads（Meta Platforms, Inc.）</td><td>共有するページのURLとタイトル、IPアドレス等の接続情報</td><td>ページの共有</td><td>ページ下の「このページを共有」のボタンを押したときだけ。押すまで何も送信しません。共有用のプログラム（SDK）は読み込んでいません</td></tr>
     </tbody>
   </table></div>
-  <p>現在、アクセス解析（Google アナリティクスなど）や広告のためのCookieは使用していません。今後導入する場合は、事前にこの表を更新します。</p>
+  <p>アクセス解析にGoogle アナリティクス 4のCookieを使用します。広告向けのデータ収集・パーソナライズは無効です。フォーム操作・サイト内検索・ダウンロードの自動計測は行いません。入力内容、振込データ、ファイル名、ライセンスキー、URLのクエリとハッシュは解析に送信しません。EEA・英国・スイスでは解析Cookieを既定で拒否します。<a href="https://policies.google.com/privacy" rel="noopener">Googleのプライバシーポリシー</a>もご参照ください。</p>
+  <p><button type="button" id="analytics-optout">このブラウザのアクセス解析を無効にする</button> <span id="analytics-optout-status" role="status"></span></p>
 
   <h2>6. 安全管理</h2>
   <p>取得した情報への不正アクセス、漏えい等を防止するため、次の措置を講じています。</p>

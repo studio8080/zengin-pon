@@ -121,6 +121,7 @@ function headCommon({ title, description, path, type, noindex }) {
     '<meta name="theme-color" content="#14305c">',
     '<meta name="referrer" content="strict-origin-when-cross-origin">',
     '<meta name="format-detection" content="telephone=no">',
+    '<script defer src="/analytics.js"></script>',
   ];
   if (!noindex) {
     lines.push(

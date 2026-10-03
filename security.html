@@ -10,6 +10,7 @@
 <meta name="theme-color" content="#14305c">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="format-detection" content="telephone=no">
+<script defer src="/analytics.js"></script>
 <meta property="og:site_name" content="全銀ポン">
 <meta property="og:type" content="article">
 <meta property="og:locale" content="ja_JP">
@@ -89,7 +90,7 @@
 
   <h2>4. 当サイトが取得する情報</h2>
   <ul>
-    <li>現在、アクセス解析や広告のためのCookieは使用していません。サイトの表示に伴って外部に送信される情報は、<a href="/privacy.html#external">プライバシーポリシーの「外部送信について」</a>に一覧で示しています。</li>
+    <li>Google アナリティクス 4で公開ページの閲覧状況を計測します。振込データ、入力内容、ファイル名、ライセンスキーは送信せず、フォーム操作やダウンロードの自動計測も行いません。解析はプライバシーポリシーから無効にできます。サイトの表示に伴って外部に送信される情報は、<a href="/privacy.html#external">プライバシーポリシーの「外部送信について」</a>に一覧で示しています。</li>
     <li>有料プランの申し込み時に、メールアドレスと決済情報（Stripeが処理し、当サイトはカード番号を保持しません）をお預かりします。</li>
     <li>お問い合わせでいただいた内容は、回答のために保管します。</li>
   </ul>
@@ -98,7 +99,7 @@
   <ul>
     <li>サイトはHTTPSで配信します。</li>
     <li>Excel読み取りとPDF読み取りのライブラリはCDN（cdnjs）から取得しますが、バージョンを固定し、改ざん検知（Subresource Integrity）を設定しています。</li>
-    <li>Content Security Policy により、指定外のサーバーへの通信をブラウザ側で禁止しています（変換ツールと無料ツールのページに設定。許可先は cdnjs のライブラリ、Googleフォント、当社のライセンス確認サーバー、Googleのログイン・スプレッドシート連携〈連携を有効にした場合〉のみ）。</li>
+    <li>Content Security Policy により、指定外のサーバーへの通信をブラウザ側で禁止しています（変換ツールと無料ツールのページに設定。許可先は cdnjs のライブラリ、Googleフォント、当社のライセンス確認サーバー、Googleのログイン・スプレッドシート連携〈連携を有効にした場合〉、Google アナリティクスの計測先）。</li>
     <li>ソースコードは <a href="https://github.com/studio8080/zengin-pon" target="_blank" rel="noopener">GitHub で公開</a>しており、誰でも処理内容を確認できます。</li>
     <li>Proのライセンスキーは、ページに埋め込まれた公開鍵で署名を検証します。キーを入力する操作自体では通信は発生しません。</li>
     <li>Proプランをご利用中は、おおむね1週間に1回、当社のライセンス更新APIに<strong>ライセンスID（英数字と記号の12文字）のみ</strong>を送って契約状態を確認し、新しいキーを受け取ります。振込先のデータ、ファイル名、金額などは一切送信されません。オフラインの場合は何もせず、手元のキーの期限まで（最長30日）そのまま使えます。</li>
