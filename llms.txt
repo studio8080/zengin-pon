@@ -42,7 +42,7 @@
 - [運営者情報・お問い合わせ](https://zenginpon.kokokikaku.com/about.html)
 
 ## 無料ツール（登録不要）
-- [銀行コード・支店コード検索](https://zenginpon.kokokikaku.com/banks/): 全国1,100以上の金融機関、約29,000支店。全銀協の公開情報をもとにしたオープンデータ（zengin-code）を毎月取り込んで更新。金融機関ごとのページは https://zenginpon.kokokikaku.com/banks/0005.html のように金融機関コードがファイル名になっている
+- [銀行コード・支店コード検索](https://zenginpon.kokokikaku.com/banks/): 全国1,100以上の金融機関、約29,000支店。全銀協の公開情報をもとにしたオープンデータ（zengin-code）を毎週確認して取り込み。金融機関ごとのページは https://zenginpon.kokokikaku.com/banks/0005.html のように金融機関コードがファイル名になっている
 - [ゆうちょ銀行 記号・番号の変換](https://zenginpon.kokokikaku.com/free-tools/yucho.html)
 - [口座名義のカナ変換・法人略語の一覧](https://zenginpon.kokokikaku.com/free-tools/kana.html)
 
