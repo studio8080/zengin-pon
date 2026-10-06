@@ -1,10 +1,11 @@
-# 金融機関辞書（data/）を zengin-code/source-data から毎月自動で更新し、差分があれば PR を作る。
+# 金融機関辞書（data/）を zengin-code/source-data から毎週自動で更新し、差分があれば PR を作る。
+# 元データの更新は不定期（1〜2か月おき）なので毎週見て、取り込みの遅れを短くする。差分が無い週は何もしない。
 # マージすれば GitHub Pages に反映される（アプリ側の変更は不要）。
 name: update-bank-dictionary
 
 on:
   schedule:
-    - cron: '0 3 2 * *'   # 毎月2日 12:00 JST
+    - cron: '0 22 * * 0'   # 毎週月曜 7:00 JST（10:00 の週次点検エージェントがこの PR も見る）
   workflow_dispatch:
 
 permissions:
@@ -32,6 +33,14 @@ jobs:
           node tools/build-history.js /tmp/source-data
           node tools/build-bank-pages.js
           node tools/build-site.js
+      # この PR は GITHUB_TOKEN で作るので check-site が走らない。ここでテストを通してから PR にする
+      - name: Test with the new dictionary
+        run: |
+          node test/zengin.test.js
+          node test/organize.test.js
+          node test/robust.test.js
+          node test/dict.test.js
+          node tools/build-site.js --check
       - name: Create pull request if changed
         uses: peter-evans/create-pull-request@v6
         with:
@@ -39,7 +48,9 @@ jobs:
           title: "金融機関辞書の更新（${{ steps.src.outputs.date }} 版）"
           body: |
             zengin-code/source-data の ${{ steps.src.outputs.date }} 版を取り込みました。
+            テスト（変換・自動整理・揺れ・照合）と `build-site.js --check` は通過済みです。
             統廃合があった場合は `data/merged.json` にも旧→新コードを追記してください。
+            マージして GitHub Pages に反映されたら `node tools/indexnow.js --changed` を実行します。
           branch: auto/update-dict
           add-paths: |
             data/
