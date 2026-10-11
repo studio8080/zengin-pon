@@ -76,7 +76,7 @@
     <div>
       <span class="kicker">総合振込・給与振込の全銀フォーマット変換Webツール</span>
       <h1>Excelを、<em>そのまま銀行へ。</em></h1>
-      <p class="lead">全銀ポンは、総合振込・給与振込のファイルを作成するWebアプリです。給与計算表や支払リストを、ネットバンキングに取り込める<strong>全銀フォーマット（FBデータ）</strong>に変換。列の並びがバラバラでも自動で整理します。データはあなたのブラウザから外に出ません。</p>
+      <p class="lead">給与計算表や支払リストを、ネットバンキングに取り込める<strong>全銀フォーマット（FBデータ）</strong>に。Excel・CSV・PDFを読み込み、列の整理から名義のカナ変換まで、ブラウザの中で処理します。</p>
       <div class="ctas">
         <a class="btn primary big" href="#tool">無料で試す（登録不要）</a>
         <a class="btn" href="guide.html">使い方を見る</a>
@@ -119,12 +119,21 @@
 </section>
 
 <!-- ===== TOOL ===== -->
+<section class="workspace" aria-labelledby="tool-title">
 <main class="wrap tool" id="tool">
 <div class="tool-head">
-  <h2>総合振込・給与振込の全銀データを作成</h2>
-  <p>4ステップ・約1分。<span class="badge-lock">🔒 サーバーに送信しません</span>
+  <div class="tool-heading">
+    <p class="section-label">変換ワークスペース</p>
+    <h2 id="tool-title">全銀データを作成する</h2>
+    <p>総合振込・給与振込・賞与振込に対応。1回20件まで無料。</p>
+  </div>
+  <div class="tool-utility">
+    <span class="badge-lock">🔒 振込データは送信しません</span>
+    <div class="tool-settings">
     <button id="proBtn" class="btn mini pro-key" type="button" title="メールで届いたライセンスキーを入力します">⭐ Pro のキーを入力</button>
-    <button id="settingsBtn" class="btn mini" type="button" title="バックアップ・設定の削除">⚙ 設定</button></p>
+    <button id="settingsBtn" class="btn mini" type="button" title="バックアップ・設定の削除">⚙ 設定</button>
+    </div>
+  </div>
 </div>
 
 <dialog id="proDialog" class="dlg">
@@ -169,6 +178,7 @@
 
 <!-- STEP 1 -->
 <section class="panel" id="panel1">
+  <p class="panel-label">STEP 1 / ファイルの読み込み</p>
   <h2>給与計算表・支払リストのファイルを選ぶ</h2>
   <p class="desc">「銀行・支店・口座番号・受取人名・金額」がどこかの列にあれば大丈夫。並び順や見出しの言い方は問いません。</p>
 
@@ -189,8 +199,9 @@
   </div>
   <div id="fileInfo" class="fileinfo" hidden></div>
 
+  <div class="sample-area">
   <div class="try-row" role="group" aria-label="サンプルデータで試す">
-    <strong>はじめての方へ：</strong>
+    <strong>ファイルなしで、まず体験</strong>
     <button type="button" class="btn" data-sample="samples/sample_messy.csv" data-kind="21">▶ 並びがバラバラな表で試す</button>
     <button type="button" class="btn" data-sample="samples/sample_kyuyo.csv" data-kind="11">▶ 給与計算表で試す</button>
   </div>
@@ -201,10 +212,12 @@
     <a href="samples/sample_kyuyo.csv" download>給与振込のCSV</a>
     <a href="samples/sample_messy.csv" download>並びがバラバラなCSV</a>
   </div>
+  </div>
 </section>
 
 <!-- STEP 2 -->
 <section class="panel" id="panel2" hidden>
+  <p class="panel-label">STEP 2 / 読み込んだ列の割り当て</p>
   <h2>列の確認</h2>
   <p class="desc">見出し名と値の形から自動で割り当てました。<span class="tag infer">推定</span>が付いた項目は見出しではなく値の形から決めたものです。右の「例」を見て、違っていれば選び直してください。Pro なら、同じ形のファイルを次に読み込んだときに自動で復元されます。</p>
   <div id="organizeNotes" class="notes" hidden></div>
@@ -219,6 +232,7 @@
 
 <!-- STEP 3 -->
 <section class="panel" id="panel3" hidden>
+  <p class="panel-label">STEP 3 / 振込元と振込日の設定</p>
   <h2>振込元（自社）の情報</h2>
   <p class="desc">ネットバンキングの「振込依頼人コード（企業コード・委託者コード）」は銀行から通知された10桁の番号です。一度入力すればこのブラウザに保存されます。</p>
   <div id="demoNote" class="notes" hidden><div>🧪 サンプルを試せるように、空欄だった項目に<strong>仮の値</strong>を入れています。この値は保存されません。ご自分のファイルを読み込むと消えます。</div></div>
@@ -272,6 +286,7 @@
 
 <!-- STEP 4 -->
 <section class="panel" id="panel4" hidden>
+  <p class="panel-label">STEP 4 / 件数・金額の確認と出力</p>
   <h2>確認してダウンロード</h2>
   <div id="summary" class="cards"></div>
   <div id="headerErrors" class="alert" hidden></div>
@@ -298,10 +313,12 @@
 </section>
 <p id="dictInfo" class="dictline">金融機関一覧: 読み込み中…</p>
 </main>
+</section>
 
 <!-- ===== FEATURES ===== -->
 <section class="section alt" id="features">
   <div class="wrap">
+    <p class="section-label">変換例と機能</p>
     <h2>こんな表が、銀行に渡せるファイルになります</h2>
     <p class="sub">左は、よくある支払一覧です。銀行コードは無く、銀行名と支店名が1つのセルに入り、最後に合計の行があります。全銀ポンはこれをそのまま読み込みます。</p>
     <div class="ba">
@@ -342,6 +359,7 @@
 <!-- ===== HOW ===== -->
 <section class="section" id="how">
   <div class="wrap">
+    <p class="section-label">ご利用の流れ</p>
     <h2>使い方は3つだけ</h2>
     <p class="sub">ネットバンキングの「振込依頼人コード」だけ手元に用意してください。初回に入れればブラウザが覚えます。</p>
     <div class="steps3">
@@ -356,6 +374,7 @@
 <!-- ===== PRICING TEASER ===== -->
 <section class="section alt" id="pricing">
   <div class="wrap">
+    <p class="section-label">料金プラン</p>
     <h2>まずは無料で。毎月使うならPro。</h2>
     <p class="sub">登録なしで今すぐ使えます。件数無制限・テンプレート保存・複数の振込元の切替が必要になったらProへ。月払いでも年払いでも。</p>
     <div class="plans" style="max-width:720px;margin:0 auto">
@@ -368,6 +387,7 @@
 <!-- ===== FAQ TEASER ===== -->
 <section class="section" id="faq">
   <div class="wrap faq" style="max-width:820px">
+    <p class="section-label">使う前に確認</p>
     <h2>よくある質問</h2>
     <details><summary>総合振込のWebアプリで、銀行への振込までできますか？</summary><div class="a">全銀ポンは、総合振込・給与振込に使う全銀フォーマットのファイルを作成するWebツールです。銀行への送信や振込の実行は行いません。ダウンロードしたFBデータを、ご契約の法人向けネットバンキングに取り込み、銀行の画面で金額・件数を確認して手続きしてください。<a href="/guide.html#banks">銀行別の取込方法</a>も確認できます。</div></details>
     <details><summary>本当にサーバーにデータを送っていないの？</summary><div class="a">はい。変換はすべてブラウザ内のJavaScriptで行い、当サイトのサーバーへの送信は一切ありません。ブラウザの開発者ツール（ネットワークタブ）で通信が発生しないことを確認できますし、ページを開いたあとに通信を切っても変換できます。詳しくは<a href="security.html">セキュリティとデータの扱い</a>をご覧ください。</div></details>
