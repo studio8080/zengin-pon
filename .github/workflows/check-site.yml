@@ -10,10 +10,10 @@ jobs:
   check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0   # sitemap の lastmod を git の履歴から出すため
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: '22'
       - name: 変換エンジンと自動整理のテスト
@@ -24,6 +24,7 @@ jobs:
           node test/robust.test.js
           node test/dict.test.js
           node test/analytics.test.js
+          node --test test/revenue.test.js
           mkdir -p /tmp/fb && node test/make-fb.js /tmp/fb && python3 tools/verify_zengin.py /tmp/fb/*.txt
       - name: 共通部品（ヘッダー・フッター・構造化データ）が全ページに埋め込まれているか
         run: node tools/build-site.js --check

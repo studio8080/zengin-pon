@@ -117,7 +117,7 @@ const groupHtml = Object.entries(groups).map(([k, codes]) => `<h2 id="${esc(k)}"
 <ul class="banklist">${codes.map((c) => `<li data-s="${esc(c + ' ' + banks[c][0] + ' ' + banks[c][1])}"><a href="${c}.html"><span class="mono">${c}</span> ${esc(fullName(c, banks[c][0]))}</a></li>`).join('')}</ul>`).join('\n');
 const indexBody = `<article class="article" style="max-width:960px">
   <h1>銀行コード・支店コード検索</h1>
-  <p class="updated">全国 ${Object.keys(banks).length} 金融機関・${branchTotal.toLocaleString()} 支店。${version} 版の全銀協公開データ（毎月更新）に基づく</p>
+  <p class="updated">全国 ${Object.keys(banks).length} 金融機関・${branchTotal.toLocaleString()} 支店。${version} 版の全銀協公開データ（毎週確認して更新）に基づく</p>
   <p><input id="q" type="search" placeholder="銀行名・カナ・コードで検索（例: みずほ、1610、ゆうちょ）" style="width:100%;max-width:520px;font-size:16px"></p>
   <div class="callout">振込データ（全銀フォーマット）に必要なのは <strong>4桁の金融機関コード</strong> と <strong>3桁の支店コード</strong> です。金融機関名をクリックすると支店コードの一覧が見られます。</div>
   <style>.banklist{list-style:none;padding:0;columns:3;column-gap:20px;font-size:14px}.banklist li{break-inside:avoid;margin:2px 0}.banklist a{text-decoration:none;color:var(--ink)}.banklist a:hover{color:var(--navy-2)}@media(max-width:700px){.banklist{columns:1}}</style>
@@ -126,7 +126,7 @@ const indexBody = `<article class="article" style="max-width:960px">
 </article>`;
 fs.writeFileSync(path.join(outDir, 'index.html'), page({
   title: '銀行コード・支店コード検索（全国の金融機関一覧）｜全銀ポン',
-  description: `全国${Object.keys(banks).length}金融機関の銀行コード（金融機関コード）と支店コードを検索。振込データ・全銀フォーマットの作成に。${version}版の全銀協公開データに基づき毎月更新。`,
+  description: `全国${Object.keys(banks).length}金融機関の銀行コード（金融機関コード）と支店コードを検索。振込データ・全銀フォーマットの作成に。${version}版の全銀協公開データに基づき毎週確認して更新。`,
   canonical: `${SITE}/banks/`,
   urlPath: '/banks/',
   trail: [['無料ツール', '/free-tools/'], ['銀行コード・支店コード検索', '/banks/']],

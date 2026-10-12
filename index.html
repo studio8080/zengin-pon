@@ -16,20 +16,20 @@
 <meta property="og:site_name" content="全銀ポン">
 <meta property="og:type" content="website">
 <meta property="og:locale" content="ja_JP">
-<meta property="og:title" content="全銀ポン｜総合振込・給与振込の全銀フォーマット変換Webツール">
-<meta property="og:description" content="総合振込・給与振込のExcel・CSV・PDFを全銀フォーマット（FBデータ）に変換するWebアプリ。登録・インストール不要で、振込データはブラウザ内だけで処理。1回20件まで無料。作成したファイルを法人向けネットバンキングに取り込んで利用します。">
+<meta property="og:title" content="全銀ポン｜全銀フォーマットの振込データ作成｜ここ企画">
+<meta property="og:description" content="ここ企画の全銀ポンは、総合振込・給与振込のExcel・CSV・PDFを全銀フォーマット（FBデータ）に変換するWebツールです。登録・インストール不要で、振込データはブラウザ内だけで処理。1回20件まで無料。作成後は銀行の取込条件と内容を確認してください。">
 <meta property="og:url" content="https://zenginpon.kokokikaku.com/">
 <meta property="og:image" content="https://zenginpon.kokokikaku.com/assets/ogp.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="全銀ポン — Excelの振込一覧を、全銀フォーマットに変換">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="全銀ポン｜総合振込・給与振込の全銀フォーマット変換Webツール">
-<meta name="twitter:description" content="総合振込・給与振込のExcel・CSV・PDFを全銀フォーマット（FBデータ）に変換するWebアプリ。登録・インストール不要で、振込データはブラウザ内だけで処理。1回20件まで無料。作成したファイルを法人向けネットバンキングに取り込んで利用します。">
+<meta name="twitter:title" content="全銀ポン｜全銀フォーマットの振込データ作成｜ここ企画">
+<meta name="twitter:description" content="ここ企画の全銀ポンは、総合振込・給与振込のExcel・CSV・PDFを全銀フォーマット（FBデータ）に変換するWebツールです。登録・インストール不要で、振込データはブラウザ内だけで処理。1回20件まで無料。作成後は銀行の取込条件と内容を確認してください。">
 <meta name="twitter:image" content="https://zenginpon.kokokikaku.com/assets/ogp.png">
 <!-- /site:head -->
-<title>全銀ポン｜総合振込・給与振込の全銀フォーマット変換Webツール</title>
-<meta name="description" content="総合振込・給与振込のExcel・CSV・PDFを全銀フォーマット（FBデータ）に変換するWebアプリ。登録・インストール不要で、振込データはブラウザ内だけで処理。1回20件まで無料。作成したファイルを法人向けネットバンキングに取り込んで利用します。">
+<title>全銀ポン｜全銀フォーマットの振込データ作成｜ここ企画</title>
+<meta name="description" content="ここ企画の全銀ポンは、総合振込・給与振込のExcel・CSV・PDFを全銀フォーマット（FBデータ）に変換するWebツールです。登録・インストール不要で、振込データはブラウザ内だけで処理。1回20件まで無料。作成後は銀行の取込条件と内容を確認してください。">
 <link rel="canonical" href="https://zenginpon.kokokikaku.com/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;800&display=swap" rel="stylesheet">
@@ -76,11 +76,12 @@
     <div>
       <span class="kicker">総合振込・給与振込の全銀フォーマット変換Webツール</span>
       <h1>Excelを、<em>そのまま銀行へ。</em></h1>
-      <p class="lead">全銀ポンは、総合振込・給与振込のファイルを作成するWebアプリです。給与計算表や支払リストを、ネットバンキングに取り込める<strong>全銀フォーマット（FBデータ）</strong>に変換。列の並びがバラバラでも自動で整理します。データはあなたのブラウザから外に出ません。</p>
+      <p class="lead">給与計算表や支払リストを、ネットバンキングに取り込める<strong>全銀フォーマット（FBデータ）</strong>に。Excel・CSV・PDFを読み込み、列の整理から名義のカナ変換まで、ブラウザの中で処理します。</p>
       <div class="ctas">
         <a class="btn primary big" href="#tool">無料で試す（登録不要）</a>
         <a class="btn" href="guide.html">使い方を見る</a>
       </div>
+      <p class="hint"><a class="btn-link" href="https://kokokikaku.com/column/payment-list-zenginpon">毎月の支払一覧で使う場面と、銀行で確認すること</a></p>
       <div class="trust"><span>サーバーに送信しない</span><span>登録・インストール不要</span><span>全銀協の標準フォーマットで出力</span><span>最新の金融機関一覧と照合</span></div>
     </div>
     <svg class="hero-art" viewBox="0 0 520 380" aria-hidden="true">
@@ -118,12 +119,21 @@
 </section>
 
 <!-- ===== TOOL ===== -->
+<section class="workspace" aria-labelledby="tool-title">
 <main class="wrap tool" id="tool">
 <div class="tool-head">
-  <h2>総合振込・給与振込の全銀データを作成</h2>
-  <p>4ステップ・約1分。<span class="badge-lock">🔒 サーバーに送信しません</span>
+  <div class="tool-heading">
+    <p class="section-label">変換ワークスペース</p>
+    <h2 id="tool-title">全銀データを作成する</h2>
+    <p>総合振込・給与振込・賞与振込に対応。1回20件まで無料。</p>
+  </div>
+  <div class="tool-utility">
+    <span class="badge-lock">🔒 振込データは送信しません</span>
+    <div class="tool-settings">
     <button id="proBtn" class="btn mini pro-key" type="button" title="メールで届いたライセンスキーを入力します">⭐ Pro のキーを入力</button>
-    <button id="settingsBtn" class="btn mini" type="button" title="バックアップ・設定の削除">⚙ 設定</button></p>
+    <button id="settingsBtn" class="btn mini" type="button" title="バックアップ・設定の削除">⚙ 設定</button>
+    </div>
+  </div>
 </div>
 
 <dialog id="proDialog" class="dlg">
@@ -168,6 +178,7 @@
 
 <!-- STEP 1 -->
 <section class="panel" id="panel1">
+  <p class="panel-label">STEP 1 / ファイルの読み込み</p>
   <h2>給与計算表・支払リストのファイルを選ぶ</h2>
   <p class="desc">「銀行・支店・口座番号・受取人名・金額」がどこかの列にあれば大丈夫。並び順や見出しの言い方は問いません。</p>
 
@@ -188,8 +199,9 @@
   </div>
   <div id="fileInfo" class="fileinfo" hidden></div>
 
+  <div class="sample-area">
   <div class="try-row" role="group" aria-label="サンプルデータで試す">
-    <strong>はじめての方へ：</strong>
+    <strong>ファイルなしで、まず体験</strong>
     <button type="button" class="btn" data-sample="samples/sample_messy.csv" data-kind="21">▶ 並びがバラバラな表で試す</button>
     <button type="button" class="btn" data-sample="samples/sample_kyuyo.csv" data-kind="11">▶ 給与計算表で試す</button>
   </div>
@@ -200,10 +212,12 @@
     <a href="samples/sample_kyuyo.csv" download>給与振込のCSV</a>
     <a href="samples/sample_messy.csv" download>並びがバラバラなCSV</a>
   </div>
+  </div>
 </section>
 
 <!-- STEP 2 -->
 <section class="panel" id="panel2" hidden>
+  <p class="panel-label">STEP 2 / 読み込んだ列の割り当て</p>
   <h2>列の確認</h2>
   <p class="desc">見出し名と値の形から自動で割り当てました。<span class="tag infer">推定</span>が付いた項目は見出しではなく値の形から決めたものです。右の「例」を見て、違っていれば選び直してください。Pro なら、同じ形のファイルを次に読み込んだときに自動で復元されます。</p>
   <div id="organizeNotes" class="notes" hidden></div>
@@ -218,6 +232,7 @@
 
 <!-- STEP 3 -->
 <section class="panel" id="panel3" hidden>
+  <p class="panel-label">STEP 3 / 振込元と振込日の設定</p>
   <h2>振込元（自社）の情報</h2>
   <p class="desc">ネットバンキングの「振込依頼人コード（企業コード・委託者コード）」は銀行から通知された10桁の番号です。一度入力すればこのブラウザに保存されます。</p>
   <div id="demoNote" class="notes" hidden><div>🧪 サンプルを試せるように、空欄だった項目に<strong>仮の値</strong>を入れています。この値は保存されません。ご自分のファイルを読み込むと消えます。</div></div>
@@ -271,6 +286,7 @@
 
 <!-- STEP 4 -->
 <section class="panel" id="panel4" hidden>
+  <p class="panel-label">STEP 4 / 件数・金額の確認と出力</p>
   <h2>確認してダウンロード</h2>
   <div id="summary" class="cards"></div>
   <div id="headerErrors" class="alert" hidden></div>
@@ -297,10 +313,12 @@
 </section>
 <p id="dictInfo" class="dictline">金融機関一覧: 読み込み中…</p>
 </main>
+</section>
 
 <!-- ===== FEATURES ===== -->
 <section class="section alt" id="features">
   <div class="wrap">
+    <p class="section-label">変換例と機能</p>
     <h2>こんな表が、銀行に渡せるファイルになります</h2>
     <p class="sub">左は、よくある支払一覧です。銀行コードは無く、銀行名と支店名が1つのセルに入り、最後に合計の行があります。全銀ポンはこれをそのまま読み込みます。</p>
     <div class="ba">
@@ -329,7 +347,7 @@
     <p class="sub">給与ソフトの出力、税理士さんからもらった表、自分で作った支払リスト。形はみんな違います。だから、整えるところから自動でやります。</p>
     <div class="cards3">
       <div class="feat"><div class="ic">🧹</div><h3>並びを自動で整理</h3><p>見出しの言い方が違っても、列の順番が違っても、見出しが無くても。「三菱UFJ銀行 渋谷支店」「普通 1234567」のように1つのセルに詰まっていても分解します。</p></div>
-      <div class="feat"><div class="ic">🏦</div><h3>銀行名から支店コードまで自動</h3><p>最新の金融機関一覧（毎月更新）と照合。銀行名・支店名しかない表からコードを補い、存在しないコードや統廃合を送る前に教えます。</p></div>
+      <div class="feat"><div class="ic">🏦</div><h3>銀行名から支店コードまで自動</h3><p>最新の金融機関一覧（毎週確認して更新）と照合。銀行名・支店名しかない表からコードを補い、存在しないコードや統廃合を送る前に教えます。</p></div>
       <div class="feat"><div class="ic">🔤</div><h3>名義のカナ変換も任せて</h3><p>「株式会社」→「ｶ)」、ひらがな・全角→半角カナ、ゆうちょの記号番号→店番・口座番号。銀行のルールどおりに直します。</p></div>
       <div class="feat"><div class="ic">🔒</div><h3>口座情報は外に出さない</h3><p>変換はすべてあなたのブラウザの中で完結。当サイトのサーバーには一切送信しません。通信を切っても動きます。</p></div>
       <div class="feat"><div class="ic">📄</div><h3>PDF・CSVもそのまま</h3><p>給与ソフトの「振込一覧表PDF」（文字が選択できるもの）や、Shift_JIS の CSV もそのまま読めます。Googleスプレッドシートも、選ぶだけで直接読み込めます。</p></div>
@@ -341,6 +359,7 @@
 <!-- ===== HOW ===== -->
 <section class="section" id="how">
   <div class="wrap">
+    <p class="section-label">ご利用の流れ</p>
     <h2>使い方は3つだけ</h2>
     <p class="sub">ネットバンキングの「振込依頼人コード」だけ手元に用意してください。初回に入れればブラウザが覚えます。</p>
     <div class="steps3">
@@ -355,6 +374,7 @@
 <!-- ===== PRICING TEASER ===== -->
 <section class="section alt" id="pricing">
   <div class="wrap">
+    <p class="section-label">料金プラン</p>
     <h2>まずは無料で。毎月使うならPro。</h2>
     <p class="sub">登録なしで今すぐ使えます。件数無制限・テンプレート保存・複数の振込元の切替が必要になったらProへ。月払いでも年払いでも。</p>
     <div class="plans" style="max-width:720px;margin:0 auto">
@@ -367,6 +387,7 @@
 <!-- ===== FAQ TEASER ===== -->
 <section class="section" id="faq">
   <div class="wrap faq" style="max-width:820px">
+    <p class="section-label">使う前に確認</p>
     <h2>よくある質問</h2>
     <details><summary>総合振込のWebアプリで、銀行への振込までできますか？</summary><div class="a">全銀ポンは、総合振込・給与振込に使う全銀フォーマットのファイルを作成するWebツールです。銀行への送信や振込の実行は行いません。ダウンロードしたFBデータを、ご契約の法人向けネットバンキングに取り込み、銀行の画面で金額・件数を確認して手続きしてください。<a href="/guide.html#banks">銀行別の取込方法</a>も確認できます。</div></details>
     <details><summary>本当にサーバーにデータを送っていないの？</summary><div class="a">はい。変換はすべてブラウザ内のJavaScriptで行い、当サイトのサーバーへの送信は一切ありません。ブラウザの開発者ツール（ネットワークタブ）で通信が発生しないことを確認できますし、ページを開いたあとに通信を切っても変換できます。詳しくは<a href="security.html">セキュリティとデータの扱い</a>をご覧ください。</div></details>
@@ -377,11 +398,11 @@
 </section>
 
 <!-- site:footer -->
-<section class="site-sns-share wrap" id="site-sns-share" aria-label="このページを共有" data-url="https://zenginpon.kokokikaku.com/" data-title="全銀ポン｜総合振込・給与振込の全銀フォーマット変換Webツール">
+<section class="site-sns-share wrap" id="site-sns-share" aria-label="このページを共有" data-url="https://zenginpon.kokokikaku.com/" data-title="全銀ポン｜全銀フォーマットの振込データ作成｜ここ企画">
   <span class="site-sns-share__label">このページを共有</span>
-  <a href="https://twitter.com/intent/tweet?text=%E5%85%A8%E9%8A%80%E3%83%9D%E3%83%B3%EF%BD%9C%E7%B7%8F%E5%90%88%E6%8C%AF%E8%BE%BC%E3%83%BB%E7%B5%A6%E4%B8%8E%E6%8C%AF%E8%BE%BC%E3%81%AE%E5%85%A8%E9%8A%80%E3%83%95%E3%82%A9%E3%83%BC%E3%83%9E%E3%83%83%E3%83%88%E5%A4%89%E6%8F%9BWeb%E3%83%84%E3%83%BC%E3%83%AB&amp;url=https%3A%2F%2Fzenginpon.kokokikaku.com%2F" target="_blank" rel="noopener noreferrer">X</a>
+  <a href="https://twitter.com/intent/tweet?text=%E5%85%A8%E9%8A%80%E3%83%9D%E3%83%B3%EF%BD%9C%E5%85%A8%E9%8A%80%E3%83%95%E3%82%A9%E3%83%BC%E3%83%9E%E3%83%83%E3%83%88%E3%81%AE%E6%8C%AF%E8%BE%BC%E3%83%87%E3%83%BC%E3%82%BF%E4%BD%9C%E6%88%90%EF%BD%9C%E3%81%93%E3%81%93%E4%BC%81%E7%94%BB&amp;url=https%3A%2F%2Fzenginpon.kokokikaku.com%2F" target="_blank" rel="noopener noreferrer">X</a>
   <a href="https://social-plugins.line.me/lineit/share?url=https%3A%2F%2Fzenginpon.kokokikaku.com%2F" target="_blank" rel="noopener noreferrer">LINE</a>
-  <a href="https://www.threads.com/intent/post?url=https%3A%2F%2Fzenginpon.kokokikaku.com%2F&amp;text=%E5%85%A8%E9%8A%80%E3%83%9D%E3%83%B3%EF%BD%9C%E7%B7%8F%E5%90%88%E6%8C%AF%E8%BE%BC%E3%83%BB%E7%B5%A6%E4%B8%8E%E6%8C%AF%E8%BE%BC%E3%81%AE%E5%85%A8%E9%8A%80%E3%83%95%E3%82%A9%E3%83%BC%E3%83%9E%E3%83%83%E3%83%88%E5%A4%89%E6%8F%9BWeb%E3%83%84%E3%83%BC%E3%83%AB" target="_blank" rel="noopener noreferrer">Threads</a>
+  <a href="https://www.threads.com/intent/post?url=https%3A%2F%2Fzenginpon.kokokikaku.com%2F&amp;text=%E5%85%A8%E9%8A%80%E3%83%9D%E3%83%B3%EF%BD%9C%E5%85%A8%E9%8A%80%E3%83%95%E3%82%A9%E3%83%BC%E3%83%9E%E3%83%83%E3%83%88%E3%81%AE%E6%8C%AF%E8%BE%BC%E3%83%87%E3%83%BC%E3%82%BF%E4%BD%9C%E6%88%90%EF%BD%9C%E3%81%93%E3%81%93%E4%BC%81%E7%94%BB" target="_blank" rel="noopener noreferrer">Threads</a>
   <button type="button" data-share-copy>リンクをコピー</button>
   <button type="button" data-share-native hidden>その他の共有…</button>
   <span class="site-sns-share__status" data-share-status role="status" aria-live="polite"></span>

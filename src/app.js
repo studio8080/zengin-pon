@@ -599,7 +599,7 @@
     if (!window.pdfjsLib) throw new Error('PDF ライブラリが読み込めませんでした');
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
     // 日本語の CID フォント（埋め込みなし）を読むには CMap が要る。cdnjs に無いので自サイトに置いている（vendor/pdfjs/README.md）
-    const pdf = await pdfjsLib.getDocument({ data: buf, cMapUrl: '/vendor/pdfjs/cmaps/', cMapPacked: true }).promise;
+    const pdf = await pdfjsLib.getDocument({ data: buf, isEvalSupported: false, cMapUrl: '/vendor/pdfjs/cmaps/', cMapPacked: true }).promise;
     const rows = [];
     for (let p = 1; p <= pdf.numPages; p++) {
       const page = await pdf.getPage(p);

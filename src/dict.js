@@ -172,10 +172,10 @@
     'PAYPAY': 'ＰａｙＰａｙ', 'RAKUTEN': '楽天', 'SONY': 'ソニー', 'SEVEN': 'セブン', 'AEON': 'イオン', 'LAWSON': 'ローソン',
     'AUJIBUN': 'ａｕじぶん', 'JIBUN': 'ａｕじぶん', 'SBISHINSEI': 'ＳＢＩ新生', 'SHINSEI': 'ＳＢＩ新生', 'AOZORA': 'あおぞら',
     'GMOAOZORANET': 'ＧＭＯあおぞらネット', 'GMOAOZORA': 'ＧＭＯあおぞらネット', 'SUMISHINSBINET': 'ドコモＳＭＴＢネット', 'SBINET': 'ドコモＳＭＴＢネット',
-    'DOCOMOSMTBNET': 'ドコモＳＭＴＢネット', 'SUMITOMOMITSUITRUST': '三井住友信託', 'SMTB': '三井住友信託', 'MITSUBISHIUFJTRUST': '三菱ＵＦＪ信託', 'MIZUHOTRUST': 'みずほ信託',
+    'DOCOMOSMTBNET': 'ドコモＳＭＴＢネット', 'SBISHINSEITRUST': '新生信託', 'SHINSEITRUST': '新生信託', 'SUMITOMOMITSUITRUST': '三井住友信託', 'SMTB': '三井住友信託', 'MITSUBISHIUFJTRUST': '三菱ＵＦＪ信託', 'MIZUHOTRUST': 'みずほ信託',
     'MINNANO': 'みんなの', 'UI': 'ＵＩ', 'SHOKOCHUKIN': '商工中金', 'NORINCHUKIN': '農林中金',
     // 改称・通称（日本語）
-    '住信SBIネット': 'ドコモＳＭＴＢネット', 'ジャパンネット': 'ＰａｙＰａｙ', 'じぶん': 'ａｕじぶん', '新生': 'ＳＢＩ新生',
+    '住信SBIネット': 'ドコモＳＭＴＢネット', 'ジャパンネット': 'ＰａｙＰａｙ', 'じぶん': 'ａｕじぶん', '新生': 'ＳＢＩ新生', 'SBI新生信託': '新生信託',
     '三菱東京UFJ': '三菱ＵＦＪ', '東京三菱': '三菱ＵＦＪ', 'UFJ': '三菱ＵＦＪ', '郵便局': 'ゆうちょ', 'ゆうちょ': 'ゆうちょ', 'ペイペイ': 'ＰａｙＰａｙ',
   };
   let aliasIndex = new Map();   // 正規化キー → [{code, via}]
