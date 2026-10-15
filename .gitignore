@@ -6,3 +6,4 @@ Thumbs.db
 tools/issued-keys.csv
 functions/node_modules/
 functions/.env
+*.pem

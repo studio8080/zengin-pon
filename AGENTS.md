@@ -92,6 +92,9 @@ tools/build-history.js    金融機関・支店の統廃合・改称・番号の
 node test/zengin.test.js      # 変換エンジン
 node test/organize.test.js    # 表の自動整理
 node test/license.test.js     # ライセンスの発行と検証（秘密鍵が必要。CI では回さない）
+node test/functions.test.js   # 課金: Webhook・キー更新の全経路（Stripe・Firestore・メールは差し替え）
+node test/renew.test.js       # 課金: サーバーのキーをブラウザが読めるか、自動更新の判定
+node tools/preflight.mjs      # 課金: 商品ID・更新先・CSP・メール文・キーの形式・秘密情報の照合（CI でも実行）
 node test/robust.test.js      # 書き方の揺れ・書き間違い
 node test/dict.test.js        # 銀行名・支店名・コードの照合（実際の辞書と履歴を使う）
 node tools/build-site.js --check
@@ -110,7 +113,15 @@ python -m http.server 8877    # ローカル確認（8765 と 8790 は別プロ�
 
 Stripe のサブスク（月払い・年払い、自動更新）→ Webhook → Cloud Functions（Firebase `misefits` に codebase `zenginpon` で相乗り）
 → キーを発行してメール。キーの寿命は最長30日で、ブラウザが定期的に取り直す。解約されると 410 が返り、ブラウザがキーを消す。
-デプロイは `firebase deploy --only functions:zenginpon --project misefits`。**`--only` を外さない**（Misefits の関数に触れないため）。
+410 は Stripe（照会か署名付き Webhook）で解約を確かめたときだけ。Stripe に照会できず判断できなければ 503 で、ブラウザはキーを消さない。
+判定とメールの文面は `functions/billing.js`、Webhook とキー更新は `functions/index.js`。**有休ポン（`C:/Users/chaha/repos/yukyu-pon` の `functions/`）と同じ設計**で、
+改善は両方に入れる（2026-10-15 に有休ポンの c765a28 を移植）。使ってよい最終日は契約の状態で決める（`entitledUntilOf`）。
+Webhook はイベントID（`zenginponEvents`）で二重処理を防ぎ、メールを送れない・宛先が分からないときは運営者に「【要対応】」を送って 500 で再送させる。
+デプロイは `firebase deploy --only functions:zenginpon --project misefits`。**`--only` を外さない**（Misefits・有休ポンの関数に触れないため）。
+デプロイの前に `node test/functions.test.js`・`node test/renew.test.js`・`node tools/preflight.mjs` が通ること（手順は `docs/launch-checklist.md` 3-4）。
+**既存のお客さまのキーと記録をそのまま使えるように、次を変えない**: キーの形式（`ZP1-`、中身 `{v,p,e,id}`）、ライセンスIDの作り方（`functions/sign.js` の `licenseIdFor`）、
+Firestore のコレクション名（`zenginponLicenses`）とフィールド名、ブラウザの保存キー（`zenginpon.license` / `zenginpon.licenseChecked`）、関数名（＝ Webhook と更新先の URL）。
+Webhook を変えたら `test/functions.test.js` に経路を足す。メール本文はプレーンテキスト（`**` を書かない）。
 `index.html` の CSP `connect-src` にある cloudfunctions のドメインを消さない（消すと更新が黙って失敗する）。
 Stripe のキーは MiseFits と共用の制限付きキー。**Subscriptions・Customers の読み取り権限が必須**（無いとキーが届かない。2026-10-02 に実際に起きた）。
 キーが届かないという問い合わせが来たら、Stripe の Webhook「zenginpon-license」→「イベントの配信」で失敗を探し、

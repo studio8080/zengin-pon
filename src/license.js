@@ -13,9 +13,11 @@
 (function (root, factory) {
   if (typeof module === 'object' && module.exports) module.exports = factory();
   else root.License = factory();
-})(typeof self !== 'undefined' ? self : this, function () {
+})(typeof self !== 'undefined' ? self : this, function factory(publicKeyForTest) {
   'use strict';
-  const PUBLIC_KEY = 'OIwfbUMa9__rkLw72kjwZr7akX27nG9AjM11tcpp-ng'; // Ed25519 公開鍵（生32バイト, base64url）
+  // Ed25519 公開鍵（生32バイト, base64url）。publicKeyForTest はテストでだけ使う使い捨ての鍵
+  // （test/renew.test.js。サーバーの functions/sign.js のキーをブラウザが読めるかを確かめる）
+  const PUBLIC_KEY = publicKeyForTest || 'OIwfbUMa9__rkLw72kjwZr7akX27nG9AjM11tcpp-ng';
   const STORAGE = 'zenginpon.license';
 
   function b64uToBytes(s) {
@@ -93,7 +95,8 @@
    *
    * 契約が続いていれば期限が延びたキーに差し替わる（利用者は何もしなくてよい）。
    * 解約・未払いでサーバーが 410 を返したら、保存済みのキーを削除して Free に戻す。
-   * オフラインや通信エラーのときは何もしない（手元のキーの期限までは使える）。
+   * それ以外（オフライン・通信エラー・503 で Stripe に照会できない・404 の手動発行キー など）は何もしない
+   * （手元のキーの期限までは使える）。キーを消すのは、サーバーが Stripe で解約を確かめた 410 のときだけ。
    *
    * @returns {Promise<{refreshed:boolean, expiry?:string, reason?:string, revoked?:boolean}>}
    */
@@ -104,6 +107,8 @@
     // 期限切れでも payload は読めているので、その id で復帰を試みる
     const id = cur.payload && cur.payload.id;
     if (!id) return { refreshed: false, reason: 'no-key' };
+    // 更新先が受け付ける形（英数字と - _ の6〜32文字）でなければ送らない（手動発行の古いキーなど）
+    if (!/^[A-Za-z0-9_-]{6,32}$/.test(String(id))) return { refreshed: false, reason: 'no-id' };
     if (!force) {
       const soon = cur.active && daysUntil(cur.expiry) <= REFRESH_WITHIN_DAYS;
       const stale = !lastChecked() || daysUntil(lastChecked()) <= -RECHECK_AFTER_DAYS;
@@ -127,11 +132,12 @@
     if (!j || !j.key) return { refreshed: false, reason: 'bad-response' };
     const v = await verify(j.key);
     if (!v.ok) return { refreshed: false, reason: v.reason };
+    if (v.payload.id !== id) return { refreshed: false, reason: 'id-mismatch' }; // 別の契約のキーには差し替えない
     markChecked();
     if (v.expiry === cur.expiry) return { refreshed: false, reason: 'unchanged', expiry: v.expiry };
     save(j.key);
     return { refreshed: true, expiry: v.expiry };
   }
 
-  return { verify, status, activate, deactivate, refreshIfNeeded, STORAGE, PUBLIC_KEY };
+  return { verify, status, activate, deactivate, refreshIfNeeded, STORAGE, PUBLIC_KEY, _withPublicKey: factory };
 });

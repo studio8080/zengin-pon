@@ -118,7 +118,9 @@
   $('proRefresh').addEventListener('click', async () => {
     $('proMsg').textContent = '確認中…'; $('proMsg').style.color = '';
     const r = await L.refreshIfNeeded(true);
-    const msg = { 'no-api': '自動更新は設定されていません', 'no-key': 'キーが入っていません', unchanged: '最新の状態です', offline: 'サーバーに接続できませんでした', 'http-404': 'このライセンスが見つかりません（お問い合わせください）', 'not-entitled': 'ご契約が終了しているため、Proを解除しました' };
+    const msg = { 'no-api': '自動更新は設定されていません', 'no-key': 'キーが入っていません', unchanged: '最新の状態です', offline: 'サーバーに接続できませんでした', 'http-404': 'このライセンスが見つかりません（お問い合わせください）', 'no-id': 'このライセンスが見つかりません（お問い合わせください）', 'not-entitled': 'ご契約が終了しているため、Proを解除しました' };
+    // 5xx（503 = Stripe に照会できない など）ではキーを消さない。手元のキーの期限までは使える
+    if (/^http-5/.test(r.reason || '')) msg[r.reason] = '契約の確認先が一時的に使えません。手元のキーの期限までは、そのまま使えます（次に開いたときにもう一度確かめます）';
     $('proMsg').textContent = r.refreshed ? `✔ 更新しました（〜${r.expiry}）` : (msg[r.reason] || `更新できませんでした（${r.reason}）`);
     $('proMsg').style.color = r.refreshed ? 'var(--ok)' : '';
     await refreshPro();

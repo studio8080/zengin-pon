@@ -325,17 +325,22 @@ codebase が別なので Misefits の関数は消えない。Firestore ルール
 
 | 関数 | 役割 |
 |---|---|
-| `zenginponStripeWebhook` | `checkout.session.completed` / `invoice.paid` でキーを発行し、Firestore に保存してメール送信。`customer.subscription.deleted` で解約日を記録し、解約確認メールを送る |
-| `zenginponLicense` | `GET ?id=<ライセンスID>`。**Stripe に契約状態を直接問い合わせて**、契約中なら新しいキー、解約済み・期限切れなら `410` を返す。CORS はサイトと localhost のみ |
+| `zenginponStripeWebhook` | `checkout.session.completed` / `invoice.paid` でキーを発行し、Firestore に保存してメール送信。`customer.subscription.updated` で解約の予約を知らせ、`customer.subscription.deleted` で解約日を記録して終了のメールを送る。イベントID（`zenginponEvents`）で二重処理を防ぎ、メールを送れなければ 500 で Stripe に再送させる |
+| `zenginponLicense` | `GET ?id=<ライセンスID>`。**Stripe に契約状態を直接問い合わせて**、契約中なら新しいキー、Stripe で解約・期限切れを確かめたら `410`、Stripe に照会できず判断できなければ `503`（ブラウザはキーを消さない）。10分以内に照会済みなら照会を省く。CORS はサイトと localhost のみ |
 
-発行する期限は `min(契約期間の末日 + 猶予3日, 今日 + 30日)`（`functions/sign.js` の `cappedExpiry`）。
+判定とメールの文面は `functions/billing.js`（有休ポンと同じ設計。2026-10-15 にそろえた）。
+発行する期限は `min(使ってよい最終日, 今日 + 30日)`。使ってよい最終日は契約の状態で決める（`entitledUntilOf`）:
+契約中は期間の末日＋3日、日付指定の解約（`cancel_at`）はその日＋3日、再請求中（past_due）は期間の初日から30日＋3日まで、
+未払い（unpaid）・一時停止は今の期間の初日＋3日、解約済みは終了日＋3日、一度も払われていない契約（incomplete）には出さない。
 
 | 状況 | 起きること |
 |---|---|
 | 契約中（月払い・年払いとも） | 取り直すたびに「今日+30日」まで延びる。利用者は何もしなくてよい |
 | 期間末で解約 | 期間の末日+3日を超えて延びない → その後 `410` → **ブラウザが手元のキーを削除して Free に戻る** |
 | 即時解約・未払い | 次の確認（最長7日以内）で `410` → 同上 |
-| オフライン | 何もしない。手元のキーの期限（最長30日）までは使える |
+| オフライン・Stripe の障害（`503`）・`5xx` | 何もしない。手元のキーの期限（最長30日）までは使える |
+
+- 確かめ方: `test/functions.test.js`（Webhook・キー更新の全経路。イベントは Stripe の実際の形）、`test/renew.test.js`（サーバーのキーをブラウザが読めるか・自動更新の判定）、`tools/preflight.mjs`（設定の照合。CI でも実行）。
 
 - ライセンスIDは**サブスクリプションIDのハッシュ**で、更新しても変わらない。
 - ブラウザは「期限が10日以内」または「前回の確認から7日以上」で取り直す（`src/license.js` の `refreshIfNeeded`）。
