@@ -111,7 +111,8 @@ await tryRun('メール', () => {
   check(/^https:\/\/billing\.stripe\.com\/p\/login\/[A-Za-z0-9]+$/.test(B.PORTAL_URL), 'PORTAL_URL がカスタマーポータルのログインリンク', B.PORTAL_URL)
   if (exists(`${SIBLING}/billing.js`)) {
     const Y = require(path.join(ROOT, SIBLING, 'billing.js'))
-    check(Y.PORTAL_URL === B.PORTAL_URL, 'PORTAL_URL が有休ポンと同じ（アカウント共通のリンク）', Y.PORTAL_URL)
+    // 有休ポンは専用ポータルで4価格を切り替える。共用リンクへの戻しを防ぐ。
+    check(Y.PORTAL_URL !== B.PORTAL_URL, 'PORTAL_URL が有休ポン専用のリンクと別（商品ごとのプラン切り替え先を維持）', B.PORTAL_URL)
   } else warn('PORTAL_URL を有休ポンと照合できない（../yukyu-pon が無い）')
   const bodies = {
     キー: B.welcomeMail('ZP1-abc.def', 'Emn4w-UX3Ygb', '年払い'),
