@@ -3,7 +3,7 @@
   var q = document.getElementById('q');
   if (!q) return;
   function norm(s) {
-    return String(s).toLowerCase().replace(/[\s　]/g, '')
+    return String(s).normalize('NFKC').toLowerCase().replace(/[\s　]/g, '')
       .replace(/[ぁ-ゖ]/g, function (c) { return String.fromCharCode(c.charCodeAt(0) + 96); })
       .replace(/[！-～]/g, function (c) { return String.fromCharCode(c.charCodeAt(0) - 65248); });
   }
@@ -23,8 +23,22 @@
   }
   // 各銀行ページ: 支店名・支店コードで絞り込み
   var rows = [].slice.call(document.querySelectorAll('#t tbody tr'));
-  q.addEventListener('input', function () {
+  var count = document.getElementById('search-count');
+  var empty = document.getElementById('search-empty');
+  var reset = document.getElementById('search-reset');
+  function filterBranches() {
     var v = norm(q.value);
-    rows.forEach(function (r) { r.style.display = !v || norm(r.textContent).indexOf(v) >= 0 ? '' : 'none'; });
-  });
+    var visible = 0;
+    rows.forEach(function (r) {
+      var match = !v || norm(r.textContent).indexOf(v) >= 0;
+      r.style.display = match ? '' : 'none';
+      if (match) visible++;
+    });
+    if (count) count.textContent = v ? rows.length + '支店中' + visible + '支店を表示' : rows.length + '支店を表示';
+    if (empty) empty.hidden = visible !== 0;
+    if (reset) reset.hidden = !v;
+  }
+  q.addEventListener('input', filterBranches);
+  if (reset) reset.addEventListener('click', function () { q.value = ''; filterBranches(); q.focus(); });
+  filterBranches();
 })();

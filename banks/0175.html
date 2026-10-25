@@ -14,7 +14,7 @@
 <meta property="og:type" content="article">
 <meta property="og:locale" content="ja_JP">
 <meta property="og:title" content="四国銀行の銀行コード（0175）と支店コード一覧｜全銀ポン">
-<meta property="og:description" content="四国銀行（金融機関コード 0175）の支店コード・支店名の一覧。振込データ（全銀フォーマット）作成に必要な4桁の銀行コードと3桁の支店コードを確認できます。">
+<meta property="og:description" content="四国銀行の銀行コードは0175。110支店の支店名・カナ・3桁の支店コードを一覧で確認し、ひらがなや全角・半角でも絞り込めます。2026-08-24版のデータを掲載。">
 <meta property="og:url" content="https://zenginpon.kokokikaku.com/banks/0175.html">
 <meta property="og:image" content="https://zenginpon.kokokikaku.com/assets/ogp.png">
 <meta property="og:image:width" content="1200">
@@ -22,10 +22,10 @@
 <meta property="og:image:alt" content="全銀ポン — Excelの振込一覧を、全銀フォーマットに変換">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="四国銀行の銀行コード（0175）と支店コード一覧｜全銀ポン">
-<meta name="twitter:description" content="四国銀行（金融機関コード 0175）の支店コード・支店名の一覧。振込データ（全銀フォーマット）作成に必要な4桁の銀行コードと3桁の支店コードを確認できます。">
+<meta name="twitter:description" content="四国銀行の銀行コードは0175。110支店の支店名・カナ・3桁の支店コードを一覧で確認し、ひらがなや全角・半角でも絞り込めます。2026-08-24版のデータを掲載。">
 <meta name="twitter:image" content="https://zenginpon.kokokikaku.com/assets/ogp.png">
 <title>四国銀行の銀行コード（0175）と支店コード一覧｜全銀ポン</title>
-<meta name="description" content="四国銀行（金融機関コード 0175）の支店コード・支店名の一覧。振込データ（全銀フォーマット）作成に必要な4桁の銀行コードと3桁の支店コードを確認できます。">
+<meta name="description" content="四国銀行の銀行コードは0175。110支店の支店名・カナ・3桁の支店コードを一覧で確認し、ひらがなや全角・半角でも絞り込めます。2026-08-24版のデータを掲載。">
 <link rel="canonical" href="https://zenginpon.kokokikaku.com/banks/0175.html">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -56,7 +56,11 @@
   <h1>四国銀行の銀行コード・支店コード一覧</h1>
   <p class="updated">金融機関コード <strong class="mono">0175</strong> ／ カナ: シコク ／ 110 支店 ／ 2026-08-24 版の全銀協公開データに基づく</p>
   <div class="callout">振込データ（全銀フォーマット）では、この <strong>金融機関コード 0175</strong> と下の <strong>3桁の支店コード</strong> を使います。銀行名・支店名は任意項目で、コードから自動で判定されます。</div>
-  <p><input id="q" type="search" placeholder="支店名・支店コードで絞り込み" style="width:100%;max-width:420px"></p>
+  <p><label for="q"><strong>支店名・カナ・支店コードで絞り込む</strong></label><br>
+    <input id="q" type="search" aria-controls="t" aria-describedby="search-help" placeholder="例: ローンプラザ、014" style="width:100%;max-width:420px;font-size:16px"></p>
+  <p id="search-help" class="hint">支店名の一部・ひらがな・カナ・3桁の支店コードで検索できます。全角・半角のどちらでも入力できます。</p>
+  <p><span id="search-count" role="status" aria-live="polite" aria-atomic="true">110支店を表示</span> <button id="search-reset" type="button" hidden>絞り込みを解除</button></p>
+  <p id="search-empty" class="callout" hidden>一致する支店がありません。支店名の一部か、3桁の支店コードでお試しください。掲載データの範囲での検索のため、見つからない場合は金融機関の公式案内をご確認ください。</p>
   <div class="tablewrap"><table id="t"><thead><tr><th>支店コード</th><th>支店名</th><th>カナ</th></tr></thead><tbody>
 <tr><td class="mono">014</td><td>ローンプラザ</td><td>ロ－ンプラザ</td></tr>
 <tr><td class="mono">015</td><td>龍馬</td><td>リヨウマ</td></tr>

@@ -23,6 +23,9 @@ const version = banksJson.version;
 const banks = banksJson.banks;
 const outDir = path.join(ROOT, 'banks');
 fs.mkdirSync(outDir, { recursive: true });
+// まず既存の検索流入がある2ページで案内・検索結果表示を改善する。
+// 銀行データと他の銀行ページの検索メタデータは変えない。
+const SEARCH_PILOT_CODES = new Set(['0175', '0300']);
 
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 function kindOf(code) {
@@ -84,13 +87,18 @@ for (const code of Object.keys(banks).sort()) {
   const bf = path.join(ROOT, 'data', 'branches', `${code}.json`);
   if (fs.existsSync(bf)) branches = JSON.parse(fs.readFileSync(bf, 'utf8'));
   const list = Object.keys(branches).sort();
+  const searchPilot = SEARCH_PILOT_CODES.has(code);
   branchTotal += list.length;
   const rows = list.map((bc) => `<tr><td class="mono">${bc}</td><td>${esc(branches[bc][0])}</td><td>${esc(branches[bc][1])}</td></tr>`).join('\n');
   const body = `<article class="article">
   <h1>${esc(fn)}の銀行コード・支店コード一覧</h1>
   <p class="updated">金融機関コード <strong class="mono">${code}</strong> ／ カナ: ${esc(kana)} ／ ${list.length} 支店 ／ ${version} 版の全銀協公開データに基づく</p>
   <div class="callout">振込データ（全銀フォーマット）では、この <strong>金融機関コード ${code}</strong> と下の <strong>3桁の支店コード</strong> を使います。銀行名・支店名は任意項目で、コードから自動で判定されます。</div>
-  <p><input id="q" type="search" placeholder="支店名・支店コードで絞り込み" style="width:100%;max-width:420px"></p>
+  ${searchPilot ? `<p><label for="q"><strong>支店名・カナ・支店コードで絞り込む</strong></label><br>
+    <input id="q" type="search" aria-controls="t" aria-describedby="search-help" placeholder="${list.length ? `例: ${esc(branches[list[0]][0])}、${esc(list[0])}` : '支店名・3桁の支店コード'}" style="width:100%;max-width:420px;font-size:16px"></p>
+  <p id="search-help" class="hint">支店名の一部・ひらがな・カナ・3桁の支店コードで検索できます。全角・半角のどちらでも入力できます。</p>
+  <p><span id="search-count" role="status" aria-live="polite" aria-atomic="true">${list.length}支店を表示</span> <button id="search-reset" type="button" hidden>絞り込みを解除</button></p>
+  <p id="search-empty" class="callout" hidden>一致する支店がありません。支店名の一部か、3桁の支店コードでお試しください。掲載データの範囲での検索のため、見つからない場合は金融機関の公式案内をご確認ください。</p>` : '<p><input id="q" type="search" placeholder="支店名・支店コードで絞り込み" style="width:100%;max-width:420px"></p>'}
   <div class="tablewrap"><table id="t"><thead><tr><th>支店コード</th><th>支店名</th><th>カナ</th></tr></thead><tbody>
 ${rows}
   </tbody></table></div>
@@ -100,7 +108,7 @@ ${rows}
   const url = `${SITE}/banks/${code}.html`;
   fs.writeFileSync(path.join(outDir, `${code}.html`), page({
     title: `${fn}の銀行コード（${code}）と支店コード一覧｜全銀ポン`,
-    description: `${fn}（金融機関コード ${code}）の支店コード・支店名の一覧。振込データ（全銀フォーマット）作成に必要な4桁の銀行コードと3桁の支店コードを確認できます。`,
+    description: searchPilot ? `${fn}の銀行コードは${code}。${list.length}支店の支店名・カナ・3桁の支店コードを一覧で確認し、ひらがなや全角・半角でも絞り込めます。${version}版のデータを掲載。` : `${fn}（金融機関コード ${code}）の支店コード・支店名の一覧。振込データ（全銀フォーマット）作成に必要な4桁の銀行コードと3桁の支店コードを確認できます。`,
     canonical: url,
     urlPath: `/banks/${code}.html`,
     trail: [['無料ツール', '/free-tools/'], ['銀行コード・支店コード検索', '/banks/'], [fn, `/banks/${code}.html`]],
