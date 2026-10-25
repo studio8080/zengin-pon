@@ -1,0 +1,110 @@
+[
+  {
+    "name": "21-none.fb",
+    "profile": "ZP120-v1",
+    "expect": "accept",
+    "reason": "1件・1000円"
+  },
+  {
+    "name": "21-LF.fb",
+    "profile": "ZP120-v1",
+    "expect": "accept",
+    "reason": "1件・1000円"
+  },
+  {
+    "name": "21-CRLF.fb",
+    "profile": "ZP120-v1",
+    "expect": "accept",
+    "reason": "1件・1000円"
+  },
+  {
+    "name": "11-none.fb",
+    "profile": "ZP120-v1",
+    "expect": "accept",
+    "reason": "1件・1000円"
+  },
+  {
+    "name": "11-LF.fb",
+    "profile": "ZP120-v1",
+    "expect": "accept",
+    "reason": "1件・1000円"
+  },
+  {
+    "name": "11-CRLF.fb",
+    "profile": "ZP120-v1",
+    "expect": "accept",
+    "reason": "1件・1000円"
+  },
+  {
+    "name": "12-none.fb",
+    "profile": "ZP120-v1",
+    "expect": "accept",
+    "reason": "1件・1000円"
+  },
+  {
+    "name": "12-LF.fb",
+    "profile": "ZP120-v1",
+    "expect": "accept",
+    "reason": "1件・1000円"
+  },
+  {
+    "name": "12-CRLF.fb",
+    "profile": "ZP120-v1",
+    "expect": "accept",
+    "reason": "1件・1000円"
+  },
+  {
+    "name": "bad-length.fb",
+    "profile": "ZP120-v1",
+    "expect": "reject",
+    "reason": "レコード長119相当"
+  },
+  {
+    "name": "unknown-kind.fb",
+    "profile": "ZP120-v1",
+    "expect": "reject",
+    "reason": "未知の種別99"
+  },
+  {
+    "name": "unknown-code.fb",
+    "profile": "ZP120-v1",
+    "expect": "reject",
+    "reason": "未知のコード区分"
+  },
+  {
+    "name": "bad-total.fb",
+    "profile": "ZP120-v1",
+    "expect": "reject",
+    "reason": "件数・金額不整合"
+  },
+  {
+    "name": "mixed-newlines.fb",
+    "profile": "ZP120-v1",
+    "expect": "reject",
+    "reason": "改行混在"
+  },
+  {
+    "name": "utf8.fb",
+    "profile": "ZP120-v1",
+    "expect": "reject",
+    "reason": "UTF-8のカナは複数バイト"
+  },
+  {
+    "name": "edi-extension.fb",
+    "profile": "ZP120-v1",
+    "expect": "reject",
+    "reason": "EDI拡張は対象外"
+  },
+  {
+    "name": "multi-header.fb",
+    "profile": "ZP120-v1",
+    "expect": "reject",
+    "reason": "複数依頼"
+  },
+  {
+    "name": "missing-final-newline.fb",
+    "profile": "ZP120-v1",
+    "expect": "reject",
+    "reason": "末尾改行なし"
+  }
+]

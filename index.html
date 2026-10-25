@@ -121,6 +121,19 @@
 <!-- ===== TOOL ===== -->
 <section class="workspace" aria-labelledby="tool-title">
 <main class="wrap tool" id="tool">
+<details class="compare-panel" id="comparePanel">
+  <summary>前月と今回の振込先を比較する（ローカルMVP）</summary>
+  <p>CSV・TSV・Excelを2つ選び、シートと列を指定します。1行目は見出しです。固定長FB・PDFは比較対象外です。比較データは保存・送信しません。</p>
+  <p>社員番号・顧客コードなど、両方のファイルで同じ意味の安定識別子を指定できます。未指定なら口座の一致だけを照合し、名前だけで同一人物とは判断しません。重複・空の識別子は要確認になります。</p>
+  <div class="compare-files">
+    <fieldset id="compare-before"><legend>前月のファイル</legend><label>ファイル<input type="file" accept=".csv,.tsv,.xlsx,.xls"></label><label>シート<select aria-label="前月のシート"></select></label><div class="compare-mapping"></div></fieldset>
+    <fieldset id="compare-after"><legend>今回のファイル</legend><label>ファイル<input type="file" accept=".csv,.tsv,.xlsx,.xls"></label><label>シート<select aria-label="今回のシート"></select></label><div class="compare-mapping"></div></fieldset>
+  </div>
+  <button id="compareRun" type="button" class="btn primary">差分を確認する</button>
+  <button id="compareClear" type="button" class="btn">比較データを消す</button>
+  <p id="compareMessage" role="alert"></p>
+  <div id="compareResult" aria-live="polite"></div>
+</details>
 <div class="tool-head">
   <div class="tool-heading">
     <p class="section-label">変換ワークスペース</p>
@@ -452,6 +465,8 @@
 <script src="src/gsheets.js"></script>
 <script src="src/license.js"></script>
 <script src="src/app.js"></script>
+<script src="src/compare.js"></script>
+<script src="src/compare-ui.js"></script>
 <script src="src/site.js"></script>
 </body>
 </html>

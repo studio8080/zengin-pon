@@ -530,3 +530,12 @@ mark.badch { background: #ffd5cf; color: var(--ng); border-radius: 3px; padding:
   .article h2 { font-size: 19px; padding: 10px 12px; }
   .minitool { padding: 18px 14px; }
 }
+:root .compare-panel { margin: 0 0 24px; padding: 16px; border: 1px solid var(--line, #ccd4df); border-radius: 12px; background: #fff; }
+.compare-panel summary { cursor: pointer; font-weight: 700; }
+.compare-panel p, .compare-panel li { overflow-wrap: anywhere; }
+.compare-files { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin: 16px 0; }
+.compare-files fieldset { min-width: 0; padding: 12px; border: 1px solid #ccd4df; }
+.compare-files label { display: block; margin: 8px 0; }
+.compare-files input, .compare-files select { display: block; width: 100%; min-width: 0; max-width: 100%; }
+#compareResult { max-height: 60vh; overflow: auto; margin-top: 12px; }
+@media (max-width: 640px) { .compare-files { grid-template-columns: minmax(0, 1fr); } }
