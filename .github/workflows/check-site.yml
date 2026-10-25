@@ -25,6 +25,8 @@ jobs:
           node test/sign.test.js
           node test/robust.test.js
           node test/dict.test.js
+          node --test test/compare.test.js test/reader-fixtures.test.js
+          node --check src/compare-ui.js
           node test/analytics.test.js
           node --test test/revenue.test.js
           mkdir -p /tmp/fb && node test/make-fb.js /tmp/fb && python3 tools/verify_zengin.py /tmp/fb/*.txt
