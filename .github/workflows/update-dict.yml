@@ -16,10 +16,10 @@ jobs:
   update:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
         with:
           fetch-depth: 0   # sitemap の lastmod を git の履歴から決めるため（浅い取得だと全ページが今日になる）
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         with:
           node-version: '22'
       - name: Fetch source and read its last update date
@@ -42,7 +42,7 @@ jobs:
           node test/dict.test.js
           node tools/build-site.js --check
       - name: Create pull request if changed
-        uses: peter-evans/create-pull-request@v8
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8
         with:
           commit-message: "data: 金融機関辞書を ${{ steps.src.outputs.date }} 版に更新"
           title: "金融機関辞書の更新（${{ steps.src.outputs.date }} 版）"
