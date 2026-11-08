@@ -3,6 +3,8 @@
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
+const vm = require('node:vm');
+const Z = require('../src/zengin.js');
 const D = require('../src/dict.js');
 
 const DATA = path.join(__dirname, '..', 'data');
@@ -19,6 +21,105 @@ const resolve = async (row) => { const r = { _info: [], _warn: [], ...row }; awa
   let passed = 0;
   const t = async (name, fn) => { await fn(); passed++; console.log('ok -', name); };
   await D.load();
+
+  // 口座・金額・名義はすべて架空。辞書だけは同梱の公開情報を使う。
+  const transfer = (extra = {}) => ({ bankCode: '2356', branchCode: '001', depositType: '1',
+    accountNo: '0123456', name: 'ﾃｽﾄ ｳｹﾄﾘﾆﾝ', amount: 12345, _info: [], _warn: [], ...extra });
+  const mergerWarnings = (r) => r._warn.filter((w) => /興栄信用組合.*合併について公式案内/.test(w));
+  const checkMerger = (r) => {
+    assert.equal(mergerWarnings(r).length, 1, r._warn.join());
+    assert.match(mergerWarnings(r)[0], /2026年11月24日/);
+    assert.match(mergerWarnings(r)[0], /振込指定日/);
+    assert.match(mergerWarnings(r)[0], /事前.*作成/);
+    assert.match(mergerWarnings(r)[0], /受取人.*公式案内.*最新.*口座情報/);
+    assert.doesNotMatch(mergerWarnings(r)[0], /合併予定|合併済み/);
+  };
+
+  await t('興栄: 明示コードは全5支店で注意し、口座・金額・出力バイトを変更しない', async () => {
+    const list = JSON.parse(fs.readFileSync(path.join(DATA, 'branches', '2356.json'), 'utf8'));
+    assert.equal(Object.keys(list).length, 5);
+    for (const branchCode of Object.keys(list)) {
+      const r = transfer({ branchCode }), before = { ...r };
+      const h = { kind: '21', clientCode: '1234567890', clientName: 'ﾃｽﾄ', date: '1124',
+        bankCode: '0005', branchCode: '001', depositType: '1', accountNo: '7654321' };
+      const bytes = Z.encode(Z.build(h, [r]).text);
+      await D.resolveRows([r]);
+      checkMerger(r);
+      for (const k of ['bankCode', 'branchCode', 'depositType', 'accountNo', 'name', 'amount']) assert.equal(r[k], before[k], k);
+      assert.deepEqual(Z.encode(Z.build(h, [r]).text), bytes);
+      assert.deepEqual(Z.validateRow(r, '21'), []); // 注意はエラーではなく、既存の出力可仕様を維持
+    }
+  });
+
+  await t('興栄: 名前欄のコードと全角コードも補完後に注意する', async () => {
+    for (const q of ['2356', '２３５６']) {
+      const r = await resolve(transfer({ bankCode: '', branchCode: '', _rawBankName: q, _rawBranchName: '店番001' }));
+      assert.equal(r.bankCode, '2356'); assert.equal(r.branchCode, '001'); checkMerger(r);
+    }
+  });
+
+  await t('興栄: 正式名・辞書名・カナから銀行と支店を補完しても注意する', async () => {
+    for (const q of ['興栄信用組合', ...D.bank('2356')]) {
+      const r = await resolve(transfer({ bankCode: '', branchCode: '', _rawBankName: q, _rawBranchName: '本店' }));
+      assert.equal(r.bankCode, '2356'); assert.equal(r.branchCode, '001'); checkMerger(r);
+      assert.equal(r.accountNo, '0123456'); assert.equal(r.amount, 12345);
+    }
+  });
+
+  await t('興栄: 不明・空欄の店番でも注意し、別の照合警告も保持する', async () => {
+    for (const branchCode of ['', '999']) {
+      const r = await resolve(transfer({ branchCode }));
+      assert.equal(r.branchCode, branchCode); checkMerger(r);
+      if (branchCode) assert.ok(r._warn.some((w) => /支店コード 999/.test(w)));
+    }
+    const r = await resolve(transfer({ _rawBankName: 'みずほ銀行', _warn: ['既存の確認事項'] }));
+    checkMerger(r); assert.equal(r.bankCode, '2356');
+    assert.ok(r._warn.includes('既存の確認事項'));
+    assert.ok(r._warn.some((w) => /表の銀行名/.test(w)));
+  });
+
+  await t('興栄: 同じ行の再照合・警告配列の再作成で合併注意を重複させない', async () => {
+    const r = transfer();
+    for (let i = 0; i < 3; i++) { await D.resolveRows([r]); checkMerger(r); }
+    r._warn = [];
+    await D.resolveRows([r]); checkMerger(r);
+  });
+
+  await t('興栄: 合併予定日の前日・当日・翌日で注意を消さず、辞書から消えても置換しない', async () => {
+    const source = fs.readFileSync(path.join(__dirname, '..', 'src', 'dict.js'), 'utf8');
+    for (const day of ['2026-11-06', '2026-11-23', '2026-11-24', '2026-11-25']) {
+      for (const removed of [false, true]) {
+        const RealDate = Date;
+        class Clock extends RealDate {
+          constructor(...args) { super(...(args.length ? args : [day + 'T12:00:00Z'])); }
+          static now() { return RealDate.parse(day + 'T12:00:00Z'); }
+        }
+        const sandbox = { module: { exports: {} }, Date: Clock };
+        vm.runInNewContext(source, sandbox);
+        const dict = sandbox.module.exports;
+        dict.setLoader(async (p) => {
+          const data = JSON.parse(fs.readFileSync(path.join(DATA, p), 'utf8'));
+          if (removed && p === 'banks.json') delete data.banks['2356'];
+          return data;
+        });
+        const r = transfer();
+        await dict.resolveRows([r]); checkMerger(r);
+        assert.equal(r.bankCode, '2356'); assert.equal(r.branchCode, '001');
+        assert.equal(r.accountNo, '0123456'); assert.equal(r.amount, 12345);
+      }
+    }
+  });
+
+  await t('興栄以外: 混在行・隣のコード・既存の0120合併表の挙動を保持する', async () => {
+    const rows = ['2356', '2351', '2355', '0001', '0120', '0121', '9999'].map((bankCode) => transfer({ bankCode, branchCode: '' }));
+    await D.resolveRows(rows);
+    checkMerger(rows[0]);
+    for (const r of rows.slice(1)) assert.equal(mergerWarnings(r).length, 0);
+    for (const r of rows.filter((r) => ['2351', '0001', '0120', '0121'].includes(r.bankCode))) assert.deepEqual(r._warn, []);
+    assert.equal(D.mergedInfo('0120').new, '0121');
+    assert.equal(D.mergedInfo('2356'), null);
+    assert.match(rows.at(-1)._warn.join(), /一覧.*ありません/);
+  });
 
   await t('銀行名: 正式名・略称・空白・半角カナ・ひらがな', async () => {
     for (const [q, want] of [['京都信用金庫', '1610'], ['京都信金', '1610'], ['京都 信用 金庫', '1610'], ['きょうとしんきん', '1610'], ['ｷｮｳﾄｼﾝｷﾝ', '1610'],
