@@ -285,6 +285,9 @@
   const fmt = (list, max = 4) => list.slice(0, max).map((x) => `${x.code} ${x.name}`).join(' / ') + (list.length > max ? ` ほか${list.length - max}件` : '');
   const ym = (d) => `${d.slice(0, 4)}年${Number(d.slice(5, 7))}月`;
 
+  // 2356 は同梱辞書に残っていても要確認。根拠と公開前の確認事項は docs/merger-warning-2356.md。
+  const KOEI_MERGER_WARNING = '興栄信用組合（2356）と新潟縣信用組合の2026年11月24日付の合併について公式案内があります。振込指定日を確認し、事前に作成する場合も受取人と金融機関の公式案内で最新の口座情報（金融機関・店番など）を確認してください。コードは自動変更しません。';
+
   /**
    * 表の各行の銀行・支店を照合して、コードを補い、確認が要る点を r._info / r._warn に書く。
    * rows: { bankCode, branchCode, _rawBankName, _rawBranchName, _info: [], _warn: [] }
@@ -331,6 +334,11 @@
       } else if (pick.length && pick[0].match === 'fuzzy') r._warn.push(`銀行名「${raw}」が見つかりません。もしかして: ${fmt(pick)}`);
       else if (pick.length > 1) r._warn.push(`銀行名「${raw}」に候補が複数あります: ${fmt(pick)}`);
       else r._warn.push(`銀行名「${raw}」が金融機関一覧に見つかりません`);
+    }
+
+    // 名前・名前欄コードの補完後にも適用。振込日を受け取らないため、将来分の事前作成を見落とさないよう常時注意する。
+    for (const r of rows) {
+      if (r.bankCode === '2356' && !r._warn.includes(KOEI_MERGER_WARNING)) r._warn.push(KOEI_MERGER_WARNING);
     }
 
     // 3) 支店（一覧と履歴を読む）
