@@ -77,6 +77,13 @@ ${T.footer({ path: urlPath, title, share: true })}
 
 const cta = `<div class="callout ok" style="margin-top:28px"><strong>このコードで振込データを作る:</strong> Excelの支払リストや給与計算表を、銀行名・支店名のままでも読み込んで全銀フォーマットに変換できます。<a href="/#tool">全銀ポンで変換する（無料）</a></div>`;
 
+const mergerNotice2356 = `<div class="callout">
+    <p><strong>興栄信用組合（2356）の合併について</strong></p>
+    <p>興栄信用組合は2026年11月24日付で新潟縣信用組合と合併します（11月20日認可）。下の表は合併前の情報です。</p>
+    <p>振込指定日が2026年11月24日以降の場合は、振込データを作成・利用する前に、受取人と金融機関の公式案内で最新の口座情報を確認してください。旧コードの受付可否は、このページでは確認できません。</p>
+    <p><a href="https://lfb.mof.go.jp/kantou/kinyuu/kinyu/pagekt_cnt_20261120001.html">関東財務局の合併認可</a> ／ <a href="/updates.html">全銀ポンの再照合・既存ファイルの注意事項</a></p>
+  </div>`;
+
 // ---- 各銀行ページ ----
 const urls = [];
 let branchTotal = 0;
@@ -88,12 +95,13 @@ for (const code of Object.keys(banks).sort()) {
   if (fs.existsSync(bf)) branches = JSON.parse(fs.readFileSync(bf, 'utf8'));
   const list = Object.keys(branches).sort();
   const searchPilot = SEARCH_PILOT_CODES.has(code);
+  const isLegacy2356 = code === '2356';
   branchTotal += list.length;
   const rows = list.map((bc) => `<tr><td class="mono">${bc}</td><td>${esc(branches[bc][0])}</td><td>${esc(branches[bc][1])}</td></tr>`).join('\n');
   const body = `<article class="article">
   <h1>${esc(fn)}の銀行コード・支店コード一覧</h1>
   <p class="updated">金融機関コード <strong class="mono">${code}</strong> ／ カナ: ${esc(kana)} ／ ${list.length} 支店 ／ ${version} 版の全銀協公開データに基づく</p>
-  <div class="callout">振込データ（全銀フォーマット）では、この <strong>金融機関コード ${code}</strong> と下の <strong>3桁の支店コード</strong> を使います。銀行名・支店名は任意項目で、コードから自動で判定されます。</div>
+  ${isLegacy2356 ? mergerNotice2356 : `<div class="callout">振込データ（全銀フォーマット）では、この <strong>金融機関コード ${code}</strong> と下の <strong>3桁の支店コード</strong> を使います。銀行名・支店名は任意項目で、コードから自動で判定されます。</div>`}
   ${searchPilot ? `<p><label for="q"><strong>支店名・カナ・支店コードで絞り込む</strong></label><br>
     <input id="q" type="search" aria-controls="t" aria-describedby="search-help" placeholder="${list.length ? `例: ${esc(branches[list[0]][0])}、${esc(list[0])}` : '支店名・3桁の支店コード'}" style="width:100%;max-width:420px;font-size:16px"></p>
   <p id="search-help" class="hint">支店名の一部・ひらがな・カナ・3桁の支店コードで検索できます。全角・半角のどちらでも入力できます。</p>
@@ -101,18 +109,17 @@ for (const code of Object.keys(banks).sort()) {
   <p id="search-empty" class="callout" hidden>一致する支店がありません。支店名の一部か、3桁の支店コードでお試しください。掲載データの範囲での検索のため、見つからない場合は金融機関の公式案内をご確認ください。</p>` : '<p><input id="q" type="search" placeholder="支店名・支店コードで絞り込み" style="width:100%;max-width:420px"></p>'}
   <div class="tablewrap"><table id="t"><thead><tr><th>支店コード</th><th>支店名</th><th>カナ</th></tr></thead><tbody>
 ${rows}
-  </tbody></table></div>
-  ${cta}
+  </tbody></table></div>${isLegacy2356 ? '' : `\n  ${cta}`}
   <p class="hint">支店の新設・統廃合により最新の情報と異なる場合があります。正確な情報は各金融機関にご確認ください。</p>
 </article>`;
   const url = `${SITE}/banks/${code}.html`;
   fs.writeFileSync(path.join(outDir, `${code}.html`), page({
     title: `${fn}の銀行コード（${code}）と支店コード一覧｜全銀ポン`,
-    description: searchPilot ? `${fn}の銀行コードは${code}。${list.length}支店の支店名・カナ・3桁の支店コードを一覧で確認し、ひらがなや全角・半角でも絞り込めます。${version}版のデータを掲載。` : `${fn}（金融機関コード ${code}）の支店コード・支店名の一覧。振込データ（全銀フォーマット）作成に必要な4桁の銀行コードと3桁の支店コードを確認できます。`,
+    description: isLegacy2356 ? '興栄信用組合（2356）の合併前の支店コード一覧。2026年11月24日以降の振込は最新の口座情報をご確認ください。' : searchPilot ? `${fn}の銀行コードは${code}。${list.length}支店の支店名・カナ・3桁の支店コードを一覧で確認し、ひらがなや全角・半角でも絞り込めます。${version}版のデータを掲載。` : `${fn}（金融機関コード ${code}）の支店コード・支店名の一覧。振込データ（全銀フォーマット）作成に必要な4桁の銀行コードと3桁の支店コードを確認できます。`,
     canonical: url,
     urlPath: `/banks/${code}.html`,
     trail: [['無料ツール', '/free-tools/'], ['銀行コード・支店コード検索', '/banks/'], [fn, `/banks/${code}.html`]],
-    jsonld: { '@context': 'https://schema.org', '@type': 'Dataset', name: `${fn}の支店コード一覧`, description: `${fn}（金融機関コード ${code}）の支店コードと支店名の一覧です。${version}版の公開データをもとに、全銀フォーマットの振込データ作成に必要な4桁の金融機関コードと3桁の支店コードを確認できます。`, license: 'https://opensource.org/licenses/MIT', creator: { '@type': 'Organization', name: 'ここ企画' } },
+    jsonld: { '@context': 'https://schema.org', '@type': 'Dataset', name: `${fn}の支店コード一覧`, description: isLegacy2356 ? `興栄信用組合（2356）の合併前の支店コードと支店名の一覧です。${version}版の公開データに基づきます。` : `${fn}（金融機関コード ${code}）の支店コードと支店名の一覧です。${version}版の公開データをもとに、全銀フォーマットの振込データ作成に必要な4桁の金融機関コードと3桁の支店コードを確認できます。`, license: 'https://opensource.org/licenses/MIT', creator: { '@type': 'Organization', name: 'ここ企画' } },
     body,
   }));
   urls.push(url);
